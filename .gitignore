@@ -1,0 +1,4 @@
+.mcp.json
+.env
+.claude/settings.local.json
+.tmp/

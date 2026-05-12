@@ -1,4 +1,6 @@
 {
+  "updatedAt": "2026-05-12T21:11:23.106Z",
+  "createdAt": "2026-05-11T05:31:39.883Z",
   "id": "634G5sX55sgsYpvz",
   "name": "Gestione Email Professionale – Consulente del Lavoro",
   "description": null,
@@ -268,21 +270,21 @@
     },
     {
       "parameters": {
-        "jsCode": "var items = $input.all();\nvar emailData = $('Gmail Trigger').item.json || {};\nvar topic = 'GENERALE';\ntry { topic = $('Mappa Argomento a Cartella').item.json.topic || 'GENERALE'; } catch(e) {}\nvar driveContext = 'Nessun documento trovato su Google Drive per questa richiesta.';\nvar validItems = items.filter(function(i) { return i.json && i.json.id; });\nif (validItems.length > 0) {\n  var lines = validItems.map(function(item, idx) {\n    var name = item.json.name || ('Documento ' + (idx + 1));\n    var link = item.json.webViewLink ? (' - ' + item.json.webViewLink) : '';\n    return (idx + 1) + '. ' + name + link;\n  });\n  driveContext = 'Documenti trovati (argomento: ' + topic + '):\\n' + lines.join('\\n');\n}\nreturn [{ json: {\n  from: String(emailData.from || ''),\n  to: String(emailData.to || ''),\n  subject: String(emailData.subject || ''),\n  snippet: String(emailData.snippet || ''),\n  text: String(emailData.text || ''),\n  threadId: String(emailData.threadId || ''),\n  id: String(emailData.id || ''),\n  driveContext: driveContext,\n  topic: topic\n} }];"
+        "jsCode": "var emailData = $('Gmail Trigger').item.json || {};\nvar topic = 'GENERALE';\ntry { topic = $('Mappa Argomento a Cartella').item.json.topic || 'GENERALE'; } catch(e) {}\n\nvar driveItems = [];\ntry { driveItems = $('Cerca Documenti Drive').all(); } catch(e) {}\n\nvar aggiornamenti = '';\ntry {\n  var normItems = $input.all();\n  if (normItems.length > 0) aggiornamenti = normItems[0].json.aggiornamenti || '';\n} catch(e) {}\n\nvar driveContext = 'Nessun documento trovato su Google Drive per questa richiesta.';\nvar validItems = driveItems.filter(function(i) { return i.json && i.json.id; });\nif (validItems.length > 0) {\n  var lines = validItems.map(function(item, idx) {\n    var name = item.json.name || ('Documento ' + (idx + 1));\n    var link = item.json.webViewLink ? (' - ' + item.json.webViewLink) : '';\n    return (idx + 1) + '. ' + name + link;\n  });\n  driveContext = 'Documenti trovati (argomento: ' + topic + '):\\n' + lines.join('\\n');\n}\n\nreturn [{ json: {\n  from: String(emailData.from || ''),\n  to: String(emailData.to || ''),\n  subject: String(emailData.subject || ''),\n  snippet: String(emailData.snippet || ''),\n  text: String(emailData.text || ''),\n  threadId: String(emailData.threadId || ''),\n  id: String(emailData.id || ''),\n  driveContext: driveContext,\n  topic: topic,\n  aggiornamenti: aggiornamenti\n} }];"
       },
       "id": "node13",
       "name": "Aggrega Contesto",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2240,
+        2420,
         304
       ]
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ 'EMAIL RICEVUTA:\\n\\nMittente: ' + $json.from + '\\nOggetto: ' + $json.subject + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 2000) + '\\n\\n---\\n\\nCONTESTO DOCUMENTALE:\\n' + $json.driveContext }}",
+        "text": "={{ 'EMAIL RICEVUTA:\\n\\nMittente: ' + $json.from + '\\nOggetto: ' + $json.subject + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 2000) + '\\n\\n---\\n\\nCONTESTO DOCUMENTALE:\\n' + $json.driveContext + '\\n\\n---\\n\\nAGGIORNAMENTI NORMATIVI RECENTI:\\n' + ($json.aggiornamenti || 'Nessun aggiornamento normativo disponibile') }}",
         "messages": {
           "messageValues": [
             {
@@ -297,7 +299,7 @@
       "type": "@n8n/n8n-nodes-langchain.chainLlm",
       "typeVersion": 1.9,
       "position": [
-        2528,
+        2708,
         304
       ]
     },
@@ -317,7 +319,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
       "typeVersion": 1.3,
       "position": [
-        2528,
+        2708,
         512
       ],
       "credentials": {
@@ -337,7 +339,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2800,
+        2980,
         304
       ]
     },
@@ -353,7 +355,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.2,
       "position": [
-        3088,
+        3268,
         304
       ],
       "webhookId": "7f3c0cc6-f657-4456-aa53-8b4ec7345c9a",
@@ -394,6 +396,26 @@
           ],
           "combinator": "and"
         },
+        "options": {}
+      }
+    },
+    {
+      "id": "norm1",
+      "name": "Leggi Aggiornamenti Normativi",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.1,
+      "position": [
+        2104,
+        304
+      ],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "value": "CqJZONKRTwDohRzq",
+          "mode": "id"
+        },
+        "mode": "once",
         "options": {}
       }
     }
@@ -506,17 +528,6 @@
         ]
       ]
     },
-    "Cerca Documenti Drive": {
-      "main": [
-        [
-          {
-            "node": "Aggrega Contesto",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Aggrega Contesto": {
       "main": [
         [
@@ -582,6 +593,28 @@
           }
         ]
       ]
+    },
+    "Cerca Documenti Drive": {
+      "main": [
+        [
+          {
+            "node": "Leggi Aggiornamenti Normativi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leggi Aggiornamenti Normativi": {
+      "main": [
+        [
+          {
+            "node": "Aggrega Contesto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -593,6 +626,16 @@
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": true
+  },
+  "staticData": {
+    "node:Gmail Trigger": {
+      "Gmail Trigger": {
+        "lastTimeChecked": 1778619642,
+        "possibleDuplicates": [
+          "19e1dfdf26609ab0"
+        ]
+      }
+    }
   },
   "meta": {
     "templateCredsSetupCompleted": true
@@ -672,5 +715,9 @@
       }
     ]
   },
+  "versionId": "c4abeb76-1a21-46f4-8033-30c8ba895a94",
+  "activeVersionId": "c4abeb76-1a21-46f4-8033-30c8ba895a94",
+  "versionCounter": 142,
+  "triggerCount": 1,
   "tags": []
 }

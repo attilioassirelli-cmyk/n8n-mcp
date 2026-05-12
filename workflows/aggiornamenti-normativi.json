@@ -1,0 +1,161 @@
+{
+  "id": "CqJZONKRTwDohRzq",
+  "name": "Aggiornamenti Normativi",
+  "active": true,
+  "nodes": [
+    {
+      "id": "sched1",
+      "name": "Schedule Giornaliero",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [0, 0],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "cronExpression", "expression": "0 7 * * *" }]
+        }
+      }
+    },
+    {
+      "id": "ewt1",
+      "name": "Chiamata da Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 400],
+      "parameters": { "inputSource": "passthrough" }
+    },
+    {
+      "id": "def1",
+      "name": "Definisci Fonti",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, 0],
+      "parameters": {
+        "jsCode": "return [\n  { json: { name: 'INPS', url: 'https://www.inps.it/it/it/inps-comunica/notizie.html' } },\n  { json: { name: 'INAIL', url: 'https://www.inail.it/cs/internet/comunicazione/news/' } },\n  { json: { name: 'Agenzia Entrate', url: 'https://www.agenziaentrate.gov.it/portale/normativa-e-prassi/circolari' } },\n  { json: { name: 'AdER', url: 'https://www.agenziaentrateriscossione.gov.it/notizie/' } },\n  { json: { name: 'INL', url: 'https://www.ispettorato.gov.it/documenti-e-normativa/orientamenti-giuridici-inl/circolari/' } },\n  { json: { name: 'CNCE Casse Edili', url: 'https://www.cnce.it/' } }\n];"
+      }
+    },
+    {
+      "id": "http1",
+      "name": "Scarica Pagina",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [560, 0],
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {
+          "response": { "response": { "responseFormat": "text" } },
+          "timeout": 20000
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "id": "comb1",
+      "name": "Combina Testi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [840, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "var sources = ['INPS', 'INAIL', 'Agenzia Entrate', 'AdER', 'INL', 'CNCE Casse Edili'];\nvar items = $input.all();\nvar testi = items.map(function(item, i) {\n  var nome = sources[i] || ('Fonte ' + (i + 1));\n  var testo = '';\n  try {\n    if (item.json && typeof item.json.data === 'string') {\n      testo = item.json.data;\n    } else if (item.json && typeof item.json.body === 'string') {\n      testo = item.json.body;\n    } else if (item.json && item.json.error) {\n      return '=== ' + nome + ' ===\\n[Errore nel recupero dati]';\n    } else {\n      testo = JSON.stringify(item.json || '');\n    }\n    testo = testo\n      .replace(/<script[\\s\\S]*?<\\/script>/gi, '')\n      .replace(/<style[\\s\\S]*?<\\/style>/gi, '')\n      .replace(/<[^>]+>/g, ' ')\n      .replace(/&nbsp;/g, ' ')\n      .replace(/&amp;/g, '&')\n      .replace(/&lt;/g, '<')\n      .replace(/&gt;/g, '>')\n      .replace(/\\s+/g, ' ')\n      .trim()\n      .substring(0, 3500);\n  } catch(e) {\n    testo = '[Errore nel parsing: ' + String(e) + ']';\n  }\n  return '=== ' + nome + ' ===\\n' + testo;\n});\nreturn [{ json: { contenuto: testi.join('\\n\\n---\\n\\n'), dataOggi: new Date().toISOString().split('T')[0] } }];"
+      }
+    },
+    {
+      "id": "chain1",
+      "name": "Riassumi Aggiornamenti",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [1120, 0],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.contenuto.substring(0, 14000) }}",
+        "messages": {
+          "messageValues": [{
+            "message": "Sei un assistente specializzato in normativa italiana del lavoro, previdenziale e fiscale per Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale.\n\nAnalizzi il contenuto HTML estratto dalle pagine ufficiali di INPS, INAIL, Agenzia delle Entrate, Agenzia Entrate-Riscossione (AdER), INL (Ispettorato Nazionale Lavoro) e CNCE (Casse Edili).\n\nEstrai e riassumi gli aggiornamenti normativi più recenti e rilevanti:\n- Nuove circolari e messaggi INPS (paghe, contributi, previdenza, ammortizzatori sociali)\n- Circolari INAIL (premi assicurativi, infortuni, malattie professionali)\n- Provvedimenti Agenzia Entrate (redditi lavoro dipendente, IVA, dichiarazioni fiscali)\n- Aggiornamenti AdER (rateazioni, cartelle esattoriali, pignoramenti)\n- Note e circolari INL (rapporti di lavoro, sicurezza sul lavoro, ispezioni)\n- Comunicazioni CNCE (Casse Edili, DURC, settore costruzioni)\n\nStruttura con intestazioni ## per ente. Sii conciso ma informativo.\nSe una fonte non mostra aggiornamenti chiari (es. sito JS-rendered), indicalo.\nData aggiornamento: {{ $json.dataOggi }}"
+          }]
+        },
+        "batching": {}
+      }
+    },
+    {
+      "id": "anth1",
+      "name": "Anthropic Aggiornamenti",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [1120, 200],
+      "parameters": {
+        "model": { "__rl": true, "mode": "id", "value": "claude-sonnet-4-6" },
+        "options": { "maxTokensToSample": 1500 }
+      },
+      "credentials": {
+        "anthropicApi": { "id": "Vw3rTFIF09caGjnN", "name": "Anthropic account" }
+      }
+    },
+    {
+      "id": "save1",
+      "name": "Salva Cache",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1400, 0],
+      "parameters": {
+        "jsCode": "var items = $input.all();\nvar riassunto = items.length > 0 ? (items[0].json.text || '') : '';\nvar staticData = $getWorkflowStaticData('global');\nstaticData.aggiornamenti = riassunto;\nstaticData.ultimoAggiornamento = new Date().toISOString().split('T')[0];\nreturn [{ json: { salvato: true, data: staticData.ultimoAggiornamento, caratteri: riassunto.length } }];"
+      }
+    },
+    {
+      "id": "read1",
+      "name": "Leggi Cache",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [280, 400],
+      "parameters": {
+        "jsCode": "var staticData = $getWorkflowStaticData('global');\nvar aggiornamenti = staticData.aggiornamenti || '';\nvar data = staticData.ultimoAggiornamento || 'Mai aggiornato';\nreturn [{ json: { aggiornamenti: aggiornamenti, dataAggiornamento: data, disponibile: aggiornamenti.length > 0 } }];"
+      }
+    },
+    {
+      "id": "1f3adea2-ddd1-4e89-9941-6ecb53d068a1",
+      "name": "Prepara Email Aggiornamenti",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1680, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "var staticData = $getWorkflowStaticData('global');\nvar riassunto = staticData.aggiornamenti || 'Nessun aggiornamento disponibile';\nvar dataOggi = staticData.ultimoAggiornamento || new Date().toISOString().split('T')[0];\nvar fonti = [\n  { nome: 'INPS', desc: 'Circolari, messaggi e normativa', url: 'https://www.inps.it/it/it/inps-comunica/atti/circolari-messaggi-e-normativa.html' },\n  { nome: 'INAIL', desc: 'News e comunicati', url: 'https://www.inail.it/cs/internet/comunicazione/news/' },\n  { nome: 'Agenzia delle Entrate', desc: 'Circolari e normativa', url: 'https://www.agenziaentrate.gov.it/portale/normativa-e-prassi/circolari' },\n  { nome: 'AdER - Riscossione', desc: 'Notizie e aggiornamenti', url: 'https://www.agenziaentrateriscossione.gov.it/notizie/' },\n  { nome: 'INL - Circolari', desc: 'Circolari ispettive', url: 'https://www.ispettorato.gov.it/documenti-e-normativa/orientamenti-giuridici-inl/circolari/' },\n  { nome: 'INL - Note e Pareri', desc: 'Orientamenti giuridici', url: 'https://www.ispettorato.gov.it/documenti-e-normativa/orientamenti-giuridici-inl/note-e-pareri/' },\n  { nome: 'CNCE - Casse Edili', desc: 'Aggiornamenti e normativa', url: 'https://www.cnce.it/' }\n];\nvar linksHtml = fonti.map(function(f) {\n  return '<li style=\"margin-bottom:12px\"><strong>' + f.nome + '</strong> &mdash; ' + f.desc + '<br><a href=\"' + f.url + '\" style=\"color:#1a5276\">' + f.url + '</a></li>';\n}).join('');\nvar summaryEscaped = riassunto.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\nvar html = '<!DOCTYPE html>' +\n  '<html><head><meta charset=\"UTF-8\"></head>' +\n  '<body style=\"font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:20px;color:#333\">' +\n  '<h1 style=\"color:#1a5276;border-bottom:2px solid #1a5276;padding-bottom:10px\">Aggiornamenti Normativi &mdash; ' + dataOggi + '</h1>' +\n  '<p>Riepilogo degli aggiornamenti normativi rilevati oggi dalle principali fonti istituzionali in materia di lavoro, previdenza e fiscalit&agrave;.</p>' +\n  '<h2 style=\"color:#2874a6\">Sintesi degli Aggiornamenti</h2>' +\n  '<div style=\"background:#eaf4fb;border-left:4px solid #2874a6;padding:15px;border-radius:4px;white-space:pre-wrap;font-size:14px;line-height:1.6\">' + summaryEscaped + '</div>' +\n  '<h2 style=\"color:#2874a6\">Fonti Ufficiali</h2>' +\n  '<ul style=\"background:#f9f9f9;padding:20px 20px 20px 35px;border-radius:4px\">' + linksHtml + '</ul>' +\n  '<p style=\"margin-top:30px;font-size:12px;color:#777;border-top:1px solid #ddd;padding-top:10px\">Email generata automaticamente dal sistema n8n &mdash; ' + dataOggi + '</p>' +\n  '</body></html>';\nreturn [{ json: { html: html, subject: 'Aggiornamenti Normativi — ' + dataOggi, to: 'attilio.assirelli@gmail.com' } }];"
+      }
+    },
+    {
+      "id": "ceee194e-10fd-4eb2-a2f3-c88304a8cef8",
+      "name": "Invia Email Aggiornamenti",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [1960, 0],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "message": "={{ $json.html }}",
+        "emailType": "html",
+        "options": {}
+      },
+      "credentials": {
+        "gmailOAuth2": { "id": "i2Ruggq5iDNBD8Vq", "name": "Gmail account" }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Giornaliero": { "main": [[{ "node": "Definisci Fonti", "type": "main", "index": 0 }]] },
+    "Definisci Fonti": { "main": [[{ "node": "Scarica Pagina", "type": "main", "index": 0 }]] },
+    "Scarica Pagina": { "main": [[{ "node": "Combina Testi", "type": "main", "index": 0 }]] },
+    "Combina Testi": { "main": [[{ "node": "Riassumi Aggiornamenti", "type": "main", "index": 0 }]] },
+    "Riassumi Aggiornamenti": { "main": [[{ "node": "Salva Cache", "type": "main", "index": 0 }]] },
+    "Anthropic Aggiornamenti": { "ai_languageModel": [[{ "node": "Riassumi Aggiornamenti", "type": "ai_languageModel", "index": 0 }]] },
+    "Chiamata da Workflow": { "main": [[{ "node": "Leggi Cache", "type": "main", "index": 0 }]] },
+    "Salva Cache": { "main": [[{ "node": "Prepara Email Aggiornamenti", "type": "main", "index": 0 }]] },
+    "Prepara Email Aggiornamenti": { "main": [[{ "node": "Invia Email Aggiornamenti", "type": "main", "index": 0 }]] }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Rome",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  }
+}

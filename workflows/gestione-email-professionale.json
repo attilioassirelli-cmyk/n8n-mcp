@@ -1,0 +1,676 @@
+{
+  "id": "634G5sX55sgsYpvz",
+  "name": "Gestione Email Professionale – Consulente del Lavoro",
+  "description": null,
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {},
+        "options": {}
+      },
+      "id": "node1",
+      "name": "Gmail Trigger",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        304
+      ],
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "i2Ruggq5iDNBD8Vq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "label"
+      },
+      "id": "node2",
+      "name": "Recupera Etichette Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        288,
+        304
+      ],
+      "webhookId": "7db15a14-8090-454b-ad72-5fce18fd8bbb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "i2Ruggq5iDNBD8Vq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "var allLabels = $input.all().map(function(item) { return item.json; });\nvar emailData = $('Gmail Trigger').item.json;\nvar emailLabelIds = emailData.labelIds || [];\n\nvar isClienti = allLabels.some(function(label) {\n  return emailLabelIds.includes(label.id) &&\n    label.name &&\n    label.name.toUpperCase().startsWith('CLIENTI');\n});\n\nvar isPromotional = emailLabelIds.some(function(id) {\n  return ['CATEGORY_PROMOTIONS', 'CATEGORY_SOCIAL'].includes(id);\n});\n\nreturn [{\n  json: {\n    isClientiEmail: isClienti,\n    isPromotional: isPromotional,\n    id: emailData.id || '',\n    threadId: emailData.threadId || '',\n    from: emailData.from || '',\n    to: emailData.to || '',\n    subject: emailData.subject || '',\n    snippet: emailData.snippet || '',\n    text: emailData.text || '',\n    html: emailData.html || '',\n    date: emailData.date || '',\n    labelIds: emailData.labelIds || []\n  }\n}];"
+      },
+      "id": "node3",
+      "name": "Controlla Etichetta CLIENTI",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        560,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-clienti",
+              "leftValue": "={{ $json.isClientiEmail }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node4",
+      "name": "Email da CLIENTI?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        848,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Oggetto: ' + $json.subject + '\\n\\nMittente: ' + $json.from + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 1500) }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Sei un classificatore di email per Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale che offre anche consulenza fiscale.\n\nAnalizza l'email e classifica se è:\n- WORK_RELATED: riguarda consulenza del lavoro, elaborazione paghe, INPS, INAIL, diritto del lavoro, previdenza sociale, consulenza fiscale, dichiarazioni fiscali, contenzioso, cedolini, buste paga, contratti di lavoro, assunzioni, licenziamenti\n- PROMOTIONAL: email pubblicitaria, newsletter, offerta commerciale, promozione, marketing, notifica automatica da servizi o piattaforme\n- PERSONAL: email personale non attinente all'attività professionale\n\nRispondi SOLO con JSON valido, nessun altro testo:\n{\"category\": \"WORK_RELATED\"} oppure {\"category\": \"PROMOTIONAL\"} oppure {\"category\": \"PERSONAL\"}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "node5",
+      "name": "Classificatore Email",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1120,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-sonnet-4-6"
+        },
+        "options": {
+          "maxTokensToSample": 100
+        }
+      },
+      "id": "node6",
+      "name": "Anthropic Classificatore",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1120,
+        800
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "Vw3rTFIF09caGjnN",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-work",
+              "leftValue": "={{ $json.text }}",
+              "rightValue": "WORK_RELATED",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node8",
+      "name": "Email Lavorativa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1680,
+        608
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Oggetto: ' + $json.subject + '\\n\\nMittente: ' + $json.from + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 1500) }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Sei un analizzatore di email per un Consulente del Lavoro e della Previdenza Sociale.\n\nAnalizza l'email e identifica:\n1. Il topic principale (scegli ESATTAMENTE uno tra): PAGHE, DIRITTO_LAVORO, PREVIDENZA, INPS, INAIL, AGGIORNAMENTI, FISCALE_NORMATIVA, FISCALE_USPPIDA, GENERALE\n2. Le keywords chiave da cercare su Google Drive (massimo 3 parole)\n\nDescrizione dei topic:\n- PAGHE: cedolini, buste paga, stipendi, elaborazione paghe\n- DIRITTO_LAVORO: contratti, licenziamento, assunzioni, CCNL\n- PREVIDENZA: pensioni, contributi previdenziali\n- INPS: contributi INPS, prestazioni INPS, disoccupazione\n- INAIL: infortuni, premi assicurativi, malattie professionali\n- AGGIORNAMENTI: novità normative, circolari, aggiornamenti di legge\n- FISCALE_NORMATIVA: normativa fiscale, IVA, imposte\n- FISCALE_USPPIDA: USPPIDA, pratiche fiscali specifiche\n- GENERALE: tutto il resto\n\nRispondi SOLO con JSON valido:\n{\"topic\": \"PAGHE\", \"keywords\": [\"cedolino\", \"busta paga\"]}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "node9",
+      "name": "Estrai Argomento",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1408,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-sonnet-4-6"
+        },
+        "options": {
+          "maxTokensToSample": 200
+        }
+      },
+      "id": "node10",
+      "name": "Anthropic Argomento",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        1408,
+        512
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "Vw3rTFIF09caGjnN",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "var items = $input.all();\nvar rawText = items.length > 0 ? (items[0].json.text || '') : '';\nvar topic = 'GENERALE';\nvar driveQuery = '';\ntry {\n  var cleaned = rawText.replace(/```json\\s*/g, '').replace(/```\\s*/g, '').trim();\n  var m = cleaned.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    var parsed = JSON.parse(m[0]);\n    topic = parsed.topic || 'GENERALE';\n    if (parsed.keywords && parsed.keywords.length > 0) {\n      driveQuery = parsed.keywords.map(function(k) {\n        return \"fullText contains '\" + String(k).replace(/'/g, \"\\\\'\") + \"'\";\n      }).join(' OR ');\n    }\n  }\n} catch (e) {}\nvar topicMap = { PAGHE: 'CONSULENTE DEL LAVORO E DELLA PREVIDENZA CLIENTI', DIRITTO_LAVORO: 'DIRITTO DEL LAVORO', PREVIDENZA: 'DIRITTO DELLA PREVIDENZA', INPS: 'INPS', INAIL: 'INAIL', AGGIORNAMENTI: 'AGGIORNAMENTI NORMATIVI', FISCALE_NORMATIVA: 'CONSULENZA FISCALE NORMATIVA', FISCALE_USPPIDA: 'CONSULENZA FISCALE USPPIDA', GENERALE: 'CONSULENTE DEL LAVORO E DELLA PREVIDENZA' };\nvar driveFolder = topicMap[topic] || topicMap.GENERALE;\nif (!driveQuery) { driveQuery = driveFolder; }\nreturn [{ json: { topic: topic, driveFolder: driveFolder, driveQuery: driveQuery } }];"
+      },
+      "id": "node11",
+      "name": "Mappa Argomento a Cartella",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": "={{ $json.driveQuery }}",
+        "limit": 5,
+        "filter": {},
+        "options": {}
+      },
+      "id": "node12",
+      "name": "Cerca Documenti Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1968,
+        304
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "11MnaLtExdUMB3f9",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "var items = $input.all();\nvar emailData = $('Gmail Trigger').item.json || {};\nvar topic = 'GENERALE';\ntry { topic = $('Mappa Argomento a Cartella').item.json.topic || 'GENERALE'; } catch(e) {}\nvar driveContext = 'Nessun documento trovato su Google Drive per questa richiesta.';\nvar validItems = items.filter(function(i) { return i.json && i.json.id; });\nif (validItems.length > 0) {\n  var lines = validItems.map(function(item, idx) {\n    var name = item.json.name || ('Documento ' + (idx + 1));\n    var link = item.json.webViewLink ? (' - ' + item.json.webViewLink) : '';\n    return (idx + 1) + '. ' + name + link;\n  });\n  driveContext = 'Documenti trovati (argomento: ' + topic + '):\\n' + lines.join('\\n');\n}\nreturn [{ json: {\n  from: String(emailData.from || ''),\n  to: String(emailData.to || ''),\n  subject: String(emailData.subject || ''),\n  snippet: String(emailData.snippet || ''),\n  text: String(emailData.text || ''),\n  threadId: String(emailData.threadId || ''),\n  id: String(emailData.id || ''),\n  driveContext: driveContext,\n  topic: topic\n} }];"
+      },
+      "id": "node13",
+      "name": "Aggrega Contesto",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'EMAIL RICEVUTA:\\n\\nMittente: ' + $json.from + '\\nOggetto: ' + $json.subject + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 2000) + '\\n\\n---\\n\\nCONTESTO DOCUMENTALE:\\n' + $json.driveContext }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Sei Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale.\n\nIl tuo compito è rispondere professionalmente alle email dei tuoi clienti e colleghi in italiano.\n\nLinee guida:\n- Usa un tono professionale ma cordiale\n- Rispondi sempre in italiano\n- Se sono disponibili documenti nel CONTESTO DOCUMENTALE, menzionali quando pertinenti\n- Non inventare normative, riferimenti di legge o dati che non conosci con certezza\n- Se non sei certo su un punto normativo, indica che approfondirai\n- La risposta deve essere completa ma concisa\n- Non ripetere integralmente il contenuto dell'email ricevuta\n- Rispondi concretamente alla richiesta o alla domanda posta\n\nFirma sempre con:\n\nCordiali saluti,\nAttilio Assirelli\nConsulente del Lavoro e della Previdenza Sociale"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "node14",
+      "name": "Genera Risposta",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2528,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-sonnet-4-6"
+        },
+        "options": {
+          "maxTokensToSample": 2000
+        }
+      },
+      "id": "node15",
+      "name": "Anthropic Risposta",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        2528,
+        512
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "Vw3rTFIF09caGjnN",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "var items = $input.all();\nvar aiResponse = items.length > 0 ? (items[0].json.text || '') : '';\nvar emailData = $('Gmail Trigger').item.json || {};\nreturn [{ json: {\n  aiResponse: String(aiResponse),\n  from: String(emailData.from || ''),\n  subject: String(emailData.subject || ''),\n  threadId: String(emailData.threadId || ''),\n  messageId: String(emailData.id || '')\n} }];"
+      },
+      "id": "node16",
+      "name": "Prepara Bozza",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2800,
+        304
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ 'Re: ' + $json.subject }}",
+        "message": "={{ $json.aiResponse }}",
+        "options": {}
+      },
+      "id": "node17",
+      "name": "Crea Bozza Gmail",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3088,
+        304
+      ],
+      "webhookId": "7f3c0cc6-f657-4456-aa53-8b4ec7345c9a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "i2Ruggq5iDNBD8Vq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "id": "e50f9776-7a5a-4f7f-adc9-3c13088f629c",
+      "name": "Email Pubblicitaria?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        848,
+        50
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-promotional",
+              "leftValue": "={{ $json.isPromotional }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Recupera Etichette Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recupera Etichette Gmail": {
+      "main": [
+        [
+          {
+            "node": "Controlla Etichetta CLIENTI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controlla Etichetta CLIENTI": {
+      "main": [
+        [
+          {
+            "node": "Email Pubblicitaria?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Pubblicitaria?": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Email da CLIENTI?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email da CLIENTI?": {
+      "main": [
+        [
+          {
+            "node": "Estrai Argomento",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Classificatore Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classificatore Email": {
+      "main": [
+        [
+          {
+            "node": "Email Lavorativa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Lavorativa?": {
+      "main": [
+        [
+          {
+            "node": "Estrai Argomento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estrai Argomento": {
+      "main": [
+        [
+          {
+            "node": "Mappa Argomento a Cartella",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mappa Argomento a Cartella": {
+      "main": [
+        [
+          {
+            "node": "Cerca Documenti Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cerca Documenti Drive": {
+      "main": [
+        [
+          {
+            "node": "Aggrega Contesto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggrega Contesto": {
+      "main": [
+        [
+          {
+            "node": "Genera Risposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Genera Risposta": {
+      "main": [
+        [
+          {
+            "node": "Prepara Bozza",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepara Bozza": {
+      "main": [
+        [
+          {
+            "node": "Crea Bozza Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Classificatore": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Classificatore Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Argomento": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Estrai Argomento",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Risposta": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Genera Risposta",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Europe/Rome",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "binaryMode": "separate",
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": true
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Gmail Trigger": [
+      {
+        "json": {
+          "id": "19e182e8bd3fa35f",
+          "threadId": "19e1824b5c517271",
+          "labelIds": [
+            "UNREAD",
+            "IMPORTANT",
+            "CATEGORY_PERSONAL",
+            "INBOX"
+          ],
+          "sizeEstimate": 5134,
+          "headers": {
+            "delivered-to": "Delivered-To: attilio.assirelli@gmail.com",
+            "received": "Received: from oxapps-30-130.iol.local ([10.101.8.176])\r\n\tby smtp-35.iol.local with ESMTPA\r\n\tid MUrLwz3QBvefrMUrLwUHGn; Mon, 11 May 2026 19:56:03 +0200",
+            "x-received": "X-Received: by 2002:a05:6000:1ac6:b0:43e:a9ba:b194 with SMTP id ffacd0b85a97d-4515d5c6b69mr41186868f8f.34.1778522163735;\r\n        Mon, 11 May 2026 10:56:03 -0700 (PDT)",
+            "arc-seal": "ARC-Seal: i=1; a=rsa-sha256; t=1778522163; cv=none;\r\n        d=google.com; s=arc-20240605;\r\n        b=kSRadN9tfI8E5Bvk8GAT9QffQLjl2S5FjlvRtXD6izMUS9npNWp+y0Qjfpa3oKy7vJ\r\n         suqjlBTcQ+XlmIJbkkCoBGsp6IogtbSzwajif8/44jseDj36M62DcaCBbQAGEikCRf+h\r\n         uZ24BanDOj6hnffxdl3RIO+MWIJUcnbdSo6ey/jqU/vUTkLGEVyLx/ILX0xTJXzyOkeF\r\n         RiZZ5tHIZbgT1y3tPY+t5F6P7qJWdsz5MWhVPDBoyG4wplPmWCvV/X1/XCbOlrqX3VX5\r\n         19C4z3KQO8woo+WCtMroNZ9Ox2wLAPHIfJZ3nqn4OBfdbTNCa8cWHSm/KY4lV59sMCcU\r\n         FevA==",
+            "arc-message-signature": "ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\r\n        h=importance:mime-version:subject:message-id:to:from:date\r\n         :dkim-signature;\r\n        bh=1r77uZlhEJCjjOvDZjP3on5uJBYobT1a70cv8nRAEbs=;\r\n        fh=Y3nuJRl+/vy5K4x7nt0K1k6B7QTJ1pZPeZ0gBxKOTRk=;\r\n        b=KPUTyGUX0EYyvVHIovFNhUg2KUf4sdAfDueNFfI05gETFDBHOfKlwnWBdYZ/TilRkw\r\n         K4N+bKb7wp97SI1m2Ypk2Am8RJUcSw0275stoRksc+1CJ5zmFh5FDUcns+TAp6ED/r6G\r\n         wPJpMKN8nnf95vGuc2tPRkCbG0KTtGqVMx3MD7ZrxBWQtSXnHJMsuDV5tfvk6eIOBzoO\r\n         8TpbN79z30a0WHQB4pMqp1yJ8PMR/BPAXL+kmEbsxrbkF/P03QVnimY87Pd/FCiJDqxm\r\n         R/O5tX+e5pRjsQ8jbswSrzAgdnUVsBhgkaCcvRPJ3+e6xhl+YWr/5v3E0MIUYYhOeicZ\r\n         //Ug==;\r\n        dara=google.com",
+            "arc-authentication-results": "ARC-Authentication-Results: i=1; mx.google.com;\r\n       dkim=pass header.i=@libero.it header.s=s2021 header.b=paowA1At;\r\n       spf=pass (google.com: domain of attilio.assirelli@libero.it designates 213.209.12.35 as permitted sender) smtp.mailfrom=attilio.assirelli@libero.it;\r\n       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=libero.it",
+            "return-path": "Return-Path: <attilio.assirelli@libero.it>",
+            "received-spf": "Received-SPF: pass (google.com: domain of attilio.assirelli@libero.it designates 213.209.12.35 as permitted sender) client-ip=213.209.12.35;",
+            "authentication-results": "Authentication-Results: mx.google.com;\r\n       dkim=pass header.i=@libero.it header.s=s2021 header.b=paowA1At;\r\n       spf=pass (google.com: domain of attilio.assirelli@libero.it designates 213.209.12.35 as permitted sender) smtp.mailfrom=attilio.assirelli@libero.it;\r\n       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=libero.it",
+            "x-libjamoibt": "x-libjamoibt: 1601",
+            "dkim-signature": "DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=libero.it; s=s2021;\r\n\tt=1778522163; bh=1r77uZlhEJCjjOvDZjP3on5uJBYobT1a70cv8nRAEbs=;\r\n\th=From;\r\n\tb=paowA1AtZdxHlXKqIsR7kSaVWalk+xBBtu3FGJA0LZiB4bC5Rr37QbSnU1aa8GPpD\r\n\t vIILQLMyc3d2Y6aScvxrAQx/dIL9Ti+lelxMjPo/rRK+neLzPpns/eTVkN1rXqX3cS\r\n\t YxxVlJaWiQ7ZjeH2eB15VV3HUedm5JAs7LaV9mu1oYQkOgpb0tfLYlVcIqoW2uVAOZ\r\n\t ID04M6qL8Gj+mxKR3ZD07JCo4UMqLG/2MStS0kJ7fHT2hyoSEZC08MkcUcVrtbcV4o\r\n\t bPFcr9Exm4VqTcJ2f+VT7i1XPTTG353csPEcimEBuhad6IR8tEuQKgWFqa4LFuVqI+\r\n\t KVQkXlnKSIRGQ==",
+            "x-cnfs-analysis": "X-CNFS-Analysis: v=2.4 cv=WOF/XmsR c=1 sm=1 tr=0 ts=6a021833 cx=a_exe\r\n a=lbkMnh7ictQLabH+kF3veA==:117 a=Qe_B2J_OUiUA:10 a=MaK4mTwEb4K-96wm05oA:9\r\n a=QEXdDO2ut3YA:10 a=IJjzB8rpcGZIQZfhIOIA:9 a=_W_S_7VecoQA:10\r\n a=90sS77i1rVruOxaxj30Z:22",
+            "date": "Date: Mon, 11 May 2026 19:56:03 +0200 (CEST)",
+            "from": "From: ASSIRELLI ATTILIO <attilio.assirelli@libero.it>",
+            "to": "To: \"attilio.assirelli@gmail.com\" <attilio.assirelli@gmail.com>",
+            "message-id": "Message-ID: <299954281.2889348.1778522163584@mail1.libero.it>",
+            "subject": "Subject: CLIENTI\\Test",
+            "mime-version": "MIME-Version: 1.0",
+            "content-type": "Content-Type: multipart/alternative; \r\n\tboundary=\"----=_Part_2889347_1185037919.1778522163583\"",
+            "x-priority": "X-Priority: 3",
+            "importance": "Importance: Normal",
+            "x-mailer": "X-Mailer: Open-Xchange Mailer v7.10.6-Rev87",
+            "x-originating-ip": "X-Originating-IP: 93.150.223.101",
+            "x-originating-client": "X-Originating-Client: open-xchange-appsuite",
+            "x-libjamsun": "x-libjamsun: LUuUgyNeWGUknJJw5RM+lJZCCs95pxlicLg8J4ujfzQ=",
+            "x-libjamv": "x-libjamv: pywW5B5b4FQ=",
+            "x-cmae-envelope": "X-CMAE-Envelope: MS4xfACz6JOcsDr+SWG9HkL6oWY6UescF1whp+x95IhzE+qlRliSyKvspWhQsYyLvbkJ3NWnkolUhBCVCdLUsW0kqS/wH4j75U53uCJOLGFvIDXt1HuWk5Mz\r\n imhBBp3QrRM7nQk8lCSl/YajevGmA10Uq7MP1Rs1HizVubsGACBxyYfMygksra6KQeQY9lmVTDKRnm9eeg268My8h/PUbCZ52tzufshoBB2Oy/2Cd3ON73Gw"
+          },
+          "html": "<!doctype html>\n<html>\n <head> \n  <meta charset=\"UTF-8\"> \n </head>\n <body>\n  <div class=\"default-style\" style=\"\">\n   CLIENTI\\Test\n  </div>\n </body>\n</html>",
+          "text": "CLIENTI\\Test",
+          "textAsHtml": "<p>CLIENTI\\Test</p>",
+          "subject": "CLIENTI\\Test",
+          "date": "2026-05-11T17:56:03.000Z",
+          "to": {
+            "value": [
+              {
+                "address": "attilio.assirelli@gmail.com",
+                "name": ""
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><a href=\"mailto:attilio.assirelli@gmail.com\" class=\"mp_address_email\">attilio.assirelli@gmail.com</a></span>",
+            "text": "attilio.assirelli@gmail.com"
+          },
+          "from": {
+            "value": [
+              {
+                "address": "attilio.assirelli@libero.it",
+                "name": "ASSIRELLI ATTILIO"
+              }
+            ],
+            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">ASSIRELLI ATTILIO</span> &lt;<a href=\"mailto:attilio.assirelli@libero.it\" class=\"mp_address_email\">attilio.assirelli@libero.it</a>&gt;</span>",
+            "text": "\"ASSIRELLI ATTILIO\" <attilio.assirelli@libero.it>"
+          },
+          "messageId": "<299954281.2889348.1778522163584@mail1.libero.it>"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "tags": []
+}

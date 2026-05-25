@@ -122,6 +122,42 @@ Provide:
 
 ---
 
+## Core Integrations
+
+These integrations are used frequently and should be prioritized when building communication or automation workflows.
+
+### WhatsApp Business
+
+| Detail | Value |
+|--------|-------|
+| Node type | `n8n-nodes-base.whatsApp` |
+| Trigger node | `n8n-nodes-base.whatsAppTrigger` |
+| Credential | WhatsApp Business Cloud API (Meta Developer App) |
+| Use cases | Send/receive messages, media, templates, order notifications |
+
+**Key rules:**
+- Messages must use approved **template messages** for business-initiated conversations
+- Free-form messages are only allowed within the 24h customer service window
+- Webhook must be verified via Meta's hub challenge — use the `whatsAppTrigger` node to handle this automatically
+- Always set `recipientType: individual` and use the full international phone number format (e.g. `+39xxxxxxxxxx`)
+
+### Gmail
+
+| Detail | Value |
+|--------|-------|
+| Node type | `n8n-nodes-base.gmail` |
+| Trigger node | `n8n-nodes-base.gmailTrigger` |
+| Credential | Gmail OAuth2 (Google Cloud Console) |
+| Use cases | Send emails, read inbox, label messages, reply to threads |
+
+**Key rules:**
+- Use `gmailTrigger` with `markAsRead: true` to avoid reprocessing the same emails
+- For threaded replies, pass the `threadId` from the trigger into the Send operation
+- HTML body is supported — set `emailType: html` when formatting is needed
+- Attachments require the `attachmentsUi` parameter with binary data from a previous node
+
+---
+
 ## Instance Configuration
 
 ```

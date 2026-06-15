@@ -1106,6 +1106,195 @@
           "name": "Gmail account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-newsletter",
+              "leftValue": "={{ (function() { var from = $json.from; var addr = ''; if (from && typeof from === 'object' && from.value && from.value.length > 0) { addr = (from.value[0].address || '').toLowerCase(); } else { var raw = String(from || ''); var m = raw.match(/<([^>]+)>/); addr = m ? m[1].toLowerCase() : raw.toLowerCase(); } return addr.includes('teleconsul') || addr.includes('dottrina') || addr === 'attilio.assirelli@inps.it'; })() }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "node-newsletter-check",
+      "name": "Mittente Newsletter Normativa?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1968,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "var emailData = $('Controlla Etichetta CLIENTI').item.json;\nvar html = String(emailData.html || '');\nvar plainText = String(emailData.text || '');\n\nvar links = [];\nvar linkPattern = /<a[^>]*href=[\"']([^\"']+)[\"'][^>]*>([\\s\\S]*?)<\\/a>/gi;\nvar match;\nwhile ((match = linkPattern.exec(html)) !== null) {\n  var url = match[1].trim();\n  var text = match[2].replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/\\s+/g, ' ').trim();\n  if (url.startsWith('http') && text.length > 2 && text.length < 200) {\n    var urlLower = url.toLowerCase();\n    if (!urlLower.includes('unsubscribe') && !urlLower.includes('disiscriv') && !urlLower.includes('tracking') && !urlLower.includes('pixel') && !urlLower.includes('utm_')) {\n      links.push({ url: url, text: text });\n    }\n  }\n}\n\nvar uniqueLinks = [];\nvar seenUrls = {};\nlinks.forEach(function(l) { if (!seenUrls[l.url]) { seenUrls[l.url] = true; uniqueLinks.push(l); } });\n\nvar linksFormatted = uniqueLinks.slice(0, 25).map(function(l, i) {\n  return '- [' + l.text + '](' + l.url + ')';\n}).join('\\n');\n\nvar contentForSummary = plainText || html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\\s+/g, ' ').trim();\n\nreturn [{ json: {\n  from: String(emailData.from && emailData.from.value ? (emailData.from.value[0].name || emailData.from.value[0].address || '') + ' <' + (emailData.from.value[0].address || '') + '>' : emailData.from || ''),\n  subject: String(emailData.subject || ''),\n  contentForSummary: contentForSummary.substring(0, 4000),\n  linksFormatted: linksFormatted,\n  linkCount: uniqueLinks.length,\n  threadId: String(emailData.threadId || ''),\n  messageId: String(emailData.id || '')\n}}];"
+      },
+      "id": "node-estrai-link",
+      "name": "Estrai Link Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'MITTENTE: ' + $json.from + '\\nOGGETTO: ' + $json.subject + '\\n\\nCONTENUTO:\\n' + $json.contentForSummary + ($json.linksFormatted ? '\\n\\n---\\nLINK PRESENTI NELLA COMUNICAZIONE:\\n' + $json.linksFormatted : '') }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Sei un assistente professionale per Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale con Studio a Caserta.\n\nHai ricevuto una comunicazione da una fonte normativa autorevole (Teleconsul Lavoro, Dottrina Lavoro o INPS). Produci una **sintesi professionale** strutturata per uso interno dello studio.\n\nUSA QUESTA STRUTTURA ESATTA:\n\n## Sintesi — [titolo breve desunto dall'oggetto]\n\n**Fonte:** [mittente]  \n**Argomento principale:** [1 riga]\n\n### Punti chiave\n- [punto 1 — conciso e diretto]\n- [punto 2]\n- [aggiungine quanti necessari, max 8]\n\n### Riferimenti normativi citati\n[Se presenti nel testo: lista in formato \"- Decreto/Legge/Circolare N. XX/ANNO: [link se disponibile]()\"]\n[Se assenti: scrivi \"Nessun riferimento normativo specifico citato.\"]\n\n### Documentazione e approfondimenti\n[Lista dei link utili estratti, in formato markdown cliccabile: \"- [Testo descrittivo del link](URL)\"]\n[Ometti questa sezione se non ci sono link pertinenti]\n\n### Note operative per lo studio\n[Azioni concrete da valutare, scadenze, verifiche da fare. Max 4 righe. Ometti se non applicabile.]\n\nREGOLE TASSATIVE:\n- Scrivi SEMPRE in italiano professionale\n- I link devono essere in formato markdown ATTIVO: [testo](url) — non URL nudi\n- NON inventare riferimenti normativi non presenti nel testo originale\n- NON menzionare processi automatici, AI o limitazioni tecniche\n- La sintesi deve essere immediatamente utilizzabile dallo studio senza modifiche"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "node-genera-sintesi",
+      "name": "Genera Sintesi Normativa",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        2560,
+        450
+      ]
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "claude-sonnet-4-6"
+        },
+        "options": {
+          "maxTokensToSample": 2000
+        }
+      },
+      "id": "node-anthropic-sintesi",
+      "name": "Anthropic Sintesi",
+      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
+      "typeVersion": 1.3,
+      "position": [
+        2560,
+        650
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "Vw3rTFIF09caGjnN",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "draft",
+        "subject": "={{ '[SINTESI NORMATIVA] ' + $('Estrai Link Email').item.json.subject }}",
+        "message": "={{ $json.text }}",
+        "options": {
+          "threadId": "={{ $('Estrai Link Email').item.json.threadId }}"
+        }
+      },
+      "id": "node-bozza-sintesi",
+      "name": "Crea Bozza Sintesi Normativa",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        450
+      ],
+      "webhookId": "f7e8d9c0-b1a2-4334-8f5e-9012ab345678",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "i2Ruggq5iDNBD8Vq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "searchMethod": "query",
+        "queryString": "name = 'Aggiornamenti normativi' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+        "limit": 1,
+        "filter": {},
+        "options": {}
+      },
+      "id": "node-cerca-cartella-aggiornamenti",
+      "name": "Cerca Cartella Aggiornamenti",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3200,
+        650
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "11MnaLtExdUMB3f9",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "var folderId = '';\nvar items = $input.all();\nif (items.length > 0 && items[0].json && items[0].json.id) {\n  folderId = items[0].json.id;\n}\n\nvar synthesisText = '';\ntry { synthesisText = $('Genera Sintesi Normativa').item.json.text || ''; } catch(e) {}\n\nvar subject = '';\ntry { subject = $('Estrai Link Email').item.json.subject || ''; } catch(e) {}\n\nvar cleanSubject = subject.replace(/[^a-zA-Z0-9\\s\\-]/g, '').replace(/\\s+/g, '_').substring(0, 60);\nvar now = new Date();\nvar pad = function(n) { return String(n).padStart(2, '0'); };\nvar dateStr = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());\nvar fileName = 'Sintesi_' + dateStr + (cleanSubject ? '_' + cleanSubject : '') + '.txt';\n\nreturn [{\n  json: { fileName: fileName, folderId: folderId },\n  binary: {\n    data: {\n      data: Buffer.from(synthesisText || '', 'utf8').toString('base64'),\n      mimeType: 'text/plain',\n      fileName: fileName,\n      fileExtension: 'txt'\n    }\n  }\n}];"
+      },
+      "id": "node-prepara-upload-sintesi",
+      "name": "Prepara Upload Sintesi",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3480,
+        650
+      ]
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "data",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.folderId }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "node-salva-sintesi-drive",
+      "name": "Salva Sintesi su Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3760,
+        650
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "11MnaLtExdUMB3f9",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -1271,7 +1460,85 @@
       "main": [
         [
           {
+            "node": "Mittente Newsletter Normativa?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mittente Newsletter Normativa?": {
+      "main": [
+        [
+          {
+            "node": "Estrai Link Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Email Pubblicitaria?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Estrai Link Email": {
+      "main": [
+        [
+          {
+            "node": "Genera Sintesi Normativa",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Sintesi": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Genera Sintesi Normativa",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Genera Sintesi Normativa": {
+      "main": [
+        [
+          {
+            "node": "Crea Bozza Sintesi Normativa",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Cerca Cartella Aggiornamenti",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cerca Cartella Aggiornamenti": {
+      "main": [
+        [
+          {
+            "node": "Prepara Upload Sintesi",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepara Upload Sintesi": {
+      "main": [
+        [
+          {
+            "node": "Salva Sintesi su Drive",
             "type": "main",
             "index": 0
           }

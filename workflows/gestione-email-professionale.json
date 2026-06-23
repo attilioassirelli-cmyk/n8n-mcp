@@ -1,7 +1,11 @@
 {
+  "updatedAt": "2026-06-23T06:25:18.692Z",
+  "createdAt": "2026-05-11T05:31:39.883Z",
   "id": "634G5sX55sgsYpvz",
   "name": "Gestione Email Professionale – Consulente del Lavoro",
+  "description": null,
   "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -156,32 +160,6 @@
     },
     {
       "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "id",
-          "value": "claude-sonnet-4-6"
-        },
-        "options": {
-          "maxTokensToSample": 100
-        }
-      },
-      "id": "node6",
-      "name": "Anthropic Classificatore",
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-      "typeVersion": 1.3,
-      "position": [
-        2288,
-        800
-      ],
-      "credentials": {
-        "anthropicApi": {
-          "id": "Vw3rTFIF09caGjnN",
-          "name": "Anthropic account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "conditions": {
           "options": {
             "caseSensitive": true,
@@ -234,32 +212,6 @@
         2576,
         304
       ]
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "id",
-          "value": "claude-sonnet-4-6"
-        },
-        "options": {
-          "maxTokensToSample": 200
-        }
-      },
-      "id": "node10",
-      "name": "Anthropic Argomento",
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-      "typeVersion": 1.3,
-      "position": [
-        2576,
-        512
-      ],
-      "credentials": {
-        "anthropicApi": {
-          "id": "Vw3rTFIF09caGjnN",
-          "name": "Anthropic account"
-        }
-      }
     },
     {
       "parameters": {
@@ -1938,6 +1890,58 @@
           "name": "Google Drive account"
         }
       }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "anthropic/claude-haiku-4.5"
+        },
+        "options": {
+          "maxTokens": 100
+        }
+      },
+      "id": "node6-openrouter",
+      "name": "OpenRouter Classificatore",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2288,
+        800
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "BYSYxqd8P5VUBbBQ",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "id",
+          "value": "anthropic/claude-haiku-4.5"
+        },
+        "options": {
+          "maxTokens": 200
+        }
+      },
+      "id": "node10-openrouter",
+      "name": "OpenRouter Argomento",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        2576,
+        512
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "BYSYxqd8P5VUBbBQ",
+          "name": "OpenRouter account"
+        }
+      }
     }
   ],
   "connections": {
@@ -2075,7 +2079,7 @@
         ]
       ]
     },
-    "Anthropic Classificatore": {
+    "OpenRouter Classificatore": {
       "ai_languageModel": [
         [
           {
@@ -2086,7 +2090,7 @@
         ]
       ]
     },
-    "Anthropic Argomento": {
+    "OpenRouter Argomento": {
       "ai_languageModel": [
         [
           {
@@ -2861,10 +2865,10 @@
   "staticData": {
     "node:Gmail Trigger": {
       "Gmail Trigger": {
-        "lastTimeChecked": 1781623103,
+        "lastTimeChecked": 1782194572,
         "possibleDuplicates": [
-          "19ed10322100321f",
-          "19ed1018c5f61ad5"
+          "19ef3130f35e4fc7",
+          "19ef3117f2bb57e1"
         ]
       }
     }
@@ -2938,8 +2942,9 @@
       }
     ]
   },
-  "activeVersionId": "01fac2b5-f38a-43f2-983b-87dd56caa02b",
-  "versionCounter": 1912,
+  "versionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
+  "activeVersionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
+  "versionCounter": 2184,
   "triggerCount": 1,
   "shared": [
     {
@@ -2962,9 +2967,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-06-16T07:48:06.319Z",
-    "createdAt": "2026-06-16T07:48:06.319Z",
-    "versionId": "01fac2b5-f38a-43f2-983b-87dd56caa02b",
+    "updatedAt": "2026-06-23T06:25:18.695Z",
+    "createdAt": "2026-06-23T06:25:18.695Z",
+    "versionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
     "workflowId": "634G5sX55sgsYpvz",
     "nodes": [
       {
@@ -3120,32 +3125,6 @@
       },
       {
         "parameters": {
-          "model": {
-            "__rl": true,
-            "mode": "id",
-            "value": "claude-sonnet-4-6"
-          },
-          "options": {
-            "maxTokensToSample": 100
-          }
-        },
-        "id": "node6",
-        "name": "Anthropic Classificatore",
-        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-        "typeVersion": 1.3,
-        "position": [
-          2288,
-          800
-        ],
-        "credentials": {
-          "anthropicApi": {
-            "id": "Vw3rTFIF09caGjnN",
-            "name": "Anthropic account"
-          }
-        }
-      },
-      {
-        "parameters": {
           "conditions": {
             "options": {
               "caseSensitive": true,
@@ -3198,32 +3177,6 @@
           2576,
           304
         ]
-      },
-      {
-        "parameters": {
-          "model": {
-            "__rl": true,
-            "mode": "id",
-            "value": "claude-sonnet-4-6"
-          },
-          "options": {
-            "maxTokensToSample": 200
-          }
-        },
-        "id": "node10",
-        "name": "Anthropic Argomento",
-        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-        "typeVersion": 1.3,
-        "position": [
-          2576,
-          512
-        ],
-        "credentials": {
-          "anthropicApi": {
-            "id": "Vw3rTFIF09caGjnN",
-            "name": "Anthropic account"
-          }
-        }
       },
       {
         "parameters": {
@@ -4902,6 +4855,58 @@
             "name": "Google Drive account"
           }
         }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "id",
+            "value": "anthropic/claude-haiku-4.5"
+          },
+          "options": {
+            "maxTokens": 100
+          }
+        },
+        "id": "node6-openrouter",
+        "name": "OpenRouter Classificatore",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          2288,
+          800
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "BYSYxqd8P5VUBbBQ",
+            "name": "OpenRouter account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "mode": "id",
+            "value": "anthropic/claude-haiku-4.5"
+          },
+          "options": {
+            "maxTokens": 200
+          }
+        },
+        "id": "node10-openrouter",
+        "name": "OpenRouter Argomento",
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+        "typeVersion": 1,
+        "position": [
+          2576,
+          512
+        ],
+        "credentials": {
+          "openRouterApi": {
+            "id": "BYSYxqd8P5VUBbBQ",
+            "name": "OpenRouter account"
+          }
+        }
       }
     ],
     "connections": {
@@ -5039,7 +5044,7 @@
           ]
         ]
       },
-      "Anthropic Classificatore": {
+      "OpenRouter Classificatore": {
         "ai_languageModel": [
           [
             {
@@ -5050,7 +5055,7 @@
           ]
         ]
       },
-      "Anthropic Argomento": {
+      "OpenRouter Argomento": {
         "ai_languageModel": [
           [
             {
@@ -5818,18 +5823,18 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-06-16T07:48:06.760Z",
-        "id": 191,
+        "createdAt": "2026-06-23T06:25:19.073Z",
+        "id": 193,
         "workflowId": "634G5sX55sgsYpvz",
-        "versionId": "01fac2b5-f38a-43f2-983b-87dd56caa02b",
+        "versionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
         "event": "activated",
         "userId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
       },
       {
-        "createdAt": "2026-06-16T07:48:06.384Z",
-        "id": 190,
+        "createdAt": "2026-06-23T06:25:18.762Z",
+        "id": 192,
         "workflowId": "634G5sX55sgsYpvz",
-        "versionId": "01fac2b5-f38a-43f2-983b-87dd56caa02b",
+        "versionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
         "event": "deactivated",
         "userId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
       }

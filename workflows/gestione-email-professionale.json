@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-28T03:31:16.824Z",
+  "updatedAt": "2026-06-28T03:33:14.339Z",
   "createdAt": "2026-05-11T05:31:39.883Z",
   "id": "634G5sX55sgsYpvz",
   "name": "Gestione Email Professionale – Consulente del Lavoro",
@@ -1121,10 +1121,6 @@
         "headerParameters": {
           "parameters": [
             {
-              "name": "Authorization",
-              "value": "Bearer LEGAL_DATA_HUNTER_API_KEY_PLACEHOLDER"
-            },
-            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -1134,7 +1130,9 @@
         "contentType": "raw",
         "rawContentType": "application/json",
         "body": "={{ JSON.stringify({\n  q: (($('Mappa Argomento a Cartella').item.json.topic || '') + ' ' + \n      ($('Gmail Trigger').item.json.subject || '')).substring(0, 200),\n  namespace: 'legislation',\n  country: ['IT'],\n  language: 'it',\n  top_k: 3,\n  alpha: 0.9\n}) }}",
-        "options": {}
+        "options": {},
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth"
       },
       "id": "ldh_search_node",
       "name": "Cerca Legislazione IT",
@@ -1144,7 +1142,13 @@
         3328,
         1120
       ],
-      "onError": "continueRegularOutput"
+      "onError": "continueRegularOutput",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "SeuuMRzCZEeFjkxj",
+          "name": "Legal Data Hunter account"
+        }
+      }
     },
     {
       "parameters": {
@@ -2852,10 +2856,10 @@
   "staticData": {
     "node:Gmail Trigger": {
       "Gmail Trigger": {
-        "lastTimeChecked": 1782617118,
+        "lastTimeChecked": 1782617513,
         "possibleDuplicates": [
-          "19f0c429a877a392",
-          "19f0c3d8904b1735"
+          "19f0c489c9af253d",
+          "19f0c429a877a392"
         ]
       }
     }
@@ -2929,9 +2933,9 @@
       }
     ]
   },
-  "versionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
-  "activeVersionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
-  "versionCounter": 2386,
+  "versionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
+  "activeVersionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
+  "versionCounter": 2391,
   "triggerCount": 1,
   "shared": [
     {
@@ -2954,9 +2958,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-06-28T03:31:16.831Z",
-    "createdAt": "2026-06-28T03:31:16.831Z",
-    "versionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
+    "updatedAt": "2026-06-28T03:33:14.341Z",
+    "createdAt": "2026-06-28T03:33:14.341Z",
+    "versionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
     "workflowId": "634G5sX55sgsYpvz",
     "nodes": [
       {
@@ -4073,10 +4077,6 @@
           "headerParameters": {
             "parameters": [
               {
-                "name": "Authorization",
-                "value": "Bearer LEGAL_DATA_HUNTER_API_KEY_PLACEHOLDER"
-              },
-              {
                 "name": "Content-Type",
                 "value": "application/json"
               }
@@ -4086,7 +4086,9 @@
           "contentType": "raw",
           "rawContentType": "application/json",
           "body": "={{ JSON.stringify({\n  q: (($('Mappa Argomento a Cartella').item.json.topic || '') + ' ' + \n      ($('Gmail Trigger').item.json.subject || '')).substring(0, 200),\n  namespace: 'legislation',\n  country: ['IT'],\n  language: 'it',\n  top_k: 3,\n  alpha: 0.9\n}) }}",
-          "options": {}
+          "options": {},
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "httpBearerAuth"
         },
         "id": "ldh_search_node",
         "name": "Cerca Legislazione IT",
@@ -4096,7 +4098,13 @@
           3328,
           1120
         ],
-        "onError": "continueRegularOutput"
+        "onError": "continueRegularOutput",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "SeuuMRzCZEeFjkxj",
+            "name": "Legal Data Hunter account"
+          }
+        }
       },
       {
         "parameters": {
@@ -5797,18 +5805,18 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-06-28T03:31:17.458Z",
-        "id": 195,
+        "createdAt": "2026-06-28T03:33:14.630Z",
+        "id": 197,
         "workflowId": "634G5sX55sgsYpvz",
-        "versionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
+        "versionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
         "event": "activated",
         "userId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
       },
       {
-        "createdAt": "2026-06-28T03:31:17.250Z",
-        "id": 194,
+        "createdAt": "2026-06-28T03:33:14.419Z",
+        "id": 196,
         "workflowId": "634G5sX55sgsYpvz",
-        "versionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
+        "versionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
         "event": "deactivated",
         "userId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
       }

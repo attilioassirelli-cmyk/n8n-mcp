@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-06-23T06:25:18.692Z",
+  "updatedAt": "2026-06-28T03:31:16.824Z",
   "createdAt": "2026-05-11T05:31:39.883Z",
   "id": "634G5sX55sgsYpvz",
   "name": "Gestione Email Professionale – Consulente del Lavoro",
@@ -602,59 +602,6 @@
     },
     {
       "parameters": {
-        "url": "https://www.googleapis.com/customsearch/v1",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "key",
-              "value": "={{ $env.GOOGLE_CSE_API_KEY }}"
-            },
-            {
-              "name": "cx",
-              "value": "6577d4425118148da"
-            },
-            {
-              "name": "q",
-              "value": "={{ $json.webSearchQuery }}"
-            },
-            {
-              "name": "num",
-              "value": "5"
-            },
-            {
-              "name": "lr",
-              "value": "lang_it"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "nodeGoogleHTTP",
-      "name": "Cerca su Google",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        2256,
-        560
-      ],
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "jsCode": "var input = $input.first().json;\nvar googleResults = 'Nessun risultato trovato su Google.';\ntry {\n  var gItems = input.items || [];\n  if (gItems.length > 0) {\n    var lines = gItems.slice(0, 5).map(function(item, idx) {\n      return (idx + 1) + '. ' + (item.title || '') + '\\n   ' + (item.snippet || '') + '\\n   ' + (item.link || '');\n    });\n    googleResults = 'Risultati Google:\\n\\n' + lines.join('\\n\\n');\n  }\n} catch(e) { googleResults = ''; }\nvar mappaData = {};\ntry { mappaData = $('Mappa Argomento a Cartella').first().json; } catch(e) {}\nreturn [{ json: {\n  topic: mappaData.topic || 'GENERALE',\n  driveFolder: mappaData.driveFolder || '',\n  driveQuery: mappaData.driveQuery || '',\n  folderSearchQuery: mappaData.driveQuery || '',\n  webSearchQuery: mappaData.webSearchQuery || '',\n  googleResults: googleResults\n}}];"
-      },
-      "id": "nodeGoogleParse",
-      "name": "Elabora Risultati Google",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2544,
-        560
-      ]
-    },
-    {
-      "parameters": {
         "updates": [
           "messages"
         ],
@@ -1175,7 +1122,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer sk-mjTzPMunGqXjxWizUxcgRgIZLVJBCNjYsJLvS29TIWU"
+              "value": "Bearer LEGAL_DATA_HUNTER_API_KEY_PLACEHOLDER"
             },
             {
               "name": "Content-Type",
@@ -1942,6 +1889,46 @@
           "name": "OpenRouter account"
         }
       }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "perplexityApi",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'sonar', messages: [ { role: 'system', content: 'Sei un assistente di ricerca normativa per un Consulente del Lavoro italiano. Rispondi in italiano, in modo sintetico, citando sempre la fonte normativa precisa (legge/decreto/circolare) e la data. Non inventare riferimenti normativi che non trovi nelle fonti.' }, { role: 'user', content: $json.webSearchQuery } ], return_citations: true, search_domain_filter: ['gazzettaufficiale.it','normattiva.it','inps.it','inail.it','lavoro.gov.it'] }) }}",
+        "options": {}
+      },
+      "id": "nodeGoogleHTTP",
+      "name": "Cerca su Perplexity",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2256,
+        560
+      ],
+      "credentials": {
+        "perplexityApi": {
+          "id": "LtQ7Cvl4Tana0ktu",
+          "name": "Perplexity account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "var input = $input.first().json;\nvar perplexityResults = 'Nessun risultato trovato su Perplexity.';\ntry {\n  var content = (input.choices && input.choices[0] && input.choices[0].message && input.choices[0].message.content) || '';\n  var citations = input.citations || [];\n  if (content) {\n    perplexityResults = 'Risposta Perplexity:\\n\\n' + content;\n    if (citations.length > 0) {\n      perplexityResults += '\\n\\nFonti:\\n' + citations.map(function(c, i) { return (i + 1) + '. ' + c; }).join('\\n');\n    }\n  }\n} catch(e) { perplexityResults = ''; }\nvar mappaData = {};\ntry { mappaData = $('Mappa Argomento a Cartella').first().json; } catch(e) {}\nreturn [{ json: {\n  topic: mappaData.topic || 'GENERALE',\n  driveFolder: mappaData.driveFolder || '',\n  driveQuery: mappaData.driveQuery || '',\n  folderSearchQuery: mappaData.driveQuery || '',\n  webSearchQuery: mappaData.webSearchQuery || '',\n  googleResults: perplexityResults\n}}];"
+      },
+      "id": "nodeGoogleParse",
+      "name": "Elabora Risultati Perplexity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2544,
+        560
+      ]
     }
   ],
   "connections": {
@@ -2203,7 +2190,7 @@
       "main": [
         [
           {
-            "node": "Cerca su Google",
+            "node": "Cerca su Perplexity",
             "type": "main",
             "index": 0
           }
@@ -2217,18 +2204,18 @@
         ]
       ]
     },
-    "Cerca su Google": {
+    "Cerca su Perplexity": {
       "main": [
         [
           {
-            "node": "Elabora Risultati Google",
+            "node": "Elabora Risultati Perplexity",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Elabora Risultati Google": {
+    "Elabora Risultati Perplexity": {
       "main": [
         [
           {
@@ -2865,10 +2852,10 @@
   "staticData": {
     "node:Gmail Trigger": {
       "Gmail Trigger": {
-        "lastTimeChecked": 1782194572,
+        "lastTimeChecked": 1782617118,
         "possibleDuplicates": [
-          "19ef3130f35e4fc7",
-          "19ef3117f2bb57e1"
+          "19f0c429a877a392",
+          "19f0c3d8904b1735"
         ]
       }
     }
@@ -2942,9 +2929,9 @@
       }
     ]
   },
-  "versionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
-  "activeVersionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
-  "versionCounter": 2184,
+  "versionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
+  "activeVersionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
+  "versionCounter": 2386,
   "triggerCount": 1,
   "shared": [
     {
@@ -2967,9 +2954,9 @@
   ],
   "tags": [],
   "activeVersion": {
-    "updatedAt": "2026-06-23T06:25:18.695Z",
-    "createdAt": "2026-06-23T06:25:18.695Z",
-    "versionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
+    "updatedAt": "2026-06-28T03:31:16.831Z",
+    "createdAt": "2026-06-28T03:31:16.831Z",
+    "versionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
     "workflowId": "634G5sX55sgsYpvz",
     "nodes": [
       {
@@ -3567,59 +3554,6 @@
       },
       {
         "parameters": {
-          "url": "https://www.googleapis.com/customsearch/v1",
-          "sendQuery": true,
-          "queryParameters": {
-            "parameters": [
-              {
-                "name": "key",
-                "value": "={{ $env.GOOGLE_CSE_API_KEY }}"
-              },
-              {
-                "name": "cx",
-                "value": "6577d4425118148da"
-              },
-              {
-                "name": "q",
-                "value": "={{ $json.webSearchQuery }}"
-              },
-              {
-                "name": "num",
-                "value": "5"
-              },
-              {
-                "name": "lr",
-                "value": "lang_it"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "id": "nodeGoogleHTTP",
-        "name": "Cerca su Google",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          2256,
-          560
-        ],
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var input = $input.first().json;\nvar googleResults = 'Nessun risultato trovato su Google.';\ntry {\n  var gItems = input.items || [];\n  if (gItems.length > 0) {\n    var lines = gItems.slice(0, 5).map(function(item, idx) {\n      return (idx + 1) + '. ' + (item.title || '') + '\\n   ' + (item.snippet || '') + '\\n   ' + (item.link || '');\n    });\n    googleResults = 'Risultati Google:\\n\\n' + lines.join('\\n\\n');\n  }\n} catch(e) { googleResults = ''; }\nvar mappaData = {};\ntry { mappaData = $('Mappa Argomento a Cartella').first().json; } catch(e) {}\nreturn [{ json: {\n  topic: mappaData.topic || 'GENERALE',\n  driveFolder: mappaData.driveFolder || '',\n  driveQuery: mappaData.driveQuery || '',\n  folderSearchQuery: mappaData.driveQuery || '',\n  webSearchQuery: mappaData.webSearchQuery || '',\n  googleResults: googleResults\n}}];"
-        },
-        "id": "nodeGoogleParse",
-        "name": "Elabora Risultati Google",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          2544,
-          560
-        ]
-      },
-      {
-        "parameters": {
           "updates": [
             "messages"
           ],
@@ -4140,7 +4074,7 @@
             "parameters": [
               {
                 "name": "Authorization",
-                "value": "Bearer sk-mjTzPMunGqXjxWizUxcgRgIZLVJBCNjYsJLvS29TIWU"
+                "value": "Bearer LEGAL_DATA_HUNTER_API_KEY_PLACEHOLDER"
               },
               {
                 "name": "Content-Type",
@@ -4907,6 +4841,46 @@
             "name": "OpenRouter account"
           }
         }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.perplexity.ai/chat/completions",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "perplexityApi",
+          "sendBody": true,
+          "contentType": "raw",
+          "rawContentType": "application/json",
+          "body": "={{ JSON.stringify({ model: 'sonar', messages: [ { role: 'system', content: 'Sei un assistente di ricerca normativa per un Consulente del Lavoro italiano. Rispondi in italiano, in modo sintetico, citando sempre la fonte normativa precisa (legge/decreto/circolare) e la data. Non inventare riferimenti normativi che non trovi nelle fonti.' }, { role: 'user', content: $json.webSearchQuery } ], return_citations: true, search_domain_filter: ['gazzettaufficiale.it','normattiva.it','inps.it','inail.it','lavoro.gov.it'] }) }}",
+          "options": {}
+        },
+        "id": "nodeGoogleHTTP",
+        "name": "Cerca su Perplexity",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          2256,
+          560
+        ],
+        "credentials": {
+          "perplexityApi": {
+            "id": "LtQ7Cvl4Tana0ktu",
+            "name": "Perplexity account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "var input = $input.first().json;\nvar perplexityResults = 'Nessun risultato trovato su Perplexity.';\ntry {\n  var content = (input.choices && input.choices[0] && input.choices[0].message && input.choices[0].message.content) || '';\n  var citations = input.citations || [];\n  if (content) {\n    perplexityResults = 'Risposta Perplexity:\\n\\n' + content;\n    if (citations.length > 0) {\n      perplexityResults += '\\n\\nFonti:\\n' + citations.map(function(c, i) { return (i + 1) + '. ' + c; }).join('\\n');\n    }\n  }\n} catch(e) { perplexityResults = ''; }\nvar mappaData = {};\ntry { mappaData = $('Mappa Argomento a Cartella').first().json; } catch(e) {}\nreturn [{ json: {\n  topic: mappaData.topic || 'GENERALE',\n  driveFolder: mappaData.driveFolder || '',\n  driveQuery: mappaData.driveQuery || '',\n  folderSearchQuery: mappaData.driveQuery || '',\n  webSearchQuery: mappaData.webSearchQuery || '',\n  googleResults: perplexityResults\n}}];"
+        },
+        "id": "nodeGoogleParse",
+        "name": "Elabora Risultati Perplexity",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2544,
+          560
+        ]
       }
     ],
     "connections": {
@@ -5168,7 +5142,7 @@
         "main": [
           [
             {
-              "node": "Cerca su Google",
+              "node": "Cerca su Perplexity",
               "type": "main",
               "index": 0
             }
@@ -5182,18 +5156,18 @@
           ]
         ]
       },
-      "Cerca su Google": {
+      "Cerca su Perplexity": {
         "main": [
           [
             {
-              "node": "Elabora Risultati Google",
+              "node": "Elabora Risultati Perplexity",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Elabora Risultati Google": {
+      "Elabora Risultati Perplexity": {
         "main": [
           [
             {
@@ -5823,18 +5797,18 @@
     "autosaved": false,
     "workflowPublishHistory": [
       {
-        "createdAt": "2026-06-23T06:25:19.073Z",
-        "id": 193,
+        "createdAt": "2026-06-28T03:31:17.458Z",
+        "id": 195,
         "workflowId": "634G5sX55sgsYpvz",
-        "versionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
+        "versionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
         "event": "activated",
         "userId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
       },
       {
-        "createdAt": "2026-06-23T06:25:18.762Z",
-        "id": 192,
+        "createdAt": "2026-06-28T03:31:17.250Z",
+        "id": 194,
         "workflowId": "634G5sX55sgsYpvz",
-        "versionId": "c5e481e6-dfb9-4392-86f9-94ae005c877e",
+        "versionId": "fbde4bc1-34a4-4ad9-8618-ca2bda8becea",
         "event": "deactivated",
         "userId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
       }

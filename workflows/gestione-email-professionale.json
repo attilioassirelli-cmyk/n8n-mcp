@@ -1,11 +1,5 @@
 {
-  "updatedAt": "2026-06-28T03:33:14.339Z",
-  "createdAt": "2026-05-11T05:31:39.883Z",
-  "id": "634G5sX55sgsYpvz",
-  "name": "Gestione Email Professionale – Consulente del Lavoro",
-  "description": null,
-  "active": true,
-  "isArchived": false,
+  "name": "Gestione Email Professionale \u2013 Consulente del Lavoro",
   "nodes": [
     {
       "parameters": {
@@ -143,8 +137,7 @@
         "messages": {
           "messageValues": [
             {
-              "message": "Sei un classificatore di email per Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale che offre anche consulenza fiscale.\n\nAnalizza l'email e classifica se è:\n- WORK_RELATED: riguarda consulenza del lavoro, elaborazione paghe, INPS, INAIL, diritto del lavoro, previdenza sociale, consulenza fiscale, dichiarazioni fiscali, contenzioso, cedolini, buste paga, contratti di lavoro, assunzioni, licenziamenti\n- PROMOTIONAL: email pubblicitaria, newsletter, offerta commerciale, promozione, marketing, notifica automatica da servizi o piattaforme\n- PERSONAL: email personale non attinente all'attività professionale\n\nRispondi SOLO con JSON valido, nessun altro testo:\n{\"category\": \"WORK_RELATED\"} oppure {\"category\": \"PROMOTIONAL\"} oppure {\"category\": \"PERSONAL\"}",
-              "type": "SystemMessagePromptTemplate"
+              "message": "Sei un classificatore di email per Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale che offre anche consulenza fiscale.\n\nAnalizza l'email e classifica se \u00e8:\n- WORK_RELATED: riguarda consulenza del lavoro, elaborazione paghe, INPS, INAIL, diritto del lavoro, previdenza sociale, consulenza fiscale, dichiarazioni fiscali, contenzioso, cedolini, buste paga, contratti di lavoro, assunzioni, licenziamenti\n- PROMOTIONAL: email pubblicitaria, newsletter, offerta commerciale, promozione, marketing, notifica automatica da servizi o piattaforme\n- PERSONAL: email personale non attinente all'attivit\u00e0 professionale\n\nRispondi SOLO con JSON valido, nessun altro testo:\n{\"category\": \"WORK_RELATED\"} oppure {\"category\": \"PROMOTIONAL\"} oppure {\"category\": \"PERSONAL\"}"
             }
           ]
         }
@@ -198,8 +191,7 @@
         "messages": {
           "messageValues": [
             {
-              "message": "Sei un analizzatore di email per un Consulente del Lavoro e della Previdenza Sociale.\n\nAnalizza l'email e identifica:\n1. Il topic principale (scegli ESATTAMENTE uno tra): PAGHE, DIRITTO_LAVORO, PREVIDENZA, INPS, INAIL, AGGIORNAMENTI, FISCALE_NORMATIVA, FISCALE_USPPIDA, GENERALE\n2. Le keywords chiave da cercare (massimo 3 parole)\n3. Il nome esatto dell'azienda o cliente menzionato nell'email (oppure null se non è menzionato)\n4. L'anno di riferimento (es. \"agosto 2025\" → \"2025\"). Se non desumibile, usa null.\n5. Il mese di riferimento in italiano minuscolo (es. \"agosto\", \"settembre\"). Se non desumibile, usa null.\n\nDescrizione dei topic:\n- PAGHE: cedolini, buste paga, stipendi, elaborazione paghe\n- DIRITTO_LAVORO: contratti, licenziamento, assunzioni, CCNL\n- PREVIDENZA: pensioni, contributi previdenziali\n- INPS: contributi INPS, prestazioni INPS, disoccupazione, accertamenti INPS\n- INAIL: infortuni, premi assicurativi, malattie professionali\n- AGGIORNAMENTI: novità normative, circolari, aggiornamenti di legge\n- FISCALE_NORMATIVA: normativa fiscale, IVA, imposte\n- FISCALE_USPPIDA: USPPIDA, pratiche fiscali specifiche\n- GENERALE: tutto il resto\n\nRispondi SOLO con JSON valido:\n{\"topic\": \"PAGHE\", \"keywords\": [\"cedolino\", \"agosto\"], \"company\": \"Isocore\", \"year\": \"2025\", \"month\": \"agosto\"}",
-              "type": "SystemMessagePromptTemplate"
+              "message": "Sei un analizzatore di email per un Consulente del Lavoro e della Previdenza Sociale.\n\nAnalizza l'email e identifica:\n1. Il topic principale (scegli ESATTAMENTE uno tra): PAGHE, DIRITTO_LAVORO, PREVIDENZA, INPS, INAIL, AGGIORNAMENTI, FISCALE_NORMATIVA, FISCALE_USPPIDA, GENERALE\n2. Le keywords chiave da cercare (massimo 3 parole)\n3. Il nome esatto dell'azienda o cliente menzionato nell'email (oppure null se non \u00e8 menzionato)\n4. L'anno di riferimento (es. \"agosto 2025\" \u2192 \"2025\"). Se non desumibile, usa null.\n5. Il mese di riferimento in italiano minuscolo (es. \"agosto\", \"settembre\"). Se non desumibile, usa null.\n\nDescrizione dei topic:\n- PAGHE: cedolini, buste paga, stipendi, elaborazione paghe\n- DIRITTO_LAVORO: contratti, licenziamento, assunzioni, CCNL\n- PREVIDENZA: pensioni, contributi previdenziali\n- INPS: contributi INPS, prestazioni INPS, disoccupazione, accertamenti INPS\n- INAIL: infortuni, premi assicurativi, malattie professionali\n- AGGIORNAMENTI: novit\u00e0 normative, circolari, aggiornamenti di legge\n- FISCALE_NORMATIVA: normativa fiscale, IVA, imposte\n- FISCALE_USPPIDA: USPPIDA, pratiche fiscali specifiche\n- GENERALE: tutto il resto\n\nRispondi SOLO con JSON valido:\n{\"topic\": \"PAGHE\", \"keywords\": [\"cedolino\", \"agosto\"], \"company\": \"Isocore\", \"year\": \"2025\", \"month\": \"agosto\"}"
             }
           ]
         }
@@ -254,7 +246,7 @@
     },
     {
       "parameters": {
-        "jsCode": "var emailData = {};\ntry { emailData = $('Gmail Trigger').item.json || {}; } catch(e) {}\nif (!emailData.id && !emailData.threadId) { try { emailData = $('Normalizza Messaggio WhatsApp').item.json || {}; } catch(e2) {} }\nvar topic = 'GENERALE';\ntry { topic = $('Mappa Argomento a Cartella').item.json.topic || 'GENERALE'; } catch(e) {}\n\n\n// ── Notion — Cliente + Knowledge Base ──────────────────────────────────\nvar notionClienteInfo = '';\ntry {\n  var nCliente = $('Cerca Cliente in Notion').item.json;\n  if (nCliente && nCliente.results && nCliente.results.length > 0) {\n    var c = nCliente.results[0].properties;\n    var ccnl = (c['CCNL Applicato'] && c['CCNL Applicato'].select) ? c['CCNL Applicato'].select.name : '';\n    var nomeRaw = c['Nome / Ragione Sociale'] && c['Nome / Ragione Sociale'].title;\n    var nome = nomeRaw ? nomeRaw.map(function(t){return t.plain_text;}).join('') : '';\n    if (nome) notionClienteInfo = 'CLIENTE: ' + nome + (ccnl ? ' — CCNL: ' + ccnl : '');\n  }\n} catch(e) {}\n\nvar notionKBInfo = '';\ntry {\n  var nKB = $('Cerca in Knowledge Base').item.json;\n  if (nKB && nKB.results && nKB.results.length > 0) {\n    var kbLines = nKB.results.slice(0,3).map(function(page, i) {\n      var props = page.properties;\n      var titoloRaw = props['Titolo'] && props['Titolo'].title;\n      var titolo = titoloRaw ? titoloRaw.map(function(t){return t.plain_text;}).join('') : 'Documento';\n      var contenutoRaw = props['Contenuto'] && props['Contenuto'].rich_text;\n      var contenuto = contenutoRaw ? contenutoRaw.map(function(t){return t.plain_text;}).join('').substring(0,300) : '';\n      return (i+1) + '. ' + titolo + (contenuto ? '\\n   ' + contenuto : '');\n    });\n    if (kbLines.length > 0) notionKBInfo = '=== KNOWLEDGE BASE STUDIO ===\\n' + kbLines.join('\\n\\n');\n  }\n} catch(e) {}\n\nvar driveItems = [];\ntry { driveItems = $('Cerca File Cliente').all(); } catch(e) {}\nif (driveItems.length === 0 || !driveItems[0].json.id) {\n  try { driveItems = $('Cerca Documenti Drive').all(); } catch(e) {}\n}\n\nvar googleResults = '';\ntry {\n  var gItems = $('Elabora Risultati Google').all();\n  if (gItems.length > 0) googleResults = gItems[0].json.googleResults || '';\n} catch(e) {}\n\nvar tavilyResults = '';\ntry {\n  var tItems = $('Cerca su Tavily').all();\n  if (tItems.length > 0) {\n    var tData = tItems[0].json;\n    var answer = tData.answer || '';\n    var results = tData.results || [];\n    if (answer) tavilyResults = 'Risposta sintetica: ' + answer;\n    if (results.length > 0) {\n      var tLines = results.slice(0, 3).map(function(r, i) {\n        return (i+1) + '. ' + (r.title || '') + '\\n   ' + String(r.content || '').substring(0, 200) + '\\n   ' + (r.url || '');\n      });\n      tavilyResults += (tavilyResults ? '\\n\\n' : '') + tLines.join('\\n\\n');\n    }\n  }\n} catch(e) {}\n\nvar webResults = [googleResults, tavilyResults].filter(Boolean).join('\\n\\n---\\n\\n');\n\n// ── Legal Data Hunter — Legislazione Italiana ──────────────────────────\nvar ldhResults = '';\ntry {\n  var ldhItems = $('Cerca Legislazione IT').all();\n  if (ldhItems.length > 0 && ldhItems[0].json.hits) {\n    var hits = ldhItems[0].json.hits || [];\n    if (hits.length > 0) {\n      var ldhLines = hits.slice(0, 3).map(function(h, i) {\n        return (i+1) + '. ' + (h.title || 'Norma') + '\\n'\n             + '   ' + String(h.snippet || '').substring(0, 250) + '\\n'\n             + '   Fonte: ' + (h.url || 'legaldatahunter.com') + (h.date ? ' (' + h.date + ')' : '');\n      });\n      ldhResults = '=== NORMATIVA ITALIANA RILEVANTE ===\\n' + ldhLines.join('\\n\\n');\n    }\n  }\n} catch(e) {}\n\n\nvar attachmentText = '';\ntry {\n  var pdfData = $('Aggiungi Contesto Allegati').first().json;\n  if (pdfData && pdfData.hasPDF && pdfData.attachmentText) {\n    attachmentText = String(pdfData.attachmentText);\n  }\n} catch(e) {}\n\nvar driveContext = 'Nessun documento trovato su Google Drive per questa richiesta.';\nvar validItems = driveItems.filter(function(i) { return i.json && i.json.id; });\nif (validItems.length > 0) {\n  var lines = validItems.map(function(item, idx) {\n    var name = item.json.name || ('Documento ' + (idx + 1));\n    var link = item.json.webViewLink ? (' - ' + item.json.webViewLink) : '';\n    return (idx + 1) + '. ' + name + link;\n  });\n  driveContext = 'Documenti trovati (argomento: ' + topic + '):\\n' + lines.join('\\n');\n}\nvar aggiornamenti = '';\ntry { aggiornamenti = $('Cerca File Utente').item.json.aggiornamenti || ''; } catch(e) {}\nvar emailBodyLower = (String(emailData.text || '') + ' ' + String(emailData.subject || '')).toLowerCase();\nvar attachRequest = /gira|invi[ao]|allega|mand[ae]|spedi/.test(emailBodyLower);\nvar attachFileId = null;\nvar attachFileName = null;\nif (attachRequest && validItems.length > 0) {\n  var pdfItems = validItems.filter(function(i) { var n = (i.json.name || '').toLowerCase(); return !n.includes('f24') && !n.includes('tel-'); });\n  var cedolinoItem = pdfItems.find(function(i) { return (i.json.name || '').toLowerCase().includes('cedolino'); });\n  var toAttach = cedolinoItem || pdfItems[0] || validItems[0];\n  if (toAttach && toAttach.json.id) { attachFileId = toAttach.json.id; attachFileName = toAttach.json.name || 'documento.pdf'; }\n}\n\nreturn [{ json: {\n  from: String(emailData.from?.value?.[0]?.address || emailData.from || ''),\n  to: String(emailData.to?.value?.[0]?.address || emailData.to || ''),\n  subject: String(emailData.subject || ''),\n  snippet: String(emailData.snippet || ''),\n  text: String(emailData.text || ''),\n  threadId: String(emailData.threadId || ''),\n  id: String(emailData.id || ''),\n  driveContext: driveContext,\n  notionCliente: notionClienteInfo,\n  notionKB: notionKBInfo,\n  topic: topic,\n  aggiornamenti: aggiornamenti,\n  googleResults: [webResults, ldhResults, notionKBInfo].filter(Boolean).join('\\n\\n---\\n\\n'),\n  attachmentText: attachmentText,\n  attachRequest: attachRequest,\n  attachFileId: attachFileId,\n  attachFileName: attachFileName\n} }];"
+        "jsCode": "var emailData = {};\ntry { emailData = $('Gmail Trigger').item.json || {}; } catch(e) {}\nif (!emailData.id && !emailData.threadId) { try { emailData = $('Normalizza Messaggio WhatsApp').item.json || {}; } catch(e2) {} }\nvar topic = 'GENERALE';\ntry { topic = $('Mappa Argomento a Cartella').item.json.topic || 'GENERALE'; } catch(e) {}\n\n\n// \u2500\u2500 Notion \u2014 Cliente + Knowledge Base \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nvar notionClienteInfo = '';\ntry {\n  var nCliente = $('Cerca Cliente in Notion').item.json;\n  if (nCliente && nCliente.results && nCliente.results.length > 0) {\n    var c = nCliente.results[0].properties;\n    var ccnl = (c['CCNL Applicato'] && c['CCNL Applicato'].select) ? c['CCNL Applicato'].select.name : '';\n    var nomeRaw = c['Nome / Ragione Sociale'] && c['Nome / Ragione Sociale'].title;\n    var nome = nomeRaw ? nomeRaw.map(function(t){return t.plain_text;}).join('') : '';\n    if (nome) notionClienteInfo = 'CLIENTE: ' + nome + (ccnl ? ' \u2014 CCNL: ' + ccnl : '');\n  }\n} catch(e) {}\n\nvar notionKBInfo = '';\ntry {\n  var nKB = $('Cerca in Knowledge Base').item.json;\n  if (nKB && nKB.results && nKB.results.length > 0) {\n    var kbLines = nKB.results.slice(0,3).map(function(page, i) {\n      var props = page.properties;\n      var titoloRaw = props['Titolo'] && props['Titolo'].title;\n      var titolo = titoloRaw ? titoloRaw.map(function(t){return t.plain_text;}).join('') : 'Documento';\n      var contenutoRaw = props['Contenuto'] && props['Contenuto'].rich_text;\n      var contenuto = contenutoRaw ? contenutoRaw.map(function(t){return t.plain_text;}).join('').substring(0,300) : '';\n      return (i+1) + '. ' + titolo + (contenuto ? '\\n   ' + contenuto : '');\n    });\n    if (kbLines.length > 0) notionKBInfo = '=== KNOWLEDGE BASE STUDIO ===\\n' + kbLines.join('\\n\\n');\n  }\n} catch(e) {}\n\nvar driveItems = [];\ntry { driveItems = $('Cerca File Cliente').all(); } catch(e) {}\nif (driveItems.length === 0 || !driveItems[0].json.id) {\n  try { driveItems = $('Cerca Documenti Drive').all(); } catch(e) {}\n}\n\nvar googleResults = '';\ntry {\n  var gItems = $('Elabora Risultati Google').all();\n  if (gItems.length > 0) googleResults = gItems[0].json.googleResults || '';\n} catch(e) {}\n\nvar tavilyResults = '';\ntry {\n  var tItems = $('Cerca su Tavily').all();\n  if (tItems.length > 0) {\n    var tData = tItems[0].json;\n    var answer = tData.answer || '';\n    var results = tData.results || [];\n    if (answer) tavilyResults = 'Risposta sintetica: ' + answer;\n    if (results.length > 0) {\n      var tLines = results.slice(0, 3).map(function(r, i) {\n        return (i+1) + '. ' + (r.title || '') + '\\n   ' + String(r.content || '').substring(0, 200) + '\\n   ' + (r.url || '');\n      });\n      tavilyResults += (tavilyResults ? '\\n\\n' : '') + tLines.join('\\n\\n');\n    }\n  }\n} catch(e) {}\n\nvar webResults = [googleResults, tavilyResults].filter(Boolean).join('\\n\\n---\\n\\n');\n\n// \u2500\u2500 Legal Data Hunter \u2014 Legislazione Italiana \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nvar ldhResults = '';\ntry {\n  var ldhItems = $('Cerca Legislazione IT').all();\n  if (ldhItems.length > 0 && ldhItems[0].json.hits) {\n    var hits = ldhItems[0].json.hits || [];\n    if (hits.length > 0) {\n      var ldhLines = hits.slice(0, 3).map(function(h, i) {\n        return (i+1) + '. ' + (h.title || 'Norma') + '\\n'\n             + '   ' + String(h.snippet || '').substring(0, 250) + '\\n'\n             + '   Fonte: ' + (h.url || 'legaldatahunter.com') + (h.date ? ' (' + h.date + ')' : '');\n      });\n      ldhResults = '=== NORMATIVA ITALIANA RILEVANTE ===\\n' + ldhLines.join('\\n\\n');\n    }\n  }\n} catch(e) {}\n\n\nvar attachmentText = '';\ntry {\n  var pdfData = $('Aggiungi Contesto Allegati').first().json;\n  if (pdfData && pdfData.hasPDF && pdfData.attachmentText) {\n    attachmentText = String(pdfData.attachmentText);\n  }\n} catch(e) {}\n\nvar driveContext = 'Nessun documento trovato su Google Drive per questa richiesta.';\nvar validItems = driveItems.filter(function(i) { return i.json && i.json.id; });\nif (validItems.length > 0) {\n  var lines = validItems.map(function(item, idx) {\n    var name = item.json.name || ('Documento ' + (idx + 1));\n    var link = item.json.webViewLink ? (' - ' + item.json.webViewLink) : '';\n    return (idx + 1) + '. ' + name + link;\n  });\n  driveContext = 'Documenti trovati (argomento: ' + topic + '):\\n' + lines.join('\\n');\n}\nvar aggiornamenti = '';\ntry { aggiornamenti = $('Cerca File Utente').item.json.aggiornamenti || ''; } catch(e) {}\nvar emailBodyLower = (String(emailData.text || '') + ' ' + String(emailData.subject || '')).toLowerCase();\nvar attachRequest = /gira|invi[ao]|allega|mand[ae]|spedi/.test(emailBodyLower);\nvar attachFileId = null;\nvar attachFileName = null;\nif (attachRequest && validItems.length > 0) {\n  var pdfItems = validItems.filter(function(i) { var n = (i.json.name || '').toLowerCase(); return !n.includes('f24') && !n.includes('tel-'); });\n  var cedolinoItem = pdfItems.find(function(i) { return (i.json.name || '').toLowerCase().includes('cedolino'); });\n  var toAttach = cedolinoItem || pdfItems[0] || validItems[0];\n  if (toAttach && toAttach.json.id) { attachFileId = toAttach.json.id; attachFileName = toAttach.json.name || 'documento.pdf'; }\n}\n\nreturn [{ json: {\n  from: String(emailData.from?.value?.[0]?.address || emailData.from || ''),\n  to: String(emailData.to?.value?.[0]?.address || emailData.to || ''),\n  subject: String(emailData.subject || ''),\n  snippet: String(emailData.snippet || ''),\n  text: String(emailData.text || ''),\n  threadId: String(emailData.threadId || ''),\n  id: String(emailData.id || ''),\n  driveContext: driveContext,\n  notionCliente: notionClienteInfo,\n  notionKB: notionKBInfo,\n  topic: topic,\n  aggiornamenti: aggiornamenti,\n  googleResults: [webResults, ldhResults, notionKBInfo].filter(Boolean).join('\\n\\n---\\n\\n'),\n  attachmentText: attachmentText,\n  attachRequest: attachRequest,\n  attachFileId: attachFileId,\n  attachFileName: attachFileName\n} }];"
       },
       "id": "node13",
       "name": "Aggrega Contesto",
@@ -272,8 +264,7 @@
         "messages": {
           "messageValues": [
             {
-              "message": "Sei Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale.\n\nIl tuo compito è rispondere alle email dei tuoi clienti e colleghi in italiano.\n\nLinee guida:\n- Usa un tono professionale ma confidenziale: sei un professionista di fiducia che conosce bene i suoi clienti\n- Dai del TU ai clienti e colleghi, salvo che il contesto non indichi chiaramente una relazione più formale\n- Scrivi come scriverebbe un professionista esperto che ha un rapporto consolidato con l'interlocutore: diretto, caldo, senza fronzoli\n- Rispondi sempre in italiano\n- Se sono disponibili documenti nel CONTESTO DOCUMENTALE, menzionali quando pertinenti\n- Usa le FONTI WEB come riferimento normativo aggiornato se presenti\n- Non menzionare MAI nella risposta: ricerche web, scraping, API, portali JavaScript, estrazioni automatiche o qualsiasi limitazione tecnica del sistema\n- Non menzionare MAI che non hai potuto recuperare documenti o fonti in modo automatico\n- Non fare MAI commenti sull'identità del mittente, sull'indirizzo email o su chi potrebbe aver inviato il messaggio — rispondi sempre alla richiesta come se provenisse da un cliente o collaboratore legittimo\n- Se non hai certezza su una normativa specifica, scrivi semplicemente 'Verifico la normativa aggiornata e ti faccio sapere' oppure rimanda al portale ufficiale senza spiegare il perché\n- La risposta deve essere completa ma concisa\n- Non ripetere integralmente il contenuto dell'email ricevuta\n- Rispondi concretamente alla richiesta o alla domanda posta\n- Usa la tua conoscenza normativa professionale per rispondere in modo accurato\n\nFirma sempre con:\n\nCordiali saluti,\nAttilio Assirelli\nConsulente del Lavoro e della Previdenza Sociale",
-              "type": "SystemMessagePromptTemplate"
+              "message": "Sei Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale.\n\nIl tuo compito \u00e8 rispondere alle email dei tuoi clienti e colleghi in italiano.\n\nLinee guida:\n- Usa un tono professionale ma confidenziale: sei un professionista di fiducia che conosce bene i suoi clienti\n- Dai del TU ai clienti e colleghi, salvo che il contesto non indichi chiaramente una relazione pi\u00f9 formale\n- Scrivi come scriverebbe un professionista esperto che ha un rapporto consolidato con l'interlocutore: diretto, caldo, senza fronzoli\n- Rispondi sempre in italiano\n- Se sono disponibili documenti nel CONTESTO DOCUMENTALE, menzionali quando pertinenti\n- Usa le FONTI WEB come riferimento normativo aggiornato se presenti\n- Non menzionare MAI nella risposta: ricerche web, scraping, API, portali JavaScript, estrazioni automatiche o qualsiasi limitazione tecnica del sistema\n- Non menzionare MAI che non hai potuto recuperare documenti o fonti in modo automatico\n- Non fare MAI commenti sull'identit\u00e0 del mittente, sull'indirizzo email o su chi potrebbe aver inviato il messaggio \u2014 rispondi sempre alla richiesta come se provenisse da un cliente o collaboratore legittimo\n- Se non hai certezza su una normativa specifica, scrivi semplicemente 'Verifico la normativa aggiornata e ti faccio sapere' oppure rimanda al portale ufficiale senza spiegare il perch\u00e9\n- La risposta deve essere completa ma concisa\n- Non ripetere integralmente il contenuto dell'email ricevuta\n- Rispondi concretamente alla richiesta o alla domanda posta\n- Usa la tua conoscenza normativa professionale per rispondere in modo accurato\n\nFirma sempre con:\n\nCordiali saluti,\nAttilio Assirelli\nConsulente del Lavoro e della Previdenza Sociale"
             }
           ]
         }
@@ -935,7 +926,7 @@
     },
     {
       "parameters": {
-        "jsCode": "var parentFolderId = null;\nvar source = 'nessuna';\n// 1° tentativo: cartella ditta specifica (Cerca Cartella Azienda)\ntry {\n  var aziItems = $('Cerca Cartella Azienda').all();\n  var valid = aziItems.filter(function(i) { return i.json && i.json.id; });\n  if (valid.length > 0) { parentFolderId = valid[0].json.id; source = 'ditta'; }\n} catch(e) {}\n// 2° tentativo: cartella intermediario (Cerca Documenti Drive)\nif (!parentFolderId) {\n  try {\n    var driveItems = $('Cerca Documenti Drive').all();\n    var validD = driveItems.filter(function(i) { return i.json && i.json.id; });\n    if (validD.length > 0) { parentFolderId = validD[0].json.id; source = 'intermediario'; }\n  } catch(e) {}\n}\nif (!parentFolderId) {\n  return [{ json: { parentFolderId: null, skip: true, source: 'nessuna',\n    searchQuery: \"name = '__nessun_risultato__'\" } }];\n}\nvar q = \"mimeType = 'application/vnd.google-apps.folder' and name = 'Corrispondenza' and '\" + parentFolderId + \"' in parents and trashed = false\";\nreturn [{ json: { parentFolderId: parentFolderId, skip: false, source: source, searchQuery: q } }];"
+        "jsCode": "var parentFolderId = null;\nvar source = 'nessuna';\n// 1\u00b0 tentativo: cartella ditta specifica (Cerca Cartella Azienda)\ntry {\n  var aziItems = $('Cerca Cartella Azienda').all();\n  var valid = aziItems.filter(function(i) { return i.json && i.json.id; });\n  if (valid.length > 0) { parentFolderId = valid[0].json.id; source = 'ditta'; }\n} catch(e) {}\n// 2\u00b0 tentativo: cartella intermediario (Cerca Documenti Drive)\nif (!parentFolderId) {\n  try {\n    var driveItems = $('Cerca Documenti Drive').all();\n    var validD = driveItems.filter(function(i) { return i.json && i.json.id; });\n    if (validD.length > 0) { parentFolderId = validD[0].json.id; source = 'intermediario'; }\n  } catch(e) {}\n}\nif (!parentFolderId) {\n  return [{ json: { parentFolderId: null, skip: true, source: 'nessuna',\n    searchQuery: \"name = '__nessun_risultato__'\" } }];\n}\nvar q = \"mimeType = 'application/vnd.google-apps.folder' and name = 'Corrispondenza' and '\" + parentFolderId + \"' in parents and trashed = false\";\nreturn [{ json: { parentFolderId: parentFolderId, skip: false, source: source, searchQuery: q } }];"
       },
       "id": "prep_corrisp_node",
       "name": "Prepara Corrispondenza",
@@ -1039,7 +1030,7 @@
     },
     {
       "parameters": {
-        "jsCode": "var folderId = null;\n// Prova dalla ricerca (cartella già esistente)\ntry {\n  var found = $('Cerca Cartella Corrispondenza').item.json;\n  if (found && found.id) folderId = found.id;\n} catch(e) {}\n// Prova dalla cartella appena creata\nif (!folderId) {\n  try {\n    var created = $('Crea Cartella Corrispondenza').item.json;\n    if (created && created.id) folderId = created.id;\n  } catch(e) {}\n}\nif (!folderId) return [];\n\n// Dati email e risposta\nvar bozza = {};\ntry { bozza = $('Prepara Bozza').item.json; } catch(e) {}\nvar subject = bozza.subject || 'Nessun oggetto';\nvar fromAddr = bozza.from || '';\nvar aiResponse = bozza.aiResponse || '';\n\nvar emailText = '';\ntry {\n  var emailData = $('Gmail Trigger').item.json;\n  emailText = emailData.text || emailData.snippet || '';\n} catch(e) {}\n\nvar dateStr = new Date().toISOString().replace('T', ' ').substring(0, 16);\nvar dateFile = new Date().toISOString().split('T')[0];\n\nvar fileContent = \n  '---\\n' +\n  'data: ' + dateStr + '\\n' +\n  'mittente: ' + fromAddr + '\\n' +\n  'oggetto: \"' + subject.replace(/\"/g, '\\\\\"') + '\"\\n' +\n  'tag:\\n' +\n  '  - corrispondenza\\n' +\n  '  - email\\n' +\n  '---\\n\\n' +\n  '# ' + subject + '\\n\\n' +\n  '- **Data:** ' + dateStr + '\\n' +\n  '- **Mittente:** ' + fromAddr + '\\n\\n' +\n  '---\\n\\n' +\n  '## ✉️ Email Ricevuta\\n' +\n  '> [!NOTE] Testo dell\\'email\\n' +\n  '> ' + emailText.substring(0, 3000).replace(/\\n/g, '\\n> ') + '\\n\\n' +\n  '---\\n\\n' +\n  '## 🤖 Risposta Inviata\\n' +\n  aiResponse;\n\nvar cleanSubject = subject.replace(/[<>:\"/\\\\|?*\\r\\n]/g, '_').substring(0, 60);\nvar fileName = dateFile + ' - ' + cleanSubject + '.md';\n\nvar base64Content = Buffer.from(fileContent, 'utf-8').toString('base64');\n\nreturn [{\n  json: { folderId: folderId, fileName: fileName },\n  binary: {\n    data: {\n      data: base64Content,\n      mimeType: 'text/markdown; charset=utf-8',\n      fileName: fileName\n    }\n  }\n}];"
+        "jsCode": "var folderId = null;\n// Prova dalla ricerca (cartella gi\u00e0 esistente)\ntry {\n  var found = $('Cerca Cartella Corrispondenza').item.json;\n  if (found && found.id) folderId = found.id;\n} catch(e) {}\n// Prova dalla cartella appena creata\nif (!folderId) {\n  try {\n    var created = $('Crea Cartella Corrispondenza').item.json;\n    if (created && created.id) folderId = created.id;\n  } catch(e) {}\n}\nif (!folderId) return [];\n\n// Dati email e risposta\nvar bozza = {};\ntry { bozza = $('Prepara Bozza').item.json; } catch(e) {}\nvar subject = bozza.subject || 'Nessun oggetto';\nvar fromAddr = bozza.from || '';\nvar aiResponse = bozza.aiResponse || '';\n\nvar emailText = '';\ntry {\n  var emailData = $('Gmail Trigger').item.json;\n  emailText = emailData.text || emailData.snippet || '';\n} catch(e) {}\n\nvar dateStr = new Date().toISOString().replace('T', ' ').substring(0, 16);\nvar dateFile = new Date().toISOString().split('T')[0];\n\nvar fileContent = \n  '---\\n' +\n  'data: ' + dateStr + '\\n' +\n  'mittente: ' + fromAddr + '\\n' +\n  'oggetto: \"' + subject.replace(/\"/g, '\\\\\"') + '\"\\n' +\n  'tag:\\n' +\n  '  - corrispondenza\\n' +\n  '  - email\\n' +\n  '---\\n\\n' +\n  '# ' + subject + '\\n\\n' +\n  '- **Data:** ' + dateStr + '\\n' +\n  '- **Mittente:** ' + fromAddr + '\\n\\n' +\n  '---\\n\\n' +\n  '## \u2709\ufe0f Email Ricevuta\\n' +\n  '> [!NOTE] Testo dell\\'email\\n' +\n  '> ' + emailText.substring(0, 3000).replace(/\\n/g, '\\n> ') + '\\n\\n' +\n  '---\\n\\n' +\n  '## \ud83e\udd16 Risposta Inviata\\n' +\n  aiResponse;\n\nvar cleanSubject = subject.replace(/[<>:\"/\\\\|?*\\r\\n]/g, '_').substring(0, 60);\nvar fileName = dateFile + ' - ' + cleanSubject + '.md';\n\nvar base64Content = Buffer.from(fileContent, 'utf-8').toString('base64');\n\nreturn [{\n  json: { folderId: folderId, fileName: fileName },\n  binary: {\n    data: {\n      data: base64Content,\n      mimeType: 'text/markdown; charset=utf-8',\n      fileName: fileName\n    }\n  }\n}];"
       },
       "id": "prep_file_corrisp",
       "name": "Prepara File Corrispondenza",
@@ -1121,6 +1112,10 @@
         "headerParameters": {
           "parameters": [
             {
+              "name": "Authorization",
+              "value": "Bearer sk-YOUR_LEGALDATAHUNTER_KEY_HERE"
+            },
+            {
               "name": "Content-Type",
               "value": "application/json"
             }
@@ -1130,9 +1125,7 @@
         "contentType": "raw",
         "rawContentType": "application/json",
         "body": "={{ JSON.stringify({\n  q: (($('Mappa Argomento a Cartella').item.json.topic || '') + ' ' + \n      ($('Gmail Trigger').item.json.subject || '')).substring(0, 200),\n  namespace: 'legislation',\n  country: ['IT'],\n  language: 'it',\n  top_k: 3,\n  alpha: 0.9\n}) }}",
-        "options": {},
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "httpBearerAuth"
+        "options": {}
       },
       "id": "ldh_search_node",
       "name": "Cerca Legislazione IT",
@@ -1142,13 +1135,7 @@
         3328,
         1120
       ],
-      "onError": "continueRegularOutput",
-      "credentials": {
-        "httpBearerAuth": {
-          "id": "SeuuMRzCZEeFjkxj",
-          "name": "Legal Data Hunter account"
-        }
-      }
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -1159,7 +1146,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
+              "value": "Bearer ntn_YOUR_NOTION_TOKEN_HERE"
             },
             {
               "name": "Notion-Version",
@@ -1196,7 +1183,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
+              "value": "Bearer ntn_YOUR_NOTION_TOKEN_HERE"
             },
             {
               "name": "Notion-Version",
@@ -1266,7 +1253,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
+              "value": "Bearer ntn_YOUR_NOTION_TOKEN_HERE"
             },
             {
               "name": "Notion-Version",
@@ -1281,7 +1268,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={ JSON.stringify({  parent: { database_id: \"37bd0d2a-64a6-8134-8ba6-d5ce17d1d2ab\" },  properties: {    \"Descrizione\": { title: [{ text: { content: ($(\"Gmail Trigger\").item.json.subject || \"Scadenza da email\") } }] },    \"Ditta\": { rich_text: [{ text: { content: ($(\"Aggrega Contesto\").item.json.from || \"\") } }] },    \"Categoria\": { select: { name: ($(\"Classificatore Email\").item.json.topic || \"Altro\") } },    \"Email Origine\": { rich_text: [{ text: { content: ($(\"Gmail Trigger\").item.json.threadId || \"\") } }] },    \"Completata\": { checkbox: false },    \"Priorità\": { select: { name: \"Media\" } }  }}) }",
+        "body": "={ JSON.stringify({  parent: { database_id: \"37bd0d2a-64a6-8134-8ba6-d5ce17d1d2ab\" },  properties: {    \"Descrizione\": { title: [{ text: { content: ($(\"Gmail Trigger\").item.json.subject || \"Scadenza da email\") } }] },    \"Ditta\": { rich_text: [{ text: { content: ($(\"Aggrega Contesto\").item.json.from || \"\") } }] },    \"Categoria\": { select: { name: ($(\"Classificatore Email\").item.json.topic || \"Altro\") } },    \"Email Origine\": { rich_text: [{ text: { content: ($(\"Gmail Trigger\").item.json.threadId || \"\") } }] },    \"Completata\": { checkbox: false },    \"Priorit\u00e0\": { select: { name: \"Media\" } }  }}) }",
         "options": {}
       },
       "id": "notion_crea_scadenza",
@@ -1303,7 +1290,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
+              "value": "Bearer ntn_YOUR_NOTION_TOKEN_HERE"
             },
             {
               "name": "Notion-Version",
@@ -1369,7 +1356,7 @@
         "options": {}
       },
       "id": "new_is_zip",
-      "name": "È un file ZIP?",
+      "name": "\u00c8 un file ZIP?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
@@ -1529,7 +1516,7 @@
     },
     {
       "parameters": {
-        "jsCode": "var emailJson = {};\ntry { emailJson = $('Gmail Trigger').item.json || {}; } catch(e) {}\n\nvar items = [];\ntry {\n  items = $('Aggiungi Testo').all();\n} catch(e) {}\n\nvar fileTexts = {};\n\nitems.forEach(item => {\n  var data = item.json;\n  var fileName = data.fileName || 'Allegato';\n  var op = data.extractionOperation;\n  \n  if (!fileTexts[fileName]) {\n    fileTexts[fileName] = {\n      name: fileName,\n      operation: op,\n      textParts: [],\n      rows: []\n    };\n  }\n  \n  if (data.text) {\n    fileTexts[fileName].textParts.push(data.text);\n  } else if (data.rowData) {\n    fileTexts[fileName].rows.push(data.rowData);\n  }\n});\n\nvar attachmentTexts = [];\nvar hasPDF = false;\n\nfor (var fileName in fileTexts) {\n  var fileInfo = fileTexts[fileName];\n  var content = '';\n  \n  if (fileInfo.textParts.length > 0) {\n    content = fileInfo.textParts.join('\\n');\n  } else if (fileInfo.rows.length > 0) {\n    var rows = fileInfo.rows;\n    var headers = Object.keys(rows[0] || {}).filter(k => k !== 'fileName' && k !== 'extractionOperation' && k !== 'key');\n    \n    var headerRow = '| ' + headers.join(' | ') + ' |';\n    var separatorRow = '| ' + headers.map(() => '---').join(' | ') + ' |';\n    var dataRows = rows.map(r => '| ' + headers.map(h => String(r[h] || '')).join(' | ') + ' |');\n    \n    content = [headerRow, separatorRow].concat(dataRows).join('\\n');\n  }\n  \n  if (content.trim().length > 10) {\n    attachmentTexts.push('=== ALLEGATO: ' + fileName + ' ===\\n' + content);\n    if (fileInfo.operation === 'pdf') {\n      hasPDF = true;\n    }\n  }\n}\n\nvar attachmentText = attachmentTexts.join('\\n\\n---\\n\\n').substring(0, 10000);\n\nreturn [{\n  json: Object.assign({}, emailJson, {\n    attachmentText: attachmentText,\n    hasPDF: hasPDF,\n    hasAttachments: attachmentTexts.length > 0\n  })\n}];"
+        "jsCode": "var emailJson = {};\ntry { emailJson = $('Gmail Trigger').item.json || {}; } catch(e) {}\n\nvar items = [];\ntry {\n  items = $('Aggiungi Testo').all();\n} catch(e) {\n  // Nessun allegato o pipeline non eseguita \u2014 continuiamo comunque\n  items = [];\n}\n\nvar fileTexts = {};\n\nitems.forEach(item => {\n  var data = item.json;\n  var fileName = data.fileName || 'Allegato';\n  var op = data.extractionOperation;\n  \n  if (!fileTexts[fileName]) {\n    fileTexts[fileName] = {\n      name: fileName,\n      operation: op,\n      textParts: [],\n      rows: []\n    };\n  }\n  \n  if (data.text) {\n    fileTexts[fileName].textParts.push(data.text);\n  } else if (data.rowData) {\n    fileTexts[fileName].rows.push(data.rowData);\n  }\n});\n\nvar attachmentTexts = [];\nvar hasPDF = false;\n\nfor (var fileName in fileTexts) {\n  var fileInfo = fileTexts[fileName];\n  var content = '';\n  \n  if (fileInfo.textParts.length > 0) {\n    content = fileInfo.textParts.join('\\n');\n  } else if (fileInfo.rows.length > 0) {\n    var rows = fileInfo.rows;\n    var headers = Object.keys(rows[0] || {}).filter(k => k !== 'fileName' && k !== 'extractionOperation' && k !== 'key');\n    \n    var headerRow = '| ' + headers.join(' | ') + ' |';\n    var separatorRow = '| ' + headers.map(() => '---').join(' | ') + ' |';\n    var dataRows = rows.map(r => '| ' + headers.map(h => String(r[h] || '')).join(' | ') + ' |');\n    \n    content = [headerRow, separatorRow].concat(dataRows).join('\\n');\n  }\n  \n  if (content.trim().length > 10) {\n    attachmentTexts.push('=== ALLEGATO: ' + fileName + ' ===\\n' + content);\n    if (fileInfo.operation === 'pdf') {\n      hasPDF = true;\n    }\n  }\n}\n\nvar attachmentText = attachmentTexts.join('\\n\\n---\\n\\n').substring(0, 10000);\n\n// IMPORTANTE: questo nodo deve sempre restituire l'email, anche senza allegati\nreturn [{\n  json: Object.assign({}, emailJson, {\n    attachmentText: attachmentText,\n    hasPDF: hasPDF,\n    hasAttachments: attachmentTexts.length > 0\n  })\n}];"
       },
       "id": "new_aggiungi_contesto_allegati",
       "name": "Aggiungi Contesto Allegati",
@@ -1583,26 +1570,26 @@
         "options": {}
       },
       "id": "node_is_newsletter",
-      "name": "È Newsletter Normativa?",
+      "name": "\u00c8 Newsletter Normativa?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1408,
-        112
+        1400,
+        100
       ]
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ 'Oggetto Email: ' + ($json.subject || '') + '\\n\\nData Email: ' + ($json.date || '') + '\\n\\nCorpo Email:\\n' + ($json.text || $json.snippet || '').substring(0, 8000) + '\\n\\nTesto Consolidato Allegati:\\n' + ($json.attachmentText || '').substring(0, 10000) }}",
+        "text": "={{ 'Oggetto Email: ' + ($json.subject || '') + '\\n\\nData Email: ' + ($json.date || '') + '\\n\\nCorpo Email:\\n' + ($json.text || $json.snippet || '').substring(0, 6000) + '\\n\\nTesto Allegati:\\n' + ($json.attachmentText || '').substring(0, 4000) + '\\n\\nFonti Normative Trovate da Perplexity:\\n' + ($json.perplexityContext || 'Nessuna fonte trovata.').substring(0, 3000) + '\\n\\nLink Ufficiali Verificati:\\n' + (($json.perplexityCitations || []).join('\\n') || 'Nessun link trovato.') }}",
         "messages": {
           "messageValues": [
             {
-              "message": "Sei un assistente legale specializzato in Consulenza del Lavoro, Previdenza Sociale e Diritto Tributario/Fiscale in Italia. Il tuo compito è analizzare una newsletter o email di aggiornamento normativo (ricevuta da Teleconsul Lavoro, Dottrina Lavoro, o INPS) ed estrarre i dettagli per popolare un database Notion e catalogare gli atti. Rispondi SOLO con un oggetto JSON valido, nessun altro testo o spiegazione.\n\nI campi da estrarre sono:\n1. \"Titolo\": un titolo sintetico ed efficace in italiano per l'aggiornamento (max 80 caratteri).\n2. \"Fonte Newsletter\": deve essere esattamente uno dei seguenti valori:\n   - 'Teleconsul Lavoro' (se il mittente o l'oggetto contengono riferimenti a Teleconsul)\n   - 'Dottrina Lavoro' (se il mittente o l'oggetto contengono riferimenti a Dottrina Lavoro)\n   - 'Altra fonte' (se mittente è INPS o altro)\n3. \"Data Newsletter\": la data della newsletter in formato YYYY-MM-DD. Se non presente, usa la data dell'email in input.\n4. \"Materia\": deve essere esattamente uno dei seguenti valori in base all'argomento prevalente dell'atto:\n   - 'Lavoro'\n   - 'Previdenza'\n   - 'Fiscale'\n   - 'INPS'\n   - 'INAIL'\n   - 'Agenzia delle Entrate'\n   - 'Contenzioso'\n   - 'Altro'\n5. \"Tipo Atto\": deve essere esattamente uno dei seguenti valori:\n   - 'Circolare'\n   - 'Messaggio INPS'\n   - 'Decreto'\n   - 'Legge'\n   - 'Sentenza'\n   - 'Risoluzione AE'\n   - 'Nota MLPS'\n   - 'Altro'\n6. \"Numero Atto\": numero della circolare/messaggio/legge (es: '10/2026' o '45'). Se non presente, lascia stringa vuota \"\".\n7. \"Data Atto\": la data di pubblicazione dell'atto/circolare in formato YYYY-MM-DD. Se non presente, lascia nullo (null).\n8. \"Link Testo Ufficiale\": cerca se nell'email è presente un link diretto al testo ufficiale dell'atto. Se non presente, lascia stringa vuota \"\".\n9. \"Priorità\": deve essere esattamente uno dei seguenti valori:\n   - 'Alta' (se ci sono scadenze urgenti, sanzioni imminenti, o modifiche di grandissimo impatto)\n   - 'Media'\n   - 'Bassa'\n10. \"Sintesi Operativa\": un riassunto dettagliato dell'aggiornamento normativo in formato Markdown.\n11. \"Rischi e Scadenze\": elenca in formato Markdown eventuali rischi per le aziende, sanzioni, o scadenze temporali.\n12. \"Cosa Fare in Studio\": una checklist operativa in formato Markdown.\n13. \"Target Folder\": la cartella di catalogazione. Scegli in base a queste regole:\n    - Se l'aggiornamento riguarda l'INPS -> 'Inps'\n    - Se l'aggiornamento riguarda l'INAIL -> 'Inail'\n    - Se l'aggiornamento riguarda in generale il Diritto del Lavoro o Previdenza (non INPS/INAIL) -> 'Diritto del Lavoro'\n    - Se l'aggiornamento riguarda la normativa fiscale/tasse -> 'Normativa'\n14. \"Tags\": array di tag validi da questa lista: ['Ammortizzatori', 'NASpI', 'CIGO', 'CIGS', 'FIS', 'Pensioni', 'Contributi', 'Assunzioni', 'Contratti', 'Retribuzioni', 'Fiscale', '730', 'F24', 'Contenzioso', 'Scadenza']\n\nRispondi con una struttura JSON pulita:\n{\n  \"Titolo\": \"...\",\n  \"Fonte Newsletter\": \"...\",\n  \"Data Newsletter\": \"...\",\n  \"Materia\": \"...\",\n  \"Tipo Atto\": \"...\",\n  \"Numero Atto\": \"...\",\n  \"Data Atto\": \"...\" o null,\n  \"Link Testo Ufficiale\": \"...\",\n  \"Priorità\": \"...\",\n  \"Sintesi Operativa\": \"...\",\n  \"Rischi e Scadenze\": \"...\",\n  \"Cosa Fare in Studio\": \"...\",\n  \"Target Folder\": \"...\",\n  \"Tags\": [...]\n}",
-              "type": "SystemMessagePromptTemplate"
+              "message": "Sei un esperto giurista e consulente del lavoro in Italia. Devi redigere una RELAZIONE PROFESSIONALE completa e approfondita a partire da una newsletter normativa (Teleconsul Lavoro, Dottrina Lavoro o INPS).\n\nIl tuo output deve essere ESCLUSIVAMENTE un oggetto JSON valido, senza markdown o altro testo.\n\nCampi richiesti:\n1. \"Titolo\": titolo sintetico ed efficace (max 80 caratteri).\n2. \"Fonte Newsletter\": uno tra 'Teleconsul Lavoro', 'Dottrina Lavoro', 'Altra fonte'.\n3. \"Data Newsletter\": data in formato YYYY-MM-DD (se non presente usa la data email).\n4. \"Materia\": uno tra 'Lavoro', 'Previdenza', 'Fiscale', 'INPS', 'INAIL', 'Agenzia delle Entrate', 'Contenzioso', 'Altro'.\n5. \"Tipo Atto\": uno tra 'Circolare', 'Messaggio INPS', 'Decreto', 'Legge', 'Sentenza', 'Risoluzione AE', 'Nota MLPS', 'Altro'.\n6. \"Numero Atto\": numero dell'atto (es: '45/2026'). Se non presente, stringa vuota.\n7. \"Data Atto\": data in YYYY-MM-DD. Se non presente, null.\n8. \"Link Testo Ufficiale\": URL diretto al testo ufficiale se presente nell'email. Stringa vuota se assente.\n9. \"Priorit\u00e0\": 'Alta' (scadenze urgenti/sanzioni), 'Media', o 'Bassa'.\n10. \"Sintesi Operativa\": RELAZIONE PROFESSIONALE in Markdown con:\n    - **Inquadramento normativo**: contesto e riferimenti della norma, inclusi articoli di legge e atti precedenti\n    - **Contenuto e novit\u00e0**: spiegazione approfondita di cosa cambia e perch\u00e9\n    - **Impatto sui datori di lavoro e dipendenti**: chi \u00e8 coinvolto e come\n    - **Riferimenti normativi**: lista dei link alle fonti ufficiali in formato `[nome documento](URL)`. Includi link a Normattiva, Gazzetta Ufficiale, portale INPS/INAIL se disponibili nell'email o ragionevolmente inferibili\n    - Lunghezza: minimo 300 parole, massimo 1800 caratteri\n11. \"Rischi e Scadenze\": in Markdown, con:\n    - Elenco puntato delle scadenze temporali specifiche con date\n    - Sanzioni applicabili in caso di inadempimento con riferimenti normativi\n    - Impatto per tipologia di azienda (PMI, grandi imprese, lavoratori autonomi)\n12. \"Cosa Fare in Studio\": checklist operativa in Markdown con voci azionabili (usa `- [ ]` per ogni voce), come:\n    - Comunicazioni da inviare ai clienti\n    - Adempimenti da registrare in agenda\n    - Documentazione da predisporre\n    - Verifiche da effettuare sulle posizioni dei clienti\n13. \"Target Folder\": 'Inps' | 'Inail' | 'Diritto del Lavoro' | 'Normativa'\n14. \"Tags\": array da questa lista: ['Ammortizzatori', 'NASpI', 'CIGO', 'CIGS', 'FIS', 'Pensioni', 'Contributi', 'Assunzioni', 'Contratti', 'Retribuzioni', 'Fiscale', '730', 'F24', 'Contenzioso', 'Scadenza']"
             }
           ]
-        }
+        },
+        "batching": {}
       },
       "id": "node_claude_newsletter_analysis",
       "name": "Analisi Newsletter Claude",
@@ -1610,7 +1597,7 @@
       "typeVersion": 1.9,
       "position": [
         1600,
-        -96
+        -100
       ]
     },
     {
@@ -1630,7 +1617,7 @@
       "typeVersion": 1.3,
       "position": [
         1600,
-        112
+        100
       ],
       "credentials": {
         "anthropicApi": {
@@ -1642,7 +1629,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "var content = '';\ntry {\n  content = $('Analisi Newsletter Claude').item.json.text;\n} catch(e) {}\n\nvar clean = content.replace(/```json/g, '').replace(/```/g, '').trim();\nvar parsed = {};\ntry {\n  parsed = JSON.parse(clean);\n} catch(e) {\n  parsed = {\n    \"Titolo\": \"Aggiornamento Normativo - Errore Parsing JSON\",\n    \"Fonte Newsletter\": \"Altra fonte\",\n    \"Data Newsletter\": new Date().toISOString().split('T')[0],\n    \"Materia\": \"Altro\",\n    \"Tipo Atto\": \"Altro\",\n    \"Numero Atto\": \"\",\n    \"Data Atto\": null,\n    \"Link Testo Ufficiale\": \"\",\n    \"Priorità\": \"Media\",\n    \"Sintesi Operativa\": \"Non è stato possibile decodificare la risposta di Claude. Testo originale:\\n\\n\" + content,\n    \"Rischi e Scadenze\": \"\",\n    \"Cosa Fare in Studio\": \"\",\n    \"Target Folder\": \"Diritto del Lavoro\",\n    \"Tags\": []\n  };\n}\n\nvar folderMap = {\n  \"Diritto del Lavoro\": \"1CYrG2Uf0efLvxVUIh5Wnhso9-odJBhKO\",\n  \"Inps\": \"1vvQwb_nNrHUJdHXXWdJqCiQMUcfo9OD-\",\n  \"Inail\": \"1FesoLsYuyOUgMIFwiwvzpjhpiU5ad2Ux\",\n  \"Normativa\": \"1YDEdgxeuggzNYCx9MoICRw-8-qgWBwUK\"\n};\n\nparsed.parentFolderId = folderMap[parsed[\"Target Folder\"]] || \"1CYrG2Uf0efLvxVUIh5Wnhso9-odJBhKO\";\n\nvar triggerInfo = {};\ntry {\n  triggerInfo = $('Aggiungi Contesto Allegati').item.json;\n} catch(e) {}\n\nreturn Object.assign({}, triggerInfo, parsed);"
+        "jsCode": "var content = '';\ntry {\n  content = $('Analisi Newsletter Claude').item.json.text;\n} catch(e) {}\n\nvar clean = content.replace(/```json/g, '').replace(/```/g, '').trim();\nvar parsed = {};\ntry {\n  parsed = JSON.parse(clean);\n} catch(e) {\n  parsed = {\n    \"Titolo\": \"Aggiornamento Normativo - Errore Parsing JSON\",\n    \"Fonte Newsletter\": \"Altra fonte\",\n    \"Data Newsletter\": new Date().toISOString().split('T')[0],\n    \"Materia\": \"Altro\",\n    \"Tipo Atto\": \"Altro\",\n    \"Numero Atto\": \"\",\n    \"Data Atto\": null,\n    \"Link Testo Ufficiale\": \"\",\n    \"Priorit\u00e0\": \"Media\",\n    \"Sintesi Operativa\": \"Non \u00e8 stato possibile decodificare la risposta di Claude. Testo originale:\\n\\n\" + content,\n    \"Rischi e Scadenze\": \"\",\n    \"Cosa Fare in Studio\": \"\",\n    \"Target Folder\": \"Diritto del Lavoro\",\n    \"Tags\": []\n  };\n}\n\n// AGGIORNATO: punta alle sottocartelle \"Aggiornamenti Normativi\" create il 13/06/2026\nvar folderMap = {\n  \"Diritto del Lavoro\": \"1c4fa3XtcizvBzMou6Vv2belv6W2f3pdD\",\n  \"Inps\": \"1y_umf_2gagaY2wLrfCRe7O0Au0OfjFMZ\",\n  \"Inail\": \"1Hp7zWFUo1KAD2S7laJDqA9wqNkIQVaza\",\n  \"Normativa\": \"1ihn4aEzXvFchh2FjwqrQhugjSn5bPYqu\"\n};\n\nparsed.parentFolderId = folderMap[parsed[\"Target Folder\"]] || \"1c4fa3XtcizvBzMou6Vv2belv6W2f3pdD\";\n\nvar triggerInfo = {};\ntry {\n  triggerInfo = $('Aggiungi Contesto Allegati').item.json;\n} catch(e) {}\n\nreturn Object.assign({}, triggerInfo, parsed);"
       },
       "id": "node_parsed_analysis",
       "name": "Parsed Analysis",
@@ -1650,24 +1637,19 @@
       "typeVersion": 2,
       "position": [
         1760,
-        -96
+        -100
       ]
     },
     {
       "parameters": {
         "resource": "folder",
         "name": "={{ $json[\"Data Newsletter\"] }} - {{ $json[\"Tipo Atto\"] }}{{ $json[\"Numero Atto\"] ? \" \" + $json[\"Numero Atto\"] : \"\" }} - {{ $json[\"Titolo\"] }}",
-        "driveId": {
-          "__rl": true,
-          "mode": "list",
-          "value": "My Drive"
-        },
+        "options": {},
         "folderId": {
           "__rl": true,
           "value": "={{ $json.parentFolderId }}",
           "mode": "id"
-        },
-        "options": {}
+        }
       },
       "id": "node_create_drive_folder",
       "name": "Crea Cartella Aggiornamento",
@@ -1675,7 +1657,7 @@
       "typeVersion": 3,
       "position": [
         1920,
-        -96
+        -100
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
@@ -1687,7 +1669,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "var parsed = $('Parsed Analysis').item.json;\nvar folderId = $json.id;\nvar folderUrl = $json.webViewLink || '';\n\nvar dataStr = parsed[\"Data Newsletter\"] || new Date().toISOString().split('T')[0];\nvar tagsList = (parsed[\"Tags\"] || []).map(t => '  - \"#' + t + '\"').join('\\n');\nif (parsed[\"Materia\"]) {\n  tagsList += '\\n  - \"#' + parsed[\"Materia\"] + '\"';\n}\ntagsList += '\\n  - \"#aggiornamento_normativo\"';\n\nvar emailContent = parsed.text || parsed.snippet || 'Testo email non disponibile.';\n\nvar markdown = `---\\ndata: \"${dataStr}\"\\nfonte: \"${parsed[\"Fonte Newsletter\"] || 'Sconosciuta'}\"\\nmateria: \"${parsed[\"Materia\"] || 'Altro'}\"\\ntipo_atto: \"${parsed[\"Tipo Atto\"] || 'Altro'}\"\\nnumero_atto: \"${parsed[\"Numero Atto\"] || ''}\"\\ndata_atto: \"${parsed[\"Data Atto\"] || ''}\"\\npriorita: \"${parsed[\"Priorità\"] || 'Media'}\"\\ntags:\\n${tagsList}\\n---\\n# ${parsed[\"Titolo\"]}\\n\\n## 📰 Sintesi Operativa\\n${parsed[\"Sintesi Operativa\"] || 'Nessuna sintesi fornita.'}\\n\\n## ⚠️ Rischi e Scadenze\\n${parsed[\"Rischi e Scadenze\"] || 'Nessun rischio o scadenza identificata.'}\\n\\n## 🛠️ Cosa Fare in Studio\\n${parsed[\"Cosa Fare in Studio\"] || 'Nessun adempimento operativo specificato.'}\\n\\n---\\n\\n## 📎 Riferimenti\\n- **Link Testo Ufficiale:** ${parsed[\"Link Testo Ufficiale\"] ? '[' + parsed[\"Link Testo Ufficiale\"].substring(0,60) + '...](' + parsed[\"Link Testo Ufficiale\"] + ')' : 'Non presente'}\\n- **Cartella Google Drive:** [Apri su Drive](${folderUrl})\\n\\n---\\n\\n## 📧 Email Originale\\n> [!NOTE] Dettagli Email\\n> **Oggetto:** ${parsed.subject || ''}\\n> **Mittente:** ${parsed.from || ''}\\n> **Data:** ${parsed.date || ''}\\n\\n\\`\\`\\`text\\n${emailContent}\\n\\`\\`\\`\\n`;\n\nvar filename = dataStr + ' - ' + (parsed[\"Tipo Atto\"] || 'Aggiornamento') + (parsed[\"Numero Atto\"] ? ' ' + parsed[\"Numero Atto\"] : '') + ' - ' + (parsed[\"Titolo\"] || 'Nota').replace(/[/\\\\?%*:|\"<>]/g, '-') + '.md';\n\nvar result = {\n  json: Object.assign({}, parsed, {\n    noteFolderId: folderId,\n    noteFolderUrl: folderUrl,\n    noteFileName: filename\n  }),\n  binary: {\n    data: {\n      data: Buffer.from(markdown).toString('base64'),\n      mimeType: 'text/markdown',\n      fileName: filename\n    }\n  }\n};\n\nreturn result;"
+        "jsCode": "var parsed = $('Parsed Analysis').item.json;\nvar folderId = $json.id;\nvar folderUrl = $json.webViewLink || '';\n\nvar dataStr = parsed[\"Data Newsletter\"] || new Date().toISOString().split('T')[0];\nvar tagsList = (parsed[\"Tags\"] || []).map(t => '  - \"#' + t + '\"').join('\\n');\nif (parsed[\"Materia\"]) {\n  tagsList += '\\n  - \"#' + parsed[\"Materia\"] + '\"';\n}\ntagsList += '\\n  - \"#aggiornamento_normativo\"';\n\nvar emailContent = parsed.text || parsed.snippet || 'Testo email non disponibile.';\n\nvar markdown = `---\ndata: \"${dataStr}\"\nfonte: \"${parsed[\"Fonte Newsletter\"] || 'Sconosciuta'}\"\nmateria: \"${parsed[\"Materia\"] || 'Altro'}\"\ntipo_atto: \"${parsed[\"Tipo Atto\"] || 'Altro'}\"\nnumero_atto: \"${parsed[\"Numero Atto\"] || ''}\"\ndata_atto: \"${parsed[\"Data Atto\"] || ''}\"\npriorita: \"${parsed[\"Priorit\u00e0\"] || 'Media'}\"\ntags:\n${tagsList}\n---\n# ${parsed[\"Titolo\"] || 'Aggiornamento Normativo'}\n\n> [!INFO] Fonte\n> **Mittente:** ${parsed.from || ''} | **Data:** ${dataStr} | **Priorit\u00e0:** ${parsed[\"Priorit\u00e0\"] || 'Media'}\n\n## \ud83d\udcf0 Relazione Professionale\n\n${parsed[\"Sintesi Operativa\"] || 'Nessuna sintesi fornita.'}\n\n## \u26a0\ufe0f Rischi e Scadenze\n\n${parsed[\"Rischi e Scadenze\"] || 'Nessun rischio o scadenza identificata.'}\n\n## \ud83d\udee0\ufe0f Cosa Fare in Studio\n\n${parsed[\"Cosa Fare in Studio\"] || 'Nessun adempimento operativo specificato.'}\n\n---\n\n## \ud83d\udcce Riferimenti\n\n- **Testo Ufficiale:** ${parsed[\"Link Testo Ufficiale\"] ? '[Apri documento ufficiale](' + parsed[\"Link Testo Ufficiale\"] + ')' : 'Non presente'}\n- **Cartella Google Drive:** [Apri cartella su Drive](${folderUrl})\n- **Atto:** ${parsed[\"Tipo Atto\"] || ''} ${parsed[\"Numero Atto\"] || ''} del ${parsed[\"Data Atto\"] || dataStr}\n\n---\n\n## \ud83d\udce7 Email Originale\n\n> [!NOTE] Dettagli Email\n> **Oggetto:** ${parsed.subject || ''}\n> **Mittente:** ${parsed.from || ''}\n> **Data:** ${parsed.date || ''}\n\n\\`\\`\\`text\n${emailContent.substring(0, 3000)}\n\\`\\`\\`\n`;\n\nvar filename = dataStr + ' - ' + (parsed[\"Tipo Atto\"] || 'Aggiornamento') + (parsed[\"Numero Atto\"] ? ' ' + parsed[\"Numero Atto\"] : '') + ' - ' + (parsed[\"Titolo\"] || 'Nota').replace(/[\\/\\\\?%*:|\"<>]/g, '-') + '.md';\n\nvar result = {\n  json: Object.assign({}, parsed, {\n    noteFolderId: folderId,\n    noteFolderUrl: folderUrl,\n    noteFileName: filename\n  }),\n  binary: {\n    data: {\n      data: Buffer.from(markdown).toString('base64'),\n      mimeType: 'text/markdown',\n      fileName: filename\n    }\n  }\n};\n\nreturn result;"
       },
       "id": "node_prepare_obsidian_note",
       "name": "Prepara Nota Obsidian",
@@ -1695,23 +1677,17 @@
       "typeVersion": 2,
       "position": [
         2080,
-        -96
+        -100
       ]
     },
     {
       "parameters": {
+        "resource": "file",
+        "operation": "upload",
+        "binaryData": true,
+        "binaryPropertyName": "data",
         "name": "={{ $json.noteFileName }}",
-        "driveId": {
-          "__rl": true,
-          "mode": "list",
-          "value": "My Drive"
-        },
-        "folderId": {
-          "__rl": true,
-          "mode": "list",
-          "value": "root",
-          "cachedResultName": "/ (Root folder)"
-        },
+        "parents": "={{ [$json.noteFolderId] }}",
         "options": {}
       },
       "id": "node_save_obsidian_note",
@@ -1720,14 +1696,15 @@
       "typeVersion": 3,
       "position": [
         2240,
-        -96
+        -100
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
           "id": "11MnaLtExdUMB3f9",
           "name": "Google Drive account"
         }
-      }
+      },
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -1738,7 +1715,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
+              "value": "Bearer ntn_YOUR_NOTION_TOKEN_HERE"
             },
             {
               "name": "Notion-Version",
@@ -1753,8 +1730,7 @@
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({\n  parent: { database_id: '536f8767-0d24-4e77-838d-57eb65d2bdd0' },\n  properties: {\n    \"Titolo\": { title: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Titolo\"] || \"Aggiornamento Normativo\").substring(0, 100) } }] },\n    \"Fonte Newsletter\": $('Prepara Nota Obsidian').item.json[\"Fonte Newsletter\"] ? { select: { name: $('Prepara Nota Obsidian').item.json[\"Fonte Newsletter\"] } } : undefined,\n    \"Data Newsletter\": $('Prepara Nota Obsidian').item.json[\"Data Newsletter\"] ? { date: { start: $('Prepara Nota Obsidian').item.json[\"Data Newsletter\"] } } : undefined,\n    \"Materia\": $('Prepara Nota Obsidian').item.json[\"Materia\"] ? { select: { name: $('Prepara Nota Obsidian').item.json[\"Materia\"] } } : undefined,\n    \"Tipo Atto\": $('Prepara Nota Obsidian').item.json[\"Tipo Atto\"] ? { select: { name: $('Prepara Nota Obsidian').item.json[\"Tipo Atto\"] } } : undefined,\n    \"Numero Atto\": { rich_text: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Numero Atto\"] || \"\").substring(0, 100) } }] },\n    \"Data Atto\": $('Prepara Nota Obsidian').item.json[\"Data Atto\"] ? { date: { start: $('Prepara Nota Obsidian').item.json[\"Data Atto\"] } } : undefined,\n    \"Link Testo Ufficiale\": $('Prepara Nota Obsidian').item.json[\"Link Testo Ufficiale\"] ? { url: $('Prepara Nota Obsidian').item.json[\"Link Testo Ufficiale\"] } : undefined,\n    \"PDF su Drive\": $('Prepara Nota Obsidian').item.json.noteFolderUrl ? { url: $('Prepara Nota Obsidian').item.json.noteFolderUrl } : undefined,\n    \"Sintesi Operativa\": { rich_text: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Sintesi Operativa\"] || \"\").substring(0, 1900) } }] },\n    \"Rischi e Scadenze\": { rich_text: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Rischi e Scadenze\"] || \"\").substring(0, 1900) } }] },\n    \"Cosa Fare in Studio\": { rich_text: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Cosa Fare in Studio\"] || \"\").substring(0, 1900) } }] },\n    \"Priorità\": $('Prepara Nota Obsidian').item.json[\"Priorità\"] ? { select: { name: $('Prepara Nota Obsidian').item.json[\"Priorità\"] } } : undefined,\n    \"Stato\": { select: { name: \"Nuovo\" } },\n    \"Elaborato da n8n\": { checkbox: true },\n    \"Tags\": { multi_select: ($('Prepara Nota Obsidian').item.json[\"Tags\"] || []).map(t => ({ name: t })) }\n  }\n}) }}",
-        "options": {}
+        "body": "={{ JSON.stringify({\n  parent: { database_id: '536f8767-0d24-4e77-838d-57eb65d2bdd0' },\n  properties: {\n    \"Titolo\": { title: [{ text: { content: ($json[\"Titolo\"] || \"Aggiornamento Normativo\").substring(0, 100) } }] },\n    \"Fonte Newsletter\": $json[\"Fonte Newsletter\"] ? { select: { name: $json[\"Fonte Newsletter\"] } } : undefined,\n    \"Data Newsletter\": $json[\"Data Newsletter\"] ? { date: { start: $json[\"Data Newsletter\"] } } : undefined,\n    \"Materia\": $json[\"Materia\"] ? { select: { name: $json[\"Materia\"] } } : undefined,\n    \"Tipo Atto\": $json[\"Tipo Atto\"] ? { select: { name: $json[\"Tipo Atto\"] } } : undefined,\n    \"Numero Atto\": { rich_text: [{ text: { content: ($json[\"Numero Atto\"] || \"\").substring(0, 100) } }] },\n    \"Data Atto\": $json[\"Data Atto\"] ? { date: { start: $json[\"Data Atto\"] } } : undefined,\n    \"Link Testo Ufficiale\": $json[\"Link Testo Ufficiale\"] ? { url: $json[\"Link Testo Ufficiale\"] } : undefined,\n    \"PDF su Drive\": $json.noteFolderUrl ? { url: $json.noteFolderUrl } : undefined,\n    \"Sintesi Operativa\": { rich_text: [{ text: { content: ($json[\"Sintesi Operativa\"] || \"\").substring(0, 1900) } }] },\n    \"Rischi e Scadenze\": { rich_text: [{ text: { content: ($json[\"Rischi e Scadenze\"] || \"\").substring(0, 1900) } }] },\n    \"Cosa Fare in Studio\": { rich_text: [{ text: { content: ($json[\"Cosa Fare in Studio\"] || \"\").substring(0, 1900) } }] },\n    \"Priorit\u00e0\": $json[\"Priorit\u00e0\"] ? { select: { name: $json[\"Priorit\u00e0\"] } } : undefined,\n    \"Stato\": { select: { name: \"Nuovo\" } },\n    \"Elaborato da n8n\": { checkbox: true },\n    \"Tags\": { multi_select: ($json[\"Tags\"] || []).map(t => ({ name: t })) }\n  }\n}) }}"
       },
       "id": "node_save_notion_updates",
       "name": "Salva su Notion Aggiornamenti",
@@ -1762,8 +1738,9 @@
       "typeVersion": 4.2,
       "position": [
         2400,
-        -96
-      ]
+        -100
+      ],
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -1795,11 +1772,12 @@
       "typeVersion": 2.2,
       "position": [
         2560,
-        -96
+        -100
       ]
     },
     {
       "parameters": {
+        "mode": "runOnceForAllItems",
         "jsCode": "var files = [];\ntry {\n  files = $('Estrai Testo File').all();\n} catch(e) {}\n\nvar folderId = $('Crea Cartella Aggiornamento').item.json.id;\n\nreturn files.map(fileItem => {\n  var key = fileItem.json.key;\n  var name = fileItem.json.fileName || 'allegato';\n  \n  var result = {\n    json: {\n      parentFolderId: folderId,\n      fileName: name,\n      binaryKey: key\n    },\n    binary: {}\n  };\n  \n  if (fileItem.binary && fileItem.binary[key]) {\n    result.binary[key] = fileItem.binary[key];\n  }\n  \n  return result;\n});"
       },
       "id": "node_prepare_attachments_upload",
@@ -1808,23 +1786,17 @@
       "typeVersion": 2,
       "position": [
         2720,
-        -208
+        -200
       ]
     },
     {
       "parameters": {
+        "resource": "file",
+        "operation": "upload",
+        "binaryData": true,
+        "binaryPropertyName": "={{ $json.binaryKey }}",
         "name": "={{ $json.fileName }}",
-        "driveId": {
-          "__rl": true,
-          "mode": "list",
-          "value": "My Drive"
-        },
-        "folderId": {
-          "__rl": true,
-          "mode": "list",
-          "value": "root",
-          "cachedResultName": "/ (Root folder)"
-        },
+        "parents": "={{ [$json.parentFolderId] }}",
         "options": {}
       },
       "id": "node_save_attachments_drive",
@@ -1833,105 +1805,61 @@
       "typeVersion": 3,
       "position": [
         2880,
-        -208
+        -200
       ],
       "credentials": {
         "googleDriveOAuth2Api": {
           "id": "11MnaLtExdUMB3f9",
           "name": "Google Drive account"
         }
-      }
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "id",
-          "value": "anthropic/claude-haiku-4.5"
-        },
-        "options": {
-          "maxTokens": 100
-        }
       },
-      "id": "node6-openrouter",
-      "name": "OpenRouter Classificatore",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
-      "typeVersion": 1,
-      "position": [
-        2288,
-        800
-      ],
-      "credentials": {
-        "openRouterApi": {
-          "id": "BYSYxqd8P5VUBbBQ",
-          "name": "OpenRouter account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "id",
-          "value": "anthropic/claude-haiku-4.5"
-        },
-        "options": {
-          "maxTokens": 200
-        }
-      },
-      "id": "node10-openrouter",
-      "name": "OpenRouter Argomento",
-      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
-      "typeVersion": 1,
-      "position": [
-        2576,
-        512
-      ],
-      "credentials": {
-        "openRouterApi": {
-          "id": "BYSYxqd8P5VUBbBQ",
-          "name": "OpenRouter account"
-        }
-      }
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
         "method": "POST",
         "url": "https://api.perplexity.ai/chat/completions",
-        "authentication": "predefinedCredentialType",
-        "nodeCredentialType": "perplexityApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer pplx-YOUR_PERPLEXITY_KEY_HERE"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
         "sendBody": true,
         "contentType": "raw",
         "rawContentType": "application/json",
-        "body": "={{ JSON.stringify({ model: 'sonar', messages: [ { role: 'system', content: 'Sei un assistente di ricerca normativa per un Consulente del Lavoro italiano. Rispondi in italiano, in modo sintetico, citando sempre la fonte normativa precisa (legge/decreto/circolare) e la data. Non inventare riferimenti normativi che non trovi nelle fonti.' }, { role: 'user', content: $json.webSearchQuery } ], return_citations: true, search_domain_filter: ['gazzettaufficiale.it','normattiva.it','inps.it','inail.it','lavoro.gov.it'] }) }}",
+        "body": "={{ JSON.stringify({\n  model: 'sonar-pro',\n  messages: [\n    {\n      role: 'system',\n      content: 'Sei un esperto di normativa italiana del lavoro, previdenza e fisco. Trova le fonti ufficiali, i testi normativi e i link verificati relativi alla query. Rispondi in italiano con un elenco strutturato delle fonti trovate e una breve spiegazione del contenuto normativo.'\n    },\n    {\n      role: 'user',\n      content: 'Trova le fonti normative ufficiali italiane per: ' + ($json.subject || '') + '. Email ricevuta da: ' + (($json.from && $json.from.value && $json.from.value[0] && $json.from.value[0].address) || '') + '. Testo email: ' + ($json.text || $json.snippet || '').substring(0, 1500)\n    }\n  ],\n  return_citations: true,\n  return_related_questions: false,\n  search_recency_filter: 'month',\n  temperature: 0.1\n}) }}",
         "options": {}
       },
-      "id": "nodeGoogleHTTP",
-      "name": "Cerca su Perplexity",
+      "id": "node_perplexity_search",
+      "name": "Cerca Fonti Normative (Perplexity)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2256,
-        560
+        1440,
+        -100
       ],
-      "credentials": {
-        "perplexityApi": {
-          "id": "LtQ7Cvl4Tana0ktu",
-          "name": "Perplexity account"
-        }
-      }
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
-        "jsCode": "var input = $input.first().json;\nvar perplexityResults = 'Nessun risultato trovato su Perplexity.';\ntry {\n  var content = (input.choices && input.choices[0] && input.choices[0].message && input.choices[0].message.content) || '';\n  var citations = input.citations || [];\n  if (content) {\n    perplexityResults = 'Risposta Perplexity:\\n\\n' + content;\n    if (citations.length > 0) {\n      perplexityResults += '\\n\\nFonti:\\n' + citations.map(function(c, i) { return (i + 1) + '. ' + c; }).join('\\n');\n    }\n  }\n} catch(e) { perplexityResults = ''; }\nvar mappaData = {};\ntry { mappaData = $('Mappa Argomento a Cartella').first().json; } catch(e) {}\nreturn [{ json: {\n  topic: mappaData.topic || 'GENERALE',\n  driveFolder: mappaData.driveFolder || '',\n  driveQuery: mappaData.driveQuery || '',\n  folderSearchQuery: mappaData.driveQuery || '',\n  webSearchQuery: mappaData.webSearchQuery || '',\n  googleResults: perplexityResults\n}}];"
+        "mode": "runOnceForEachItem",
+        "jsCode": "// Recupera i dati dell'email originale da Aggiungi Contesto Allegati\nvar emailCtx = {};\ntry { emailCtx = $('Aggiungi Contesto Allegati').item.json || {}; } catch(e) {}\n\n// Recupera il risultato di Perplexity\nvar perplexityText = '';\nvar citations = [];\ntry {\n  var pxData = $('Cerca Fonti Normative (Perplexity)').item.json;\n  if (pxData && pxData.choices && pxData.choices[0]) {\n    perplexityText = pxData.choices[0].message.content || '';\n  }\n  if (pxData && pxData.citations) {\n    citations = pxData.citations;\n  }\n} catch(e) {\n  perplexityText = '';\n  citations = [];\n}\n\n// Formatta le citazioni come link Markdown\nvar citationsText = '';\nif (citations.length > 0) {\n  citationsText = '\\n\\n=== FONTI UFFICIALI TROVATE (Perplexity) ===\\n' +\n    citations.map((url, i) => (i + 1) + '. ' + url).join('\\n');\n}\n\nvar perplexityContext = '';\nif (perplexityText) {\n  perplexityContext = '\\n\\n=== RICERCA NORMATIVA (Perplexity) ===\\n' + perplexityText + citationsText;\n}\n\n// Aggiungi il contesto Perplexity al campo attachmentText\nreturn Object.assign({}, emailCtx, {\n  perplexityContext: perplexityContext,\n  perplexityCitations: citations,\n  // Estende attachmentText con le fonti Perplexity\n  attachmentText: (emailCtx.attachmentText || '') + perplexityContext\n});"
       },
-      "id": "nodeGoogleParse",
-      "name": "Elabora Risultati Perplexity",
+      "id": "node_arricchisci_contesto_newsletter",
+      "name": "Arricchisci Contesto Newsletter",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2544,
-        560
+        1520,
+        -100
       ]
     }
   ],
@@ -1941,7 +1869,7 @@
         [],
         [
           {
-            "node": "È Newsletter Normativa?",
+            "node": "\u00c8 Newsletter Normativa?",
             "type": "main",
             "index": 0
           }
@@ -2594,14 +2522,14 @@
       "main": [
         [
           {
-            "node": "È un file ZIP?",
+            "node": "\u00c8 un file ZIP?",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "È un file ZIP?": {
+    "\u00c8 un file ZIP?": {
       "main": [
         [
           {
@@ -2719,11 +2647,11 @@
         ]
       ]
     },
-    "È Newsletter Normativa?": {
+    "\u00c8 Newsletter Normativa?": {
       "main": [
         [
           {
-            "node": "Analisi Newsletter Claude",
+            "node": "Cerca Fonti Normative (Perplexity)",
             "type": "main",
             "index": 0
           }
@@ -2841,2985 +2769,42 @@
           }
         ]
       ]
+    },
+    "Cerca Fonti Normative (Perplexity)": {
+      "main": [
+        [
+          {
+            "node": "Arricchisci Contesto Newsletter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Arricchisci Contesto Newsletter": {
+      "main": [
+        [
+          {
+            "node": "Analisi Newsletter Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
-    "executionOrder": "v1",
-    "timezone": "Europe/Rome",
-    "saveDataErrorExecution": "all",
-    "saveDataSuccessExecution": "all",
-    "binaryMode": "separate",
-    "timeSavedMode": "fixed",
-    "callerPolicy": "workflowsFromSameOwner",
-    "availableInMCP": true
+    "executionOrder": "v1"
   },
   "staticData": {
     "node:Gmail Trigger": {
       "Gmail Trigger": {
-        "lastTimeChecked": 1782617513,
+        "lastTimeChecked": 1781173888,
         "possibleDuplicates": [
-          "19f0c489c9af253d",
-          "19f0c429a877a392"
+          "19eb63cce90e91aa",
+          "19eb63c7ebb96f33"
         ]
       }
     }
-  },
-  "meta": {
-    "templateCredsSetupCompleted": true
-  },
-  "pinData": {
-    "Gmail Trigger": [
-      {
-        "json": {
-          "id": "19eccc17a32ebb75",
-          "threadId": "19eccc11f73727fc",
-          "labelIds": [
-            "UNREAD",
-            "IMPORTANT",
-            "SENT",
-            "INBOX"
-          ],
-          "sizeEstimate": 1747850,
-          "headers": {
-            "mime-version": "MIME-Version: 1.0",
-            "date": "Date: Mon, 15 Jun 2026 21:28:11 +0200",
-            "message-id": "Message-ID: <CAHH2FSFrDvhNju3swNzTOS9+-GAbvJwUX=oi+itc_c0T+bh=Yg@mail.gmail.com>",
-            "subject": "Subject: ",
-            "from": "From: Attilio Assirelli <attilio.assirelli@gmail.com>",
-            "to": "To: Attilio Assirelli <Attilio.assirelli@gmail.com>",
-            "content-type": "Content-Type: multipart/mixed; boundary=\"000000000000c4feab06544fd300\""
-          },
-          "html": "<div dir=\"ltr\"><div><br clear=\"all\"></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\">DOTT. ASSIRELLI ATTILIO</div></div></div>\n",
-          "text": "-- \nDOTT. ASSIRELLI ATTILIO\n",
-          "textAsHtml": "<p>--<br/>DOTT. ASSIRELLI ATTILIO</p>",
-          "date": "2026-06-15T19:28:11.000Z",
-          "to": {
-            "value": [
-              {
-                "address": "Attilio.assirelli@gmail.com",
-                "name": "Attilio Assirelli"
-              }
-            ],
-            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Attilio Assirelli</span> &lt;<a href=\"mailto:Attilio.assirelli@gmail.com\" class=\"mp_address_email\">Attilio.assirelli@gmail.com</a>&gt;</span>",
-            "text": "\"Attilio Assirelli\" <Attilio.assirelli@gmail.com>"
-          },
-          "from": {
-            "value": [
-              {
-                "address": "attilio.assirelli@gmail.com",
-                "name": "Attilio Assirelli"
-              }
-            ],
-            "html": "<span class=\"mp_address_group\"><span class=\"mp_address_name\">Attilio Assirelli</span> &lt;<a href=\"mailto:attilio.assirelli@gmail.com\" class=\"mp_address_email\">attilio.assirelli@gmail.com</a>&gt;</span>",
-            "text": "\"Attilio Assirelli\" <attilio.assirelli@gmail.com>"
-          },
-          "messageId": "<CAHH2FSFrDvhNju3swNzTOS9+-GAbvJwUX=oi+itc_c0T+bh=Yg@mail.gmail.com>"
-        },
-        "binary": {
-          "attachment_0": {
-            "mimeType": "application/pdf",
-            "fileType": "pdf",
-            "fileExtension": "pdf",
-            "data": "filesystem-v2",
-            "fileName": "modello.pdf",
-            "id": "filesystem-v2:workflows/634G5sX55sgsYpvz/executions/temp/binary_data/e73d5b49-a084-4425-a59f-08f7ff01a095",
-            "fileSize": "1.28 MB",
-            "bytes": 1276419
-          }
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
-    ]
-  },
-  "versionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
-  "activeVersionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
-  "versionCounter": 2391,
-  "triggerCount": 1,
-  "shared": [
-    {
-      "updatedAt": "2026-05-11T05:31:39.893Z",
-      "createdAt": "2026-05-11T05:31:39.893Z",
-      "role": "workflow:owner",
-      "workflowId": "634G5sX55sgsYpvz",
-      "projectId": "s5JnDMGFcGIbM4q1",
-      "project": {
-        "updatedAt": "2026-05-18T17:52:40.891Z",
-        "createdAt": "2026-05-09T08:51:41.984Z",
-        "id": "s5JnDMGFcGIbM4q1",
-        "name": "Attilio Assirelli <attilio.assirelli@gmail.com>",
-        "type": "personal",
-        "icon": null,
-        "description": null,
-        "creatorId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
-      }
-    }
-  ],
-  "tags": [],
-  "activeVersion": {
-    "updatedAt": "2026-06-28T03:33:14.341Z",
-    "createdAt": "2026-06-28T03:33:14.341Z",
-    "versionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
-    "workflowId": "634G5sX55sgsYpvz",
-    "nodes": [
-      {
-        "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "mode": "everyMinute"
-              }
-            ]
-          },
-          "simple": false,
-          "filters": {},
-          "options": {
-            "downloadAttachments": true
-          }
-        },
-        "id": "node1",
-        "name": "Gmail Trigger",
-        "type": "n8n-nodes-base.gmailTrigger",
-        "typeVersion": 1.3,
-        "position": [
-          0,
-          304
-        ],
-        "credentials": {
-          "gmailOAuth2": {
-            "id": "i2Ruggq5iDNBD8Vq",
-            "name": "Gmail account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": false,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-self",
-                "leftValue": "={{ $json.from.value[0].address }}",
-                "rightValue": "attilio.assirelli@gmail.com",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "filter-self-email",
-        "name": "Ignora Email da Se Stesso",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          1232,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "label"
-        },
-        "id": "node2",
-        "name": "Recupera Etichette Gmail",
-        "type": "n8n-nodes-base.gmail",
-        "typeVersion": 2.2,
-        "position": [
-          1456,
-          304
-        ],
-        "webhookId": "7db15a14-8090-454b-ad72-5fce18fd8bbb",
-        "credentials": {
-          "gmailOAuth2": {
-            "id": "i2Ruggq5iDNBD8Vq",
-            "name": "Gmail account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "var allLabels = $input.all().map(function(item) { return item.json; });\nvar emailData = $('Gmail Trigger').item.json;\nvar emailLabelIds = emailData.labelIds || [];\nvar isClienti = allLabels.some(function(label) {\n  return emailLabelIds.includes(label.id) && label.name && label.name.toUpperCase().startsWith('CLIENTI');\n});\nvar isPromotional = emailLabelIds.some(function(id) {\n  return ['CATEGORY_PROMOTIONS', 'CATEGORY_SOCIAL'].includes(id);\n});\nvar fromField = emailData.from;\nvar fromEmail = '';\nif (fromField && typeof fromField === 'object' && fromField.value && fromField.value.length > 0) {\n  fromEmail = (fromField.value[0].address || '').toLowerCase();\n} else if (typeof fromField === 'string') {\n  var match = fromField.match(/<([^>]+)>/);\n  fromEmail = match ? match[1].toLowerCase() : fromField.toLowerCase();\n}\nvar isSelfEmail = fromEmail === 'attilio.assirelli@gmail.com';\nvar collaboratorPatterns = [\n  { pattern: 'ROSA ASSIRELLI', folder: 'ROSA ASSIRELLI' },\n  { pattern: 'NICOLA MAROTTA', folder: 'Nicola Marotta' },\n  { pattern: 'FRANCESCO DURANTI', folder: 'Francesco Duranti' },\n  { pattern: 'LEGALADVICE', folder: 'LegalAdvice' }\n];\nvar collaborator = null;\nallLabels.forEach(function(label) {\n  if (emailLabelIds.includes(label.id) && label.name) {\n    var upperName = label.name.toUpperCase();\n    collaboratorPatterns.forEach(function(cp) {\n      if (upperName.includes(cp.pattern)) { collaborator = cp.folder; }\n    });\n  }\n});\nreturn [{ json: {\n  isClientiEmail: isClienti, isPromotional: isPromotional, isSelfEmail: isSelfEmail,\n  collaborator: collaborator, source: 'email', whatsappFrom: '', phoneNumberId: '',\n  id: emailData.id || '', threadId: emailData.threadId || '',\n  from: emailData.from || '', to: emailData.to || '',\n  subject: emailData.subject || '', snippet: emailData.snippet || '',\n  text: emailData.text || '', html: emailData.html || '',\n  date: emailData.date || '', labelIds: emailData.labelIds || []\n} }];"
-        },
-        "id": "node3",
-        "name": "Controlla Etichetta CLIENTI",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          1728,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-clienti",
-                "leftValue": "={{ $json.isClientiEmail }}",
-                "rightValue": true,
-                "operator": {
-                  "type": "boolean",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "node4",
-        "name": "Email da CLIENTI?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          2016,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "promptType": "define",
-          "text": "={{ 'Oggetto: ' + $json.subject + '\\n\\nMittente: ' + ($json.from && $json.from.value && $json.from.value[0] ? $json.from.value[0].address : String($json.from || '')) + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 1500) }}",
-          "messages": {
-            "messageValues": [
-              {
-                "message": "Sei un classificatore di email per Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale che offre anche consulenza fiscale.\n\nAnalizza l'email e classifica se è:\n- WORK_RELATED: riguarda consulenza del lavoro, elaborazione paghe, INPS, INAIL, diritto del lavoro, previdenza sociale, consulenza fiscale, dichiarazioni fiscali, contenzioso, cedolini, buste paga, contratti di lavoro, assunzioni, licenziamenti\n- PROMOTIONAL: email pubblicitaria, newsletter, offerta commerciale, promozione, marketing, notifica automatica da servizi o piattaforme\n- PERSONAL: email personale non attinente all'attività professionale\n\nRispondi SOLO con JSON valido, nessun altro testo:\n{\"category\": \"WORK_RELATED\"} oppure {\"category\": \"PROMOTIONAL\"} oppure {\"category\": \"PERSONAL\"}",
-                "type": "SystemMessagePromptTemplate"
-              }
-            ]
-          }
-        },
-        "id": "node5",
-        "name": "Classificatore Email",
-        "type": "@n8n/n8n-nodes-langchain.chainLlm",
-        "typeVersion": 1.9,
-        "position": [
-          2288,
-          608
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-work",
-                "leftValue": "={{ (() => { try { var t = $json.text || ''; var m = t.match(/\\{[\\s\\S]*\\}/); if (m) { return JSON.parse(m[0]).category || t; } return t; } catch(e) { return $json.text || ''; } })() }}",
-                "rightValue": "WORK_RELATED",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "node8",
-        "name": "Email Lavorativa?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          2848,
-          608
-        ]
-      },
-      {
-        "parameters": {
-          "promptType": "define",
-          "text": "={{ 'Oggetto: ' + $('Controlla Etichetta CLIENTI').item.json.subject + '\\n\\nMittente: ' + $('Controlla Etichetta CLIENTI').item.json.from + '\\n\\nContenuto:\\n' + ($('Controlla Etichetta CLIENTI').item.json.text || $('Controlla Etichetta CLIENTI').item.json.snippet || '').substring(0, 1500) }}",
-          "messages": {
-            "messageValues": [
-              {
-                "message": "Sei un analizzatore di email per un Consulente del Lavoro e della Previdenza Sociale.\n\nAnalizza l'email e identifica:\n1. Il topic principale (scegli ESATTAMENTE uno tra): PAGHE, DIRITTO_LAVORO, PREVIDENZA, INPS, INAIL, AGGIORNAMENTI, FISCALE_NORMATIVA, FISCALE_USPPIDA, GENERALE\n2. Le keywords chiave da cercare (massimo 3 parole)\n3. Il nome esatto dell'azienda o cliente menzionato nell'email (oppure null se non è menzionato)\n4. L'anno di riferimento (es. \"agosto 2025\" → \"2025\"). Se non desumibile, usa null.\n5. Il mese di riferimento in italiano minuscolo (es. \"agosto\", \"settembre\"). Se non desumibile, usa null.\n\nDescrizione dei topic:\n- PAGHE: cedolini, buste paga, stipendi, elaborazione paghe\n- DIRITTO_LAVORO: contratti, licenziamento, assunzioni, CCNL\n- PREVIDENZA: pensioni, contributi previdenziali\n- INPS: contributi INPS, prestazioni INPS, disoccupazione, accertamenti INPS\n- INAIL: infortuni, premi assicurativi, malattie professionali\n- AGGIORNAMENTI: novità normative, circolari, aggiornamenti di legge\n- FISCALE_NORMATIVA: normativa fiscale, IVA, imposte\n- FISCALE_USPPIDA: USPPIDA, pratiche fiscali specifiche\n- GENERALE: tutto il resto\n\nRispondi SOLO con JSON valido:\n{\"topic\": \"PAGHE\", \"keywords\": [\"cedolino\", \"agosto\"], \"company\": \"Isocore\", \"year\": \"2025\", \"month\": \"agosto\"}",
-                "type": "SystemMessagePromptTemplate"
-              }
-            ]
-          }
-        },
-        "id": "node9",
-        "name": "Estrai Argomento",
-        "type": "@n8n/n8n-nodes-langchain.chainLlm",
-        "typeVersion": 1.9,
-        "position": [
-          2576,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var items = $input.all();\nvar rawText = items.length > 0 ? (items[0].json.text || '') : '';\nvar topic = 'GENERALE';\nvar driveQuery = '';\nvar keywords = [];\nvar parsed = {};\ntry {\n  var cleaned = rawText.replace(/```json\\s*/g, '').replace(/```\\s*/g, '').trim();\n  var m = cleaned.match(/\\{[\\s\\S]*\\}/);\n  if (m) {\n    parsed = JSON.parse(m[0]);\n    topic = parsed.topic || 'GENERALE';\n    if (parsed.keywords && parsed.keywords.length > 0) {\n      keywords = parsed.keywords;\n      driveQuery = parsed.keywords.map(function(k) {\n        return \"fullText contains '\" + String(k).replace(/'/g, \"\\\\'\") + \"'\";\n      }).join(' OR ');\n    }\n  }\n} catch (e) {}\nvar topicMap = { PAGHE: 'CONSULENTE DEL LAVORO E DELLA PREVIDENZA CLIENTI', DIRITTO_LAVORO: 'DIRITTO DEL LAVORO', PREVIDENZA: 'DIRITTO DELLA PREVIDENZA', INPS: 'INPS', INAIL: 'INAIL', AGGIORNAMENTI: 'AGGIORNAMENTI NORMATIVI', FISCALE_NORMATIVA: 'CONSULENZA FISCALE NORMATIVA', FISCALE_USPPIDA: 'CONSULENZA FISCALE USPPIDA', GENERALE: 'CONSULENTE DEL LAVORO E DELLA PREVIDENZA' };\nvar driveFolder = topicMap[topic] || topicMap.GENERALE;\nif (!driveQuery) { driveQuery = driveFolder; }\nvar webSearchQuery = (keywords.length > 0 ? keywords.join(' ') : driveFolder) + ' normativa italiana';\nvar company = '';\nvar year = null;\nvar month = null;\ntry { company = parsed.company || ''; } catch(e) {}\ntry { year = parsed.year || null; } catch(e) {}\ntry { month = parsed.month || null; } catch(e) {}\nreturn [{ json: { topic: topic, driveFolder: driveFolder, driveQuery: driveQuery, folderSearchQuery: driveQuery, webSearchQuery: webSearchQuery, company: company, year: year, month: month } }];"
-        },
-        "id": "node11",
-        "name": "Mappa Argomento a Cartella",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          2848,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "fileFolder",
-          "searchMethod": "query",
-          "queryString": "={{ $json.folderSearchQuery }}",
-          "limit": 5,
-          "filter": {},
-          "options": {}
-        },
-        "id": "node12",
-        "name": "Cerca Documenti Drive",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          3136,
-          304
-        ],
-        "alwaysOutputData": true,
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var emailData = {};\ntry { emailData = $('Gmail Trigger').item.json || {}; } catch(e) {}\nif (!emailData.id && !emailData.threadId) { try { emailData = $('Normalizza Messaggio WhatsApp').item.json || {}; } catch(e2) {} }\nvar topic = 'GENERALE';\ntry { topic = $('Mappa Argomento a Cartella').item.json.topic || 'GENERALE'; } catch(e) {}\n\n\n// ── Notion — Cliente + Knowledge Base ──────────────────────────────────\nvar notionClienteInfo = '';\ntry {\n  var nCliente = $('Cerca Cliente in Notion').item.json;\n  if (nCliente && nCliente.results && nCliente.results.length > 0) {\n    var c = nCliente.results[0].properties;\n    var ccnl = (c['CCNL Applicato'] && c['CCNL Applicato'].select) ? c['CCNL Applicato'].select.name : '';\n    var nomeRaw = c['Nome / Ragione Sociale'] && c['Nome / Ragione Sociale'].title;\n    var nome = nomeRaw ? nomeRaw.map(function(t){return t.plain_text;}).join('') : '';\n    if (nome) notionClienteInfo = 'CLIENTE: ' + nome + (ccnl ? ' — CCNL: ' + ccnl : '');\n  }\n} catch(e) {}\n\nvar notionKBInfo = '';\ntry {\n  var nKB = $('Cerca in Knowledge Base').item.json;\n  if (nKB && nKB.results && nKB.results.length > 0) {\n    var kbLines = nKB.results.slice(0,3).map(function(page, i) {\n      var props = page.properties;\n      var titoloRaw = props['Titolo'] && props['Titolo'].title;\n      var titolo = titoloRaw ? titoloRaw.map(function(t){return t.plain_text;}).join('') : 'Documento';\n      var contenutoRaw = props['Contenuto'] && props['Contenuto'].rich_text;\n      var contenuto = contenutoRaw ? contenutoRaw.map(function(t){return t.plain_text;}).join('').substring(0,300) : '';\n      return (i+1) + '. ' + titolo + (contenuto ? '\\n   ' + contenuto : '');\n    });\n    if (kbLines.length > 0) notionKBInfo = '=== KNOWLEDGE BASE STUDIO ===\\n' + kbLines.join('\\n\\n');\n  }\n} catch(e) {}\n\nvar driveItems = [];\ntry { driveItems = $('Cerca File Cliente').all(); } catch(e) {}\nif (driveItems.length === 0 || !driveItems[0].json.id) {\n  try { driveItems = $('Cerca Documenti Drive').all(); } catch(e) {}\n}\n\nvar googleResults = '';\ntry {\n  var gItems = $('Elabora Risultati Google').all();\n  if (gItems.length > 0) googleResults = gItems[0].json.googleResults || '';\n} catch(e) {}\n\nvar tavilyResults = '';\ntry {\n  var tItems = $('Cerca su Tavily').all();\n  if (tItems.length > 0) {\n    var tData = tItems[0].json;\n    var answer = tData.answer || '';\n    var results = tData.results || [];\n    if (answer) tavilyResults = 'Risposta sintetica: ' + answer;\n    if (results.length > 0) {\n      var tLines = results.slice(0, 3).map(function(r, i) {\n        return (i+1) + '. ' + (r.title || '') + '\\n   ' + String(r.content || '').substring(0, 200) + '\\n   ' + (r.url || '');\n      });\n      tavilyResults += (tavilyResults ? '\\n\\n' : '') + tLines.join('\\n\\n');\n    }\n  }\n} catch(e) {}\n\nvar webResults = [googleResults, tavilyResults].filter(Boolean).join('\\n\\n---\\n\\n');\n\n// ── Legal Data Hunter — Legislazione Italiana ──────────────────────────\nvar ldhResults = '';\ntry {\n  var ldhItems = $('Cerca Legislazione IT').all();\n  if (ldhItems.length > 0 && ldhItems[0].json.hits) {\n    var hits = ldhItems[0].json.hits || [];\n    if (hits.length > 0) {\n      var ldhLines = hits.slice(0, 3).map(function(h, i) {\n        return (i+1) + '. ' + (h.title || 'Norma') + '\\n'\n             + '   ' + String(h.snippet || '').substring(0, 250) + '\\n'\n             + '   Fonte: ' + (h.url || 'legaldatahunter.com') + (h.date ? ' (' + h.date + ')' : '');\n      });\n      ldhResults = '=== NORMATIVA ITALIANA RILEVANTE ===\\n' + ldhLines.join('\\n\\n');\n    }\n  }\n} catch(e) {}\n\n\nvar attachmentText = '';\ntry {\n  var pdfData = $('Aggiungi Contesto Allegati').first().json;\n  if (pdfData && pdfData.hasPDF && pdfData.attachmentText) {\n    attachmentText = String(pdfData.attachmentText);\n  }\n} catch(e) {}\n\nvar driveContext = 'Nessun documento trovato su Google Drive per questa richiesta.';\nvar validItems = driveItems.filter(function(i) { return i.json && i.json.id; });\nif (validItems.length > 0) {\n  var lines = validItems.map(function(item, idx) {\n    var name = item.json.name || ('Documento ' + (idx + 1));\n    var link = item.json.webViewLink ? (' - ' + item.json.webViewLink) : '';\n    return (idx + 1) + '. ' + name + link;\n  });\n  driveContext = 'Documenti trovati (argomento: ' + topic + '):\\n' + lines.join('\\n');\n}\nvar aggiornamenti = '';\ntry { aggiornamenti = $('Cerca File Utente').item.json.aggiornamenti || ''; } catch(e) {}\nvar emailBodyLower = (String(emailData.text || '') + ' ' + String(emailData.subject || '')).toLowerCase();\nvar attachRequest = /gira|invi[ao]|allega|mand[ae]|spedi/.test(emailBodyLower);\nvar attachFileId = null;\nvar attachFileName = null;\nif (attachRequest && validItems.length > 0) {\n  var pdfItems = validItems.filter(function(i) { var n = (i.json.name || '').toLowerCase(); return !n.includes('f24') && !n.includes('tel-'); });\n  var cedolinoItem = pdfItems.find(function(i) { return (i.json.name || '').toLowerCase().includes('cedolino'); });\n  var toAttach = cedolinoItem || pdfItems[0] || validItems[0];\n  if (toAttach && toAttach.json.id) { attachFileId = toAttach.json.id; attachFileName = toAttach.json.name || 'documento.pdf'; }\n}\n\nreturn [{ json: {\n  from: String(emailData.from?.value?.[0]?.address || emailData.from || ''),\n  to: String(emailData.to?.value?.[0]?.address || emailData.to || ''),\n  subject: String(emailData.subject || ''),\n  snippet: String(emailData.snippet || ''),\n  text: String(emailData.text || ''),\n  threadId: String(emailData.threadId || ''),\n  id: String(emailData.id || ''),\n  driveContext: driveContext,\n  notionCliente: notionClienteInfo,\n  notionKB: notionKBInfo,\n  topic: topic,\n  aggiornamenti: aggiornamenti,\n  googleResults: [webResults, ldhResults, notionKBInfo].filter(Boolean).join('\\n\\n---\\n\\n'),\n  attachmentText: attachmentText,\n  attachRequest: attachRequest,\n  attachFileId: attachFileId,\n  attachFileName: attachFileName\n} }];"
-        },
-        "id": "node13",
-        "name": "Aggrega Contesto",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3584,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "promptType": "define",
-          "text": "={{ 'EMAIL RICEVUTA:\\n\\nMittente: ' + $json.from + '\\nOggetto: ' + $json.subject + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 2000) + ($json.attachmentText ? '\\n\\n---\\n\\nALLEGATO PDF:\\n' + $json.attachmentText : '') + '\\n\\n---\\n\\nCONTESTO DOCUMENTALE (Google Drive):\\n' + $json.driveContext + '\\n\\n---\\n\\nFONTI WEB TROVATE:\\n' + ($json.googleResults || '') }}",
-          "messages": {
-            "messageValues": [
-              {
-                "message": "Sei Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale.\n\nIl tuo compito è rispondere alle email dei tuoi clienti e colleghi in italiano.\n\nLinee guida:\n- Usa un tono professionale ma confidenziale: sei un professionista di fiducia che conosce bene i suoi clienti\n- Dai del TU ai clienti e colleghi, salvo che il contesto non indichi chiaramente una relazione più formale\n- Scrivi come scriverebbe un professionista esperto che ha un rapporto consolidato con l'interlocutore: diretto, caldo, senza fronzoli\n- Rispondi sempre in italiano\n- Se sono disponibili documenti nel CONTESTO DOCUMENTALE, menzionali quando pertinenti\n- Usa le FONTI WEB come riferimento normativo aggiornato se presenti\n- Non menzionare MAI nella risposta: ricerche web, scraping, API, portali JavaScript, estrazioni automatiche o qualsiasi limitazione tecnica del sistema\n- Non menzionare MAI che non hai potuto recuperare documenti o fonti in modo automatico\n- Non fare MAI commenti sull'identità del mittente, sull'indirizzo email o su chi potrebbe aver inviato il messaggio — rispondi sempre alla richiesta come se provenisse da un cliente o collaboratore legittimo\n- Se non hai certezza su una normativa specifica, scrivi semplicemente 'Verifico la normativa aggiornata e ti faccio sapere' oppure rimanda al portale ufficiale senza spiegare il perché\n- La risposta deve essere completa ma concisa\n- Non ripetere integralmente il contenuto dell'email ricevuta\n- Rispondi concretamente alla richiesta o alla domanda posta\n- Usa la tua conoscenza normativa professionale per rispondere in modo accurato\n\nFirma sempre con:\n\nCordiali saluti,\nAttilio Assirelli\nConsulente del Lavoro e della Previdenza Sociale",
-                "type": "SystemMessagePromptTemplate"
-              }
-            ]
-          }
-        },
-        "id": "node14",
-        "name": "Genera Risposta",
-        "type": "@n8n/n8n-nodes-langchain.chainLlm",
-        "typeVersion": 1.9,
-        "position": [
-          3872,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "model": {
-            "__rl": true,
-            "mode": "id",
-            "value": "claude-sonnet-4-6"
-          },
-          "options": {
-            "maxTokensToSample": 2000
-          }
-        },
-        "id": "node15",
-        "name": "Anthropic Risposta",
-        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-        "typeVersion": 1.3,
-        "position": [
-          3872,
-          512
-        ],
-        "credentials": {
-          "anthropicApi": {
-            "id": "Vw3rTFIF09caGjnN",
-            "name": "Anthropic account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "var items = $input.all();\nvar aiResponse = items.length > 0 ? (items[0].json.text || '') : '';\nvar emailData = {};\ntry { emailData = $('Gmail Trigger').item.json || {}; } catch(e) {}\nif (!emailData.id && !emailData.threadId) { try { emailData = $('Normalizza Messaggio WhatsApp').item.json || {}; } catch(e2) {} }\nvar source = emailData.source || 'email';\nreturn [{ json: {\n  aiResponse: String(aiResponse),\n  from: String(emailData.from || ''),\n  subject: String(emailData.subject || ''),\n  threadId: String(emailData.threadId || ''),\n  messageId: String(emailData.id || ''),\n  source: source,\n  whatsappFrom: String(emailData.whatsappFrom || ''),\n  phoneNumberId: String(emailData.phoneNumberId || ''),\n  attachRequest: Boolean($('Aggrega Contesto').item.json.attachRequest),\n  attachFileId: String($('Aggrega Contesto').item.json.attachFileId || ''),\n  attachFileName: String($('Aggrega Contesto').item.json.attachFileName || '')\n} }];"
-        },
-        "id": "node16",
-        "name": "Prepara Bozza",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          4144,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "draft",
-          "subject": "={{ 'Re: ' + $json.subject }}",
-          "message": "={{ $json.aiResponse }}",
-          "options": {
-            "threadId": "={{ $json.threadId }}"
-          }
-        },
-        "id": "node17",
-        "name": "Crea Bozza Gmail",
-        "type": "n8n-nodes-base.gmail",
-        "typeVersion": 2.2,
-        "position": [
-          4720,
-          304
-        ],
-        "webhookId": "7f3c0cc6-f657-4456-aa53-8b4ec7345c9a",
-        "credentials": {
-          "gmailOAuth2": {
-            "id": "i2Ruggq5iDNBD8Vq",
-            "name": "Gmail account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-promotional",
-                "leftValue": "={{ $json.isPromotional }}",
-                "rightValue": true,
-                "operator": {
-                  "type": "boolean",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "e50f9776-7a5a-4f7f-adc9-3c13088f629c",
-        "name": "Email Pubblicitaria?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          2016,
-          64
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var monthFolderIds = [];\n$input.all().forEach(function(item) {\n  if (item.json && item.json.id) {\n    monthFolderIds.push(item.json.id);\n  }\n});\nvar yearFolderIds = [];\ntry {\n  $('Cerca Cartella Anno').all().forEach(function(item) {\n    if (item.json && item.json.id) {\n      yearFolderIds.push(item.json.id);\n    }\n  });\n} catch(e) {}\nvar driveQuery = '';\ntry { driveQuery = $('Mappa Argomento a Cartella').item.json.driveQuery || ''; } catch(e) {}\nvar fileQuery;\nif (monthFolderIds.length > 0) {\n  fileQuery = monthFolderIds.map(function(id) { return \"'\" + id + \"' in parents\"; }).join(' OR ');\n} else if (yearFolderIds.length > 0) {\n  fileQuery = yearFolderIds.map(function(id) { return \"'\" + id + \"' in parents\"; }).join(' OR ');\n} else {\n  var ditaFolderIds = [];\n  try {\n    $('Cerca Cartella Azienda').all().forEach(function(item) {\n      if (item.json && item.json.id) {\n        ditaFolderIds.push(item.json.id);\n      }\n    });\n  } catch(e) {}\n  if (ditaFolderIds.length > 0) {\n    fileQuery = ditaFolderIds.map(function(id) { return \"'\" + id + \"' in parents\"; }).join(' OR ');\n  } else {\n    fileQuery = driveQuery || \"trashed = false\";\n  }\n}\nvar topic = 'GENERALE';\ntry { topic = $('Mappa Argomento a Cartella').item.json.topic || 'GENERALE'; } catch(e) {}\nif (topic === 'PAGHE' && fileQuery && fileQuery !== 'trashed = false') {\n  fileQuery = '(' + fileQuery + \") and not name contains 'f24' and not name contains 'TEL-' and mimeType = 'application/pdf'\";\n}\nreturn [{ json: { monthFolderIds: monthFolderIds, yearFolderIds: yearFolderIds, fileQuery: fileQuery, hasFolders: monthFolderIds.length > 0 || yearFolderIds.length > 0 } }];"
-        },
-        "id": "node-prep-query",
-        "name": "Prepara Query File",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3136,
-          528
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "fileFolder",
-          "searchMethod": "query",
-          "queryString": "={{ $json.fileQuery }}",
-          "limit": 10,
-          "filter": {},
-          "options": {}
-        },
-        "id": "node-file-cliente",
-        "name": "Cerca File Cliente",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          3328,
-          528
-        ],
-        "alwaysOutputData": true,
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var folderItems = $input.all();\nvar intermediarioIds = [];\nfolderItems.forEach(function(item) {\n  if (item.json && item.json.id) {\n    intermediarioIds.push(item.json.id);\n  }\n});\nvar company = '';\nvar collaborator = null;\ntry {\n  var mappaOutput = $('Mappa Argomento a Cartella').item.json;\n  company = mappaOutput.company || '';\n  collaborator = mappaOutput.collaborator || null;\n} catch(e) {}\nvar companyQuery;\nif (company) {\n  var companyUpper = company.toUpperCase();\n  companyQuery = \"mimeType = 'application/vnd.google-apps.folder' and name contains '\" + companyUpper.replace(/'/g, \"\\\\'\") + \"'\";\n} else if (intermediarioIds.length > 0) {\n  companyQuery = \"mimeType = 'application/vnd.google-apps.folder' and name contains 'cliente'\";\n} else {\n  companyQuery = \"name = '__nessun_risultato__'\";\n}\nreturn [{ json: { intermediarioIds: intermediarioIds, companyQuery: companyQuery } }];"
-        },
-        "id": "node-prep-azienda",
-        "name": "Prepara Query Azienda",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3136,
-          704
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "fileFolder",
-          "searchMethod": "query",
-          "queryString": "={{ $json.companyQuery }}",
-          "limit": 5,
-          "filter": {},
-          "options": {}
-        },
-        "id": "node-cerca-azienda",
-        "name": "Cerca Cartella Azienda",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          3328,
-          704
-        ],
-        "alwaysOutputData": true,
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var ditaFolderIds = [];\n$input.all().forEach(function(item) {\n  if (item.json && item.json.id) {\n    ditaFolderIds.push(item.json.id);\n  }\n});\nvar year = null;\ntry { year = $('Mappa Argomento a Cartella').item.json.year || null; } catch(e) {}\nvar yearQuery;\nif (ditaFolderIds.length > 0 && year) {\n  var parentsPart = ditaFolderIds.map(function(id) { return \"'\" + id + \"' in parents\"; }).join(' OR ');\n  yearQuery = \"mimeType = 'application/vnd.google-apps.folder' and (\" + parentsPart + \") and name = '\" + year + \"'\";\n} else if (ditaFolderIds.length > 0) {\n  var parentsPart2 = ditaFolderIds.map(function(id) { return \"'\" + id + \"' in parents\"; }).join(' OR ');\n  yearQuery = \"mimeType = 'application/vnd.google-apps.folder' and (\" + parentsPart2 + \") and name contains '202'\";\n} else {\n  yearQuery = \"name = '__nessun_risultato__'\";\n}\nreturn [{ json: { ditaFolderIds: ditaFolderIds, yearQuery: yearQuery, year: year } }];"
-        },
-        "id": "8cc81242-765d-4fd1-b2ae-c8fb579fd258",
-        "name": "Prepara Query Anno",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3520,
-          704
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "fileFolder",
-          "searchMethod": "query",
-          "queryString": "={{ $json.yearQuery }}",
-          "limit": 3,
-          "filter": {},
-          "options": {}
-        },
-        "id": "01fe95c9-1955-4bdc-b89f-dcde1c203f5e",
-        "name": "Cerca Cartella Anno",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          3728,
-          704
-        ],
-        "alwaysOutputData": true,
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var topic = 'GENERALE';\nvar driveQuery = '';\nvar year = null;\nvar emailText = '';\nvar emailSubject = '';\ntry {\n  var mappaOutput = $('Mappa Argomento a Cartella').item.json;\n  topic = mappaOutput.topic || 'GENERALE';\n  driveQuery = mappaOutput.driveQuery || '';\n  year = mappaOutput.year || null;\n} catch(e) {}\ntry {\n  var emailData = $('Gmail Trigger').item.json;\n  emailText = emailData.text || emailData.snippet || '';\n  emailSubject = emailData.subject || '';\n} catch(e) {}\nvar webSearchTopics = ['AGGIORNAMENTI', 'INPS', 'INAIL', 'PREVIDENZA', 'DIRITTO_LAVORO', 'FISCALE_NORMATIVA', 'FISCALE_USPPIDA'];\nvar needsWebSearch = webSearchTopics.includes(topic);\nvar normativeKeywords = ['accertamento', 'circolare', 'normativa', 'decreto', 'aggiornamento', 'sentenza', 'contributi', 'previdenz', 'ricerca normativa', 'verifica'];\nvar emailLower = (emailText + ' ' + emailSubject).toLowerCase();\nif (!needsWebSearch) {\n  needsWebSearch = normativeKeywords.some(function(kw) { return emailLower.includes(kw); });\n}\nvar searchQuery = '';\nif (needsWebSearch) {\n  var keyTerms = [];\n  if (emailLower.includes('inps')) keyTerms.push('INPS');\n  if (emailLower.includes('inail')) keyTerms.push('INAIL');\n  if (emailLower.includes('accertamento')) keyTerms.push('accertamento');\n  if (emailLower.includes('circolare')) keyTerms.push('circolare ministeriale');\n  if (emailLower.includes('cedolino') || emailLower.includes('paga') || topic === 'PAGHE') keyTerms.push('cedolini busta paga');\n  if (emailLower.includes('previdenz') || topic === 'PREVIDENZA') keyTerms.push('previdenza sociale');\n  if (emailLower.includes('decreto')) keyTerms.push('decreto legge');\n  if (emailLower.includes('contratto') || topic === 'DIRITTO_LAVORO') keyTerms.push('contratto di lavoro CCNL');\n  if (topic === 'AGGIORNAMENTI') keyTerms.push('aggiornamenti normativi lavoro');\n  if (year) keyTerms.push(year);\n  if (keyTerms.length === 0) keyTerms.push('normativa lavoro italiana');\n  keyTerms.push('Italia');\n  searchQuery = keyTerms.join(' ');\n}\nreturn [{ json: { needsWebSearch: needsWebSearch, searchQuery: searchQuery } }];"
-        },
-        "id": "373056b3-f720-4d56-abd5-5f4906a301d3",
-        "name": "Valuta Ricerca Web",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          2848,
-          912
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": false,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-web-search",
-                "leftValue": "={{ $json.needsWebSearch }}",
-                "rightValue": true,
-                "operator": {
-                  "type": "boolean",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "e6d2dbac-b284-4fbc-bc04-199c2d9c7db8",
-        "name": "Ricerca Web Necessaria?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          3088,
-          912
-        ]
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://api.tavily.com/search",
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={{ JSON.stringify({ api_key: $env.TAVILY_API_KEY, query: $json.searchQuery, search_depth: 'basic', max_results: 5, include_answer: true }) }}",
-          "options": {}
-        },
-        "id": "60482981-8eb9-497b-a883-e03131f9cbe1",
-        "name": "Cerca su Tavily",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          3328,
-          912
-        ],
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-web",
-                "leftValue": "={{ ['AGGIORNAMENTI', 'FISCALE_NORMATIVA', 'DIRITTO_LAVORO', 'PREVIDENZA', 'INPS', 'INAIL'].includes($json.topic) }}",
-                "rightValue": true,
-                "operator": {
-                  "type": "boolean",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "nodeWebIF",
-        "name": "Ricerca Normativa Web?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          1968,
-          560
-        ]
-      },
-      {
-        "parameters": {
-          "updates": [
-            "messages"
-          ],
-          "options": {}
-        },
-        "id": "nodeWATrigger",
-        "name": "WhatsApp Business Trigger",
-        "type": "n8n-nodes-base.whatsAppTrigger",
-        "typeVersion": 1,
-        "position": [
-          0,
-          624
-        ],
-        "webhookId": "bc7b6622-0bb1-4968-966b-6e2fb68f17b8",
-        "credentials": {
-          "whatsAppTriggerApi": {
-            "id": "g4nIistLgOimLT6P",
-            "name": "WhatsApp Business API"
-          }
-        },
-        "disabled": true
-      },
-      {
-        "parameters": {
-          "jsCode": "var d = $input.first().json;\nvar msgType = d.type || '';\nif (msgType && msgType !== 'text') return [];\nvar body = '';\ntry { body = d.text.body || ''; } catch(e) {}\nif (!body && d.body) body = String(d.body);\nif (!body) return [];\nvar from = d.from || d.wa_id || '';\nvar contactName = '';\ntry { contactName = d.contacts[0].profile.name || ''; } catch(e) {}\nif (!contactName) contactName = from;\nvar msgId = d.id || '';\nvar timestamp = d.timestamp ? new Date(parseInt(d.timestamp) * 1000).toISOString() : new Date().toISOString();\nvar phoneNumberId = '';\ntry { phoneNumberId = d.metadata.phone_number_id || ''; } catch(e) {}\nreturn [{ json: {\n  isClientiEmail: true, isPromotional: false, isSelfEmail: false,\n  collaborator: null, source: 'whatsapp',\n  id: msgId, threadId: from,\n  from: contactName + ' <' + from + '>',\n  to: 'WhatsApp Business',\n  subject: 'WhatsApp da ' + contactName,\n  snippet: body.substring(0, 100), text: body, html: '',\n  date: timestamp, labelIds: [],\n  whatsappFrom: from, phoneNumberId: phoneNumberId\n}}];"
-        },
-        "id": "nodeWANorm",
-        "name": "Normalizza Messaggio WhatsApp",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          400,
-          624
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-source",
-                "leftValue": "={{ $json.source }}",
-                "rightValue": "email",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "nodeCanalIF",
-        "name": "Canale Risposta?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          4432,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "draft",
-          "subject": "={{ '[WhatsApp] Risposta per: ' + $json.from }}",
-          "message": "={{ 'MESSAGGIO WHATSAPP RICEVUTO\\n\\nDA: ' + $json.from + '\\n\\n---\\n\\nRISPOSTA SUGGERITA (copia e incolla su WhatsApp Business):\\n\\n' + $json.aiResponse }}",
-          "options": {}
-        },
-        "id": "nodeWANotify",
-        "name": "Notifica WhatsApp su Gmail",
-        "type": "n8n-nodes-base.gmail",
-        "typeVersion": 2.2,
-        "position": [
-          4720,
-          560
-        ],
-        "webhookId": "62923ab1-5c70-43c0-a96d-2fc6501a260c",
-        "credentials": {
-          "gmailOAuth2": {
-            "id": "i2Ruggq5iDNBD8Vq",
-            "name": "Gmail account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "var pagheMensiliIds = [];\n$input.all().forEach(function(item) {\n  if (item.json && item.json.id) {\n    pagheMensiliIds.push(item.json.id);\n  }\n});\nvar yearFolderIds = [];\ntry {\n  $('Cerca Cartella Anno').all().forEach(function(item) {\n    if (item.json && item.json.id) {\n      yearFolderIds.push(item.json.id);\n    }\n  });\n} catch(e) {}\nvar month = null;\ntry { month = $('Mappa Argomento a Cartella').item.json.month || null; } catch(e) {}\nvar parentIds = pagheMensiliIds.length > 0 ? pagheMensiliIds : yearFolderIds;\nvar monthQuery;\nif (parentIds.length > 0 && month) {\n  var monthUpper = month.toUpperCase();\n  var parentsPart = parentIds.map(function(id) { return \"'\" + id + \"' in parents\"; }).join(' OR ');\n  monthQuery = \"mimeType = 'application/vnd.google-apps.folder' and (\" + parentsPart + \") and name contains '\" + month.toLowerCase() + \"'\";\n} else {\n  monthQuery = \"name = '__nessun_risultato__'\";\n}\nreturn [{ json: { pagheMensiliIds: pagheMensiliIds, yearFolderIds: yearFolderIds, monthQuery: monthQuery, month: month } }];"
-        },
-        "id": "node-prep-mese",
-        "name": "Prepara Query Mese",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3920,
-          704
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "fileFolder",
-          "searchMethod": "query",
-          "queryString": "={{ $json.monthQuery }}",
-          "limit": 3,
-          "filter": {},
-          "options": {}
-        },
-        "id": "node-cerca-mese",
-        "name": "Cerca Cartella Mese",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          4160,
-          704
-        ],
-        "alwaysOutputData": true,
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var items = $input.all();\nif (items.length > 0 && items[0].json && Object.keys(items[0].json).length > 0) {\n  return items;\n}\nreturn [{ json: { driveEmpty: true } }];"
-        },
-        "id": "node-garante-output",
-        "name": "Garante Output",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3520,
-          528
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var items = $input.all();\nif (items.length > 0) return items;\nreturn [{ json: {} }];"
-        },
-        "id": "node-garante-azienda",
-        "name": "Garante Azienda",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3440,
-          704
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var items = $input.all();\nif (items.length > 0) return items;\nreturn [{ json: {} }];"
-        },
-        "id": "node-garante-anno",
-        "name": "Garante Anno",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3840,
-          704
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var items = $input.all();\nif (items.length > 0) return items;\nreturn [{ json: {} }];"
-        },
-        "id": "node-garante-mese",
-        "name": "Garante Mese",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          4272,
-          704
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var items = $input.all();\nif (items.length > 0) return items;\nreturn [{ json: {} }];"
-        },
-        "id": "node-garante-drive",
-        "name": "Garante Drive",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3248,
-          704
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var yearFolderIds = [];\n$input.all().forEach(function(item) {\n  if (item.json && item.json.id) {\n    yearFolderIds.push(item.json.id);\n  }\n});\nvar topic = 'GENERALE';\ntry { topic = $('Mappa Argomento a Cartella').item.json.topic || 'GENERALE'; } catch(e) {}\nvar pagheMensiliQuery;\nif (topic === 'PAGHE' && yearFolderIds.length > 0) {\n  var parentsPart = yearFolderIds.map(function(id) { return \"'\" + id + \"' in parents\"; }).join(' OR ');\n  pagheMensiliQuery = \"mimeType = 'application/vnd.google-apps.folder' and (\" + parentsPart + \") and name = '01_PAGHE_MENSILI'\";\n} else {\n  pagheMensiliQuery = \"name = '__nessun_risultato__'\";\n}\nreturn [{ json: { yearFolderIds: yearFolderIds, pagheMensiliQuery: pagheMensiliQuery, topic: topic } }];"
-        },
-        "id": "node-prep-paghe-mensili",
-        "name": "Prepara Query Paghe Mensili",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3952,
-          1104
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "fileFolder",
-          "searchMethod": "query",
-          "queryString": "={{ $json.pagheMensiliQuery }}",
-          "limit": 3,
-          "filter": {},
-          "options": {}
-        },
-        "id": "node-cerca-paghe-mensili",
-        "name": "Cerca Cartella Paghe Mensili",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          4208,
-          1104
-        ],
-        "alwaysOutputData": true,
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var items = $input.all();\nif (items.length > 0) return items;\nreturn [{ json: {} }];"
-        },
-        "id": "node-garante-paghe-mensili",
-        "name": "Garante Paghe Mensili",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          4464,
-          1104
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-attach",
-                "leftValue": "={{ $json.attachRequest }}",
-                "rightValue": true,
-                "operator": {
-                  "type": "boolean",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "node-allegato-richiesto",
-        "name": "Allegato Richiesto?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          4960,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "operation": "download",
-          "fileId": {
-            "__rl": true,
-            "mode": "id",
-            "value": "={{ $json.attachFileId }}"
-          },
-          "options": {}
-        },
-        "id": "node-scarica-allegato",
-        "name": "Scarica File Allegato",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          5200,
-          208
-        ],
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "resource": "draft",
-          "subject": "={{ 'Re: ' + $('Prepara Bozza').item.json.subject }}",
-          "message": "={{ $('Prepara Bozza').item.json.aiResponse }}",
-          "options": {
-            "threadId": "={{ $('Prepara Bozza').item.json.threadId }}"
-          }
-        },
-        "id": "node-crea-bozza-allegato",
-        "name": "Crea Bozza Con Allegato",
-        "type": "n8n-nodes-base.gmail",
-        "typeVersion": 2.2,
-        "position": [
-          5440,
-          208
-        ],
-        "webhookId": "d3707fbf-bc56-469f-8a48-840002a5e11f",
-        "credentials": {
-          "gmailOAuth2": {
-            "id": "i2Ruggq5iDNBD8Vq",
-            "name": "Gmail account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "var parentFolderId = null;\nvar source = 'nessuna';\n// 1° tentativo: cartella ditta specifica (Cerca Cartella Azienda)\ntry {\n  var aziItems = $('Cerca Cartella Azienda').all();\n  var valid = aziItems.filter(function(i) { return i.json && i.json.id; });\n  if (valid.length > 0) { parentFolderId = valid[0].json.id; source = 'ditta'; }\n} catch(e) {}\n// 2° tentativo: cartella intermediario (Cerca Documenti Drive)\nif (!parentFolderId) {\n  try {\n    var driveItems = $('Cerca Documenti Drive').all();\n    var validD = driveItems.filter(function(i) { return i.json && i.json.id; });\n    if (validD.length > 0) { parentFolderId = validD[0].json.id; source = 'intermediario'; }\n  } catch(e) {}\n}\nif (!parentFolderId) {\n  return [{ json: { parentFolderId: null, skip: true, source: 'nessuna',\n    searchQuery: \"name = '__nessun_risultato__'\" } }];\n}\nvar q = \"mimeType = 'application/vnd.google-apps.folder' and name = 'Corrispondenza' and '\" + parentFolderId + \"' in parents and trashed = false\";\nreturn [{ json: { parentFolderId: parentFolderId, skip: false, source: source, searchQuery: q } }];"
-        },
-        "id": "prep_corrisp_node",
-        "name": "Prepara Corrispondenza",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          4144,
-          560
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "fileFolder",
-          "searchMethod": "query",
-          "queryString": "={{ $json.searchQuery }}",
-          "limit": 1,
-          "filter": {},
-          "options": {}
-        },
-        "id": "cerca_corrisp_folder",
-        "name": "Cerca Cartella Corrispondenza",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          4384,
-          560
-        ],
-        "alwaysOutputData": true,
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-corrisp-exists",
-                "leftValue": "={{ $json.id || '' }}",
-                "rightValue": "",
-                "operator": {
-                  "type": "string",
-                  "operation": "notEquals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "corrisp_esiste_if",
-        "name": "Corrispondenza Esiste?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          4576,
-          560
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "folder",
-          "name": "Corrispondenza",
-          "driveId": {
-            "__rl": true,
-            "mode": "list",
-            "value": "My Drive"
-          },
-          "folderId": {
-            "__rl": true,
-            "value": "={{ $('Prepara Corrispondenza').item.json.parentFolderId }}",
-            "mode": "id"
-          },
-          "options": {}
-        },
-        "id": "crea_corrisp_folder",
-        "name": "Crea Cartella Corrispondenza",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          4576,
-          720
-        ],
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var folderId = null;\n// Prova dalla ricerca (cartella già esistente)\ntry {\n  var found = $('Cerca Cartella Corrispondenza').item.json;\n  if (found && found.id) folderId = found.id;\n} catch(e) {}\n// Prova dalla cartella appena creata\nif (!folderId) {\n  try {\n    var created = $('Crea Cartella Corrispondenza').item.json;\n    if (created && created.id) folderId = created.id;\n  } catch(e) {}\n}\nif (!folderId) return [];\n\n// Dati email e risposta\nvar bozza = {};\ntry { bozza = $('Prepara Bozza').item.json; } catch(e) {}\nvar subject = bozza.subject || 'Nessun oggetto';\nvar fromAddr = bozza.from || '';\nvar aiResponse = bozza.aiResponse || '';\n\nvar emailText = '';\ntry {\n  var emailData = $('Gmail Trigger').item.json;\n  emailText = emailData.text || emailData.snippet || '';\n} catch(e) {}\n\nvar dateStr = new Date().toISOString().replace('T', ' ').substring(0, 16);\nvar dateFile = new Date().toISOString().split('T')[0];\n\nvar fileContent = \n  '---\\n' +\n  'data: ' + dateStr + '\\n' +\n  'mittente: ' + fromAddr + '\\n' +\n  'oggetto: \"' + subject.replace(/\"/g, '\\\\\"') + '\"\\n' +\n  'tag:\\n' +\n  '  - corrispondenza\\n' +\n  '  - email\\n' +\n  '---\\n\\n' +\n  '# ' + subject + '\\n\\n' +\n  '- **Data:** ' + dateStr + '\\n' +\n  '- **Mittente:** ' + fromAddr + '\\n\\n' +\n  '---\\n\\n' +\n  '## ✉️ Email Ricevuta\\n' +\n  '> [!NOTE] Testo dell\\'email\\n' +\n  '> ' + emailText.substring(0, 3000).replace(/\\n/g, '\\n> ') + '\\n\\n' +\n  '---\\n\\n' +\n  '## 🤖 Risposta Inviata\\n' +\n  aiResponse;\n\nvar cleanSubject = subject.replace(/[<>:\"/\\\\|?*\\r\\n]/g, '_').substring(0, 60);\nvar fileName = dateFile + ' - ' + cleanSubject + '.md';\n\nvar base64Content = Buffer.from(fileContent, 'utf-8').toString('base64');\n\nreturn [{\n  json: { folderId: folderId, fileName: fileName },\n  binary: {\n    data: {\n      data: base64Content,\n      mimeType: 'text/markdown; charset=utf-8',\n      fileName: fileName\n    }\n  }\n}];"
-        },
-        "id": "prep_file_corrisp",
-        "name": "Prepara File Corrispondenza",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          4800,
-          560
-        ]
-      },
-      {
-        "parameters": {
-          "driveId": {
-            "__rl": true,
-            "mode": "list",
-            "value": "My Drive"
-          },
-          "folderId": {
-            "__rl": true,
-            "value": "={{ $json.folderId }}",
-            "mode": "id"
-          },
-          "options": {}
-        },
-        "id": "salva_corrisp_drive",
-        "name": "Salva Corrispondenza su Drive",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          5040,
-          560
-        ],
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        },
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": false,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-ldh-topic",
-                "leftValue": "={{ $json.topic || '' }}",
-                "rightValue": "INPS,INAIL,AGGIORNAMENTI,DIRITTO_LAVORO,CONTRATTI,NORMATIVA,CONTRIBUTI,PREVIDENZA",
-                "operator": {
-                  "type": "string",
-                  "operation": "contains"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "ldh_topic_if",
-        "name": "Ricerca Normativa Legale?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          3088,
-          1120
-        ]
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://legaldatahunter.com/v1/search",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={{ JSON.stringify({\n  q: (($('Mappa Argomento a Cartella').item.json.topic || '') + ' ' + \n      ($('Gmail Trigger').item.json.subject || '')).substring(0, 200),\n  namespace: 'legislation',\n  country: ['IT'],\n  language: 'it',\n  top_k: 3,\n  alpha: 0.9\n}) }}",
-          "options": {},
-          "authentication": "predefinedCredentialType",
-          "nodeCredentialType": "httpBearerAuth"
-        },
-        "id": "ldh_search_node",
-        "name": "Cerca Legislazione IT",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          3328,
-          1120
-        ],
-        "onError": "continueRegularOutput",
-        "credentials": {
-          "httpBearerAuth": {
-            "id": "SeuuMRzCZEeFjkxj",
-            "name": "Legal Data Hunter account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://api.notion.com/v1/databases/37bd0d2a-64a6-816e-a38a-ee8ee9ac80c5/query",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Authorization",
-                "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
-              },
-              {
-                "name": "Notion-Version",
-                "value": "2022-06-28"
-              },
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={{ JSON.stringify({ filter: { or: [{ property: \"Email\", email: { equals: ($'Gmail Trigger').item.json.from?.value?.[0]?.address || ($'Gmail Trigger').item.json.from || \"\" } },{ property: \"Ditta\", rich_text: { contains: ($'Classificatore Email').item.json?.company || \"\" } }] }, page_size: 1 }) }}",
-          "options": {}
-        },
-        "id": "notion_cerca_cliente",
-        "name": "Cerca Cliente in Notion",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          2688,
-          800
-        ],
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://api.notion.com/v1/databases/37bd0d2a-64a6-8142-8b00-f4d3a983eed2/query",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Authorization",
-                "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
-              },
-              {
-                "name": "Notion-Version",
-                "value": "2022-06-28"
-              },
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={{ JSON.stringify({ filter: { and: [{ property: \"Attivo\", checkbox: { equals: true } }] }, page_size: 3 }) }}",
-          "options": {}
-        },
-        "id": "notion_cerca_kb",
-        "name": "Cerca in Knowledge Base",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          3088,
-          800
-        ],
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": false,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-scadenza",
-                "leftValue": "={{ ($('Gmail Trigger').item.json.text || '') + ' ' + ($('Gmail Trigger').item.json.subject || '') }}",
-                "rightValue": "entro il,scade,termine,versamento,pagamento entro,F24,f24,proroga,acconto,saldo,rata",
-                "operator": {
-                  "type": "string",
-                  "operation": "contains"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "notion_scadenza_if",
-        "name": "Crea Scadenza in Notion?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          4400,
-          560
-        ]
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://api.notion.com/v1/pages",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Authorization",
-                "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
-              },
-              {
-                "name": "Notion-Version",
-                "value": "2022-06-28"
-              },
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={ JSON.stringify({  parent: { database_id: \"37bd0d2a-64a6-8134-8ba6-d5ce17d1d2ab\" },  properties: {    \"Descrizione\": { title: [{ text: { content: ($(\"Gmail Trigger\").item.json.subject || \"Scadenza da email\") } }] },    \"Ditta\": { rich_text: [{ text: { content: ($(\"Aggrega Contesto\").item.json.from || \"\") } }] },    \"Categoria\": { select: { name: ($(\"Classificatore Email\").item.json.topic || \"Altro\") } },    \"Email Origine\": { rich_text: [{ text: { content: ($(\"Gmail Trigger\").item.json.threadId || \"\") } }] },    \"Completata\": { checkbox: false },    \"Priorità\": { select: { name: \"Media\" } }  }}) }",
-          "options": {}
-        },
-        "id": "notion_crea_scadenza",
-        "name": "Crea Scadenza Notion",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          4608,
-          480
-        ],
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://api.notion.com/v1/pages",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Authorization",
-                "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
-              },
-              {
-                "name": "Notion-Version",
-                "value": "2022-06-28"
-              },
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={ JSON.stringify({  parent: { database_id: \"37bd0d2a-64a6-8191-bc41-e8f41277a350\" },  properties: {    \"Oggetto\": { title: [{ text: { content: ($(\"Prepara Bozza\").item.json.subject || \"Nessun oggetto\").substring(0,100) } }] },    \"Data\": { date: { start: new Date().toISOString().split(\"T\")[0] } },    \"Mittente\": { email: $(\"Prepara Bozza\").item.json.from || \"\" },    \"Categoria\": { select: { name: ($(\"Aggrega Contesto\").item.json.topic || \"GENERALE\") } },    \"Testo Email\": { rich_text: [{ text: { content: String($(\"Aggrega Contesto\").item.json.text || \"\").substring(0,1900) } }] },    \"Risposta Generata\": { rich_text: [{ text: { content: String($(\"Prepara Bozza\").item.json.aiResponse || \"\").substring(0,1900) } }] },    \"Thread Gmail ID\": { rich_text: [{ text: { content: $(\"Prepara Bozza\").item.json.threadId || \"\" } }] },    \"Ditta\": { rich_text: [{ text: { content: $(\"Prepara Bozza\").item.json.from || \"\" } }] },    \"Risposta Inviata\": { checkbox: true }  }}) }",
-          "options": {}
-        },
-        "id": "notion_salva_corrisp",
-        "name": "Salva Corrispondenza Notion",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          4400,
-          720
-        ],
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "jsCode": "var binary = $input.item.binary || {};\nvar items = [];\n\nfor (var key in binary) {\n  var b = binary[key];\n  if (!b) continue;\n  var fileName = (b.fileName || key).toLowerCase();\n  var mimeType = b.mimeType || '';\n  \n  var isZip = fileName.endsWith('.zip') || mimeType === 'application/zip' || mimeType.includes('compressed');\n  \n  var fileItem = {\n    json: {\n      key: key,\n      fileName: b.fileName || key,\n      mimeType: b.mimeType,\n      extension: fileName.split('.').pop(),\n      isZip: isZip\n    },\n    binary: {}\n  };\n  fileItem.binary[key] = b;\n  items.push(fileItem);\n}\n\nreturn items;"
-        },
-        "id": "new_separa_allegati",
-        "name": "Separa Allegati",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          208,
-          512
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": false,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-zip",
-                "leftValue": "={{ $json.isZip ? 'true' : 'false' }}",
-                "rightValue": "true",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "new_is_zip",
-        "name": "È un file ZIP?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.2,
-        "position": [
-          368,
-          512
-        ]
-      },
-      {
-        "parameters": {
-          "binaryPropertyName": "={{ $json.key }}"
-        },
-        "id": "new_decomprimi_zip",
-        "name": "Decomprimi ZIP",
-        "type": "n8n-nodes-base.compression",
-        "typeVersion": 1,
-        "position": [
-          512,
-          400
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var binary = $input.item.binary || {};\nvar items = [];\nfor (var key in binary) {\n  var b = binary[key];\n  if (!b) continue;\n  var fileName = (b.fileName || key).toLowerCase();\n  \n  var fileItem = {\n    json: {\n      key: key,\n      fileName: b.fileName || key,\n      mimeType: b.mimeType,\n      extension: fileName.split('.').pop(),\n      isZip: false\n    },\n    binary: {}\n  };\n  fileItem.binary[key] = b;\n  items.push(fileItem);\n}\nreturn items;"
-        },
-        "id": "new_estrai_file_decompressi",
-        "name": "Estrai File Decompressi",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          672,
-          400
-        ]
-      },
-      {
-        "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "var ext = ($json.extension || '').toLowerCase();\nvar mime = ($json.mimeType || '').toLowerCase();\nvar op = 'text'; // default fallback\n\nif (ext === 'pdf' || mime === 'application/pdf') {\n  op = 'pdf';\n} else if (ext === 'xlsx' || mime.includes('excel') || mime.includes('spreadsheet')) {\n  op = 'xlsx';\n} else if (ext === 'xls') {\n  op = 'xls';\n} else if (ext === 'ods') {\n  op = 'ods';\n} else if (ext === 'csv') {\n  op = 'csv';\n} else if (['docx', 'odt', 'txt', 'rtf', 'html', 'xml'].includes(ext)) {\n  op = 'text';\n} else if (['png', 'jpg', 'jpeg', 'gif', 'webp'].includes(ext) || mime.startsWith('image/')) {\n  op = 'base64';\n}\n\nreturn {\n  fileName: $json.fileName,\n  key: $json.key,\n  extension: ext,\n  extractionOperation: op\n};"
-        },
-        "id": "new_normalizza_tutti",
-        "name": "Normalizza Tutti i File",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          832,
-          512
-        ]
-      },
-      {
-        "parameters": {
-          "operation": "{{ $json.extractionOperation }}"
-        },
-        "id": "new_estrai_testo_file",
-        "name": "Estrai Testo File",
-        "type": "n8n-nodes-base.extractFromFile",
-        "typeVersion": 1,
-        "position": [
-          960,
-          512
-        ],
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": false,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-ocr",
-                "leftValue": "={{ ($json.extractionOperation === 'pdf' && (!$json.text || $json.text.trim().length < 50)) || $json.extractionOperation === 'base64' ? 'yes' : 'no' }}",
-                "rightValue": "yes",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "new_serve_ocr",
-        "name": "Serve OCR?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.2,
-        "position": [
-          1104,
-          512
-        ]
-      },
-      {
-        "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "var binary = $input.item.binary || {};\nvar key = $json.key;\nvar base64Data = '';\nvar mimeType = 'application/pdf';\n\nif (key && binary[key]) {\n  base64Data = binary[key].data || '';\n  mimeType = binary[key].mimeType || 'application/pdf';\n}\n\nreturn {\n  fileName: $json.fileName,\n  key: key,\n  base64Data: base64Data,\n  mimeType: mimeType,\n  contentType: mimeType.startsWith('image/') ? 'image' : 'document'\n};"
-        },
-        "id": "new_prepara_ocr",
-        "name": "Prepara OCR",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          1248,
-          400
-        ]
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://api.anthropic.com/v1/messages",
-          "authentication": "predefinedCredentialType",
-          "nodeCredentialType": "anthropicApi",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "anthropic-version",
-                "value": "2023-06-01"
-              },
-              {
-                "name": "anthropic-beta",
-                "value": "pdfs-2024-09-25"
-              }
-            ]
-          },
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={{ JSON.stringify({ model: 'claude-haiku-4-5', max_tokens: 4000, messages: [{ role: 'user', content: [{ type: $json.contentType, source: { type: 'base64', media_type: $json.mimeType, data: $json.base64Data } }, { type: 'text', text: 'Estrai tutto il testo presente in questo documento. Restituisci solo il testo estratto mantenendo la struttura originale. Nessun altro testo.' }] }] }) }}",
-          "options": {}
-        },
-        "id": "new_ocr_claude",
-        "name": "OCR Claude",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          1392,
-          400
-        ],
-        "onError": "continueRegularOutput"
-      },
-      {
-        "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "var text = '';\nvar isOCR = false;\ntry {\n  var ocr = $('OCR Claude').item.json;\n  if (ocr && ocr.content && ocr.content[0]) {\n    text = ocr.content[0].text || '';\n    isOCR = true;\n  }\n} catch(e) {}\n\nif (!text) {\n  text = $json.text || '';\n}\n\nreturn {\n  fileName: $json.fileName || $('Estrai Testo File').item.json.fileName,\n  extractionOperation: $json.extractionOperation || $('Estrai Testo File').item.json.extractionOperation,\n  text: text,\n  rowData: $json.text ? null : $json,\n  isOCR: isOCR\n};"
-        },
-        "id": "new_aggiungi_testo",
-        "name": "Aggiungi Testo",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          1520,
-          512
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var emailJson = {};\ntry { emailJson = $('Gmail Trigger').item.json || {}; } catch(e) {}\n\nvar items = [];\ntry {\n  items = $('Aggiungi Testo').all();\n} catch(e) {}\n\nvar fileTexts = {};\n\nitems.forEach(item => {\n  var data = item.json;\n  var fileName = data.fileName || 'Allegato';\n  var op = data.extractionOperation;\n  \n  if (!fileTexts[fileName]) {\n    fileTexts[fileName] = {\n      name: fileName,\n      operation: op,\n      textParts: [],\n      rows: []\n    };\n  }\n  \n  if (data.text) {\n    fileTexts[fileName].textParts.push(data.text);\n  } else if (data.rowData) {\n    fileTexts[fileName].rows.push(data.rowData);\n  }\n});\n\nvar attachmentTexts = [];\nvar hasPDF = false;\n\nfor (var fileName in fileTexts) {\n  var fileInfo = fileTexts[fileName];\n  var content = '';\n  \n  if (fileInfo.textParts.length > 0) {\n    content = fileInfo.textParts.join('\\n');\n  } else if (fileInfo.rows.length > 0) {\n    var rows = fileInfo.rows;\n    var headers = Object.keys(rows[0] || {}).filter(k => k !== 'fileName' && k !== 'extractionOperation' && k !== 'key');\n    \n    var headerRow = '| ' + headers.join(' | ') + ' |';\n    var separatorRow = '| ' + headers.map(() => '---').join(' | ') + ' |';\n    var dataRows = rows.map(r => '| ' + headers.map(h => String(r[h] || '')).join(' | ') + ' |');\n    \n    content = [headerRow, separatorRow].concat(dataRows).join('\\n');\n  }\n  \n  if (content.trim().length > 10) {\n    attachmentTexts.push('=== ALLEGATO: ' + fileName + ' ===\\n' + content);\n    if (fileInfo.operation === 'pdf') {\n      hasPDF = true;\n    }\n  }\n}\n\nvar attachmentText = attachmentTexts.join('\\n\\n---\\n\\n').substring(0, 10000);\n\nreturn [{\n  json: Object.assign({}, emailJson, {\n    attachmentText: attachmentText,\n    hasPDF: hasPDF,\n    hasAttachments: attachmentTexts.length > 0\n  })\n}];"
-        },
-        "id": "new_aggiungi_contesto_allegati",
-        "name": "Aggiungi Contesto Allegati",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          928,
-          304
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": false,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-teleconsul",
-                "leftValue": "={{ $json.from.value[0].address }}",
-                "rightValue": "teleconsul",
-                "operator": {
-                  "type": "string",
-                  "operation": "contains"
-                }
-              },
-              {
-                "id": "cond-dottrina",
-                "leftValue": "={{ $json.from.value[0].address }}",
-                "rightValue": "dottrina",
-                "operator": {
-                  "type": "string",
-                  "operation": "contains"
-                }
-              },
-              {
-                "id": "cond-inps",
-                "leftValue": "={{ $json.from.value[0].address }}",
-                "rightValue": "attilio.assirelli@inps.it",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "or"
-          },
-          "options": {}
-        },
-        "id": "node_is_newsletter",
-        "name": "È Newsletter Normativa?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.2,
-        "position": [
-          1408,
-          112
-        ]
-      },
-      {
-        "parameters": {
-          "promptType": "define",
-          "text": "={{ 'Oggetto Email: ' + ($json.subject || '') + '\\n\\nData Email: ' + ($json.date || '') + '\\n\\nCorpo Email:\\n' + ($json.text || $json.snippet || '').substring(0, 8000) + '\\n\\nTesto Consolidato Allegati:\\n' + ($json.attachmentText || '').substring(0, 10000) }}",
-          "messages": {
-            "messageValues": [
-              {
-                "message": "Sei un assistente legale specializzato in Consulenza del Lavoro, Previdenza Sociale e Diritto Tributario/Fiscale in Italia. Il tuo compito è analizzare una newsletter o email di aggiornamento normativo (ricevuta da Teleconsul Lavoro, Dottrina Lavoro, o INPS) ed estrarre i dettagli per popolare un database Notion e catalogare gli atti. Rispondi SOLO con un oggetto JSON valido, nessun altro testo o spiegazione.\n\nI campi da estrarre sono:\n1. \"Titolo\": un titolo sintetico ed efficace in italiano per l'aggiornamento (max 80 caratteri).\n2. \"Fonte Newsletter\": deve essere esattamente uno dei seguenti valori:\n   - 'Teleconsul Lavoro' (se il mittente o l'oggetto contengono riferimenti a Teleconsul)\n   - 'Dottrina Lavoro' (se il mittente o l'oggetto contengono riferimenti a Dottrina Lavoro)\n   - 'Altra fonte' (se mittente è INPS o altro)\n3. \"Data Newsletter\": la data della newsletter in formato YYYY-MM-DD. Se non presente, usa la data dell'email in input.\n4. \"Materia\": deve essere esattamente uno dei seguenti valori in base all'argomento prevalente dell'atto:\n   - 'Lavoro'\n   - 'Previdenza'\n   - 'Fiscale'\n   - 'INPS'\n   - 'INAIL'\n   - 'Agenzia delle Entrate'\n   - 'Contenzioso'\n   - 'Altro'\n5. \"Tipo Atto\": deve essere esattamente uno dei seguenti valori:\n   - 'Circolare'\n   - 'Messaggio INPS'\n   - 'Decreto'\n   - 'Legge'\n   - 'Sentenza'\n   - 'Risoluzione AE'\n   - 'Nota MLPS'\n   - 'Altro'\n6. \"Numero Atto\": numero della circolare/messaggio/legge (es: '10/2026' o '45'). Se non presente, lascia stringa vuota \"\".\n7. \"Data Atto\": la data di pubblicazione dell'atto/circolare in formato YYYY-MM-DD. Se non presente, lascia nullo (null).\n8. \"Link Testo Ufficiale\": cerca se nell'email è presente un link diretto al testo ufficiale dell'atto. Se non presente, lascia stringa vuota \"\".\n9. \"Priorità\": deve essere esattamente uno dei seguenti valori:\n   - 'Alta' (se ci sono scadenze urgenti, sanzioni imminenti, o modifiche di grandissimo impatto)\n   - 'Media'\n   - 'Bassa'\n10. \"Sintesi Operativa\": un riassunto dettagliato dell'aggiornamento normativo in formato Markdown.\n11. \"Rischi e Scadenze\": elenca in formato Markdown eventuali rischi per le aziende, sanzioni, o scadenze temporali.\n12. \"Cosa Fare in Studio\": una checklist operativa in formato Markdown.\n13. \"Target Folder\": la cartella di catalogazione. Scegli in base a queste regole:\n    - Se l'aggiornamento riguarda l'INPS -> 'Inps'\n    - Se l'aggiornamento riguarda l'INAIL -> 'Inail'\n    - Se l'aggiornamento riguarda in generale il Diritto del Lavoro o Previdenza (non INPS/INAIL) -> 'Diritto del Lavoro'\n    - Se l'aggiornamento riguarda la normativa fiscale/tasse -> 'Normativa'\n14. \"Tags\": array di tag validi da questa lista: ['Ammortizzatori', 'NASpI', 'CIGO', 'CIGS', 'FIS', 'Pensioni', 'Contributi', 'Assunzioni', 'Contratti', 'Retribuzioni', 'Fiscale', '730', 'F24', 'Contenzioso', 'Scadenza']\n\nRispondi con una struttura JSON pulita:\n{\n  \"Titolo\": \"...\",\n  \"Fonte Newsletter\": \"...\",\n  \"Data Newsletter\": \"...\",\n  \"Materia\": \"...\",\n  \"Tipo Atto\": \"...\",\n  \"Numero Atto\": \"...\",\n  \"Data Atto\": \"...\" o null,\n  \"Link Testo Ufficiale\": \"...\",\n  \"Priorità\": \"...\",\n  \"Sintesi Operativa\": \"...\",\n  \"Rischi e Scadenze\": \"...\",\n  \"Cosa Fare in Studio\": \"...\",\n  \"Target Folder\": \"...\",\n  \"Tags\": [...]\n}",
-                "type": "SystemMessagePromptTemplate"
-              }
-            ]
-          }
-        },
-        "id": "node_claude_newsletter_analysis",
-        "name": "Analisi Newsletter Claude",
-        "type": "@n8n/n8n-nodes-langchain.chainLlm",
-        "typeVersion": 1.9,
-        "position": [
-          1600,
-          -96
-        ]
-      },
-      {
-        "parameters": {
-          "model": {
-            "__rl": true,
-            "mode": "id",
-            "value": "claude-sonnet-4-6"
-          },
-          "options": {
-            "maxTokensToSample": 4000
-          }
-        },
-        "id": "node_model_claude_newsletter",
-        "name": "Model Claude Newsletter",
-        "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-        "typeVersion": 1.3,
-        "position": [
-          1600,
-          112
-        ],
-        "credentials": {
-          "anthropicApi": {
-            "id": "Vw3rTFIF09caGjnN",
-            "name": "Anthropic account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "var content = '';\ntry {\n  content = $('Analisi Newsletter Claude').item.json.text;\n} catch(e) {}\n\nvar clean = content.replace(/```json/g, '').replace(/```/g, '').trim();\nvar parsed = {};\ntry {\n  parsed = JSON.parse(clean);\n} catch(e) {\n  parsed = {\n    \"Titolo\": \"Aggiornamento Normativo - Errore Parsing JSON\",\n    \"Fonte Newsletter\": \"Altra fonte\",\n    \"Data Newsletter\": new Date().toISOString().split('T')[0],\n    \"Materia\": \"Altro\",\n    \"Tipo Atto\": \"Altro\",\n    \"Numero Atto\": \"\",\n    \"Data Atto\": null,\n    \"Link Testo Ufficiale\": \"\",\n    \"Priorità\": \"Media\",\n    \"Sintesi Operativa\": \"Non è stato possibile decodificare la risposta di Claude. Testo originale:\\n\\n\" + content,\n    \"Rischi e Scadenze\": \"\",\n    \"Cosa Fare in Studio\": \"\",\n    \"Target Folder\": \"Diritto del Lavoro\",\n    \"Tags\": []\n  };\n}\n\nvar folderMap = {\n  \"Diritto del Lavoro\": \"1CYrG2Uf0efLvxVUIh5Wnhso9-odJBhKO\",\n  \"Inps\": \"1vvQwb_nNrHUJdHXXWdJqCiQMUcfo9OD-\",\n  \"Inail\": \"1FesoLsYuyOUgMIFwiwvzpjhpiU5ad2Ux\",\n  \"Normativa\": \"1YDEdgxeuggzNYCx9MoICRw-8-qgWBwUK\"\n};\n\nparsed.parentFolderId = folderMap[parsed[\"Target Folder\"]] || \"1CYrG2Uf0efLvxVUIh5Wnhso9-odJBhKO\";\n\nvar triggerInfo = {};\ntry {\n  triggerInfo = $('Aggiungi Contesto Allegati').item.json;\n} catch(e) {}\n\nreturn Object.assign({}, triggerInfo, parsed);"
-        },
-        "id": "node_parsed_analysis",
-        "name": "Parsed Analysis",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          1760,
-          -96
-        ]
-      },
-      {
-        "parameters": {
-          "resource": "folder",
-          "name": "={{ $json[\"Data Newsletter\"] }} - {{ $json[\"Tipo Atto\"] }}{{ $json[\"Numero Atto\"] ? \" \" + $json[\"Numero Atto\"] : \"\" }} - {{ $json[\"Titolo\"] }}",
-          "driveId": {
-            "__rl": true,
-            "mode": "list",
-            "value": "My Drive"
-          },
-          "folderId": {
-            "__rl": true,
-            "value": "={{ $json.parentFolderId }}",
-            "mode": "id"
-          },
-          "options": {}
-        },
-        "id": "node_create_drive_folder",
-        "name": "Crea Cartella Aggiornamento",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          1920,
-          -96
-        ],
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "mode": "runOnceForEachItem",
-          "jsCode": "var parsed = $('Parsed Analysis').item.json;\nvar folderId = $json.id;\nvar folderUrl = $json.webViewLink || '';\n\nvar dataStr = parsed[\"Data Newsletter\"] || new Date().toISOString().split('T')[0];\nvar tagsList = (parsed[\"Tags\"] || []).map(t => '  - \"#' + t + '\"').join('\\n');\nif (parsed[\"Materia\"]) {\n  tagsList += '\\n  - \"#' + parsed[\"Materia\"] + '\"';\n}\ntagsList += '\\n  - \"#aggiornamento_normativo\"';\n\nvar emailContent = parsed.text || parsed.snippet || 'Testo email non disponibile.';\n\nvar markdown = `---\\ndata: \"${dataStr}\"\\nfonte: \"${parsed[\"Fonte Newsletter\"] || 'Sconosciuta'}\"\\nmateria: \"${parsed[\"Materia\"] || 'Altro'}\"\\ntipo_atto: \"${parsed[\"Tipo Atto\"] || 'Altro'}\"\\nnumero_atto: \"${parsed[\"Numero Atto\"] || ''}\"\\ndata_atto: \"${parsed[\"Data Atto\"] || ''}\"\\npriorita: \"${parsed[\"Priorità\"] || 'Media'}\"\\ntags:\\n${tagsList}\\n---\\n# ${parsed[\"Titolo\"]}\\n\\n## 📰 Sintesi Operativa\\n${parsed[\"Sintesi Operativa\"] || 'Nessuna sintesi fornita.'}\\n\\n## ⚠️ Rischi e Scadenze\\n${parsed[\"Rischi e Scadenze\"] || 'Nessun rischio o scadenza identificata.'}\\n\\n## 🛠️ Cosa Fare in Studio\\n${parsed[\"Cosa Fare in Studio\"] || 'Nessun adempimento operativo specificato.'}\\n\\n---\\n\\n## 📎 Riferimenti\\n- **Link Testo Ufficiale:** ${parsed[\"Link Testo Ufficiale\"] ? '[' + parsed[\"Link Testo Ufficiale\"].substring(0,60) + '...](' + parsed[\"Link Testo Ufficiale\"] + ')' : 'Non presente'}\\n- **Cartella Google Drive:** [Apri su Drive](${folderUrl})\\n\\n---\\n\\n## 📧 Email Originale\\n> [!NOTE] Dettagli Email\\n> **Oggetto:** ${parsed.subject || ''}\\n> **Mittente:** ${parsed.from || ''}\\n> **Data:** ${parsed.date || ''}\\n\\n\\`\\`\\`text\\n${emailContent}\\n\\`\\`\\`\\n`;\n\nvar filename = dataStr + ' - ' + (parsed[\"Tipo Atto\"] || 'Aggiornamento') + (parsed[\"Numero Atto\"] ? ' ' + parsed[\"Numero Atto\"] : '') + ' - ' + (parsed[\"Titolo\"] || 'Nota').replace(/[/\\\\?%*:|\"<>]/g, '-') + '.md';\n\nvar result = {\n  json: Object.assign({}, parsed, {\n    noteFolderId: folderId,\n    noteFolderUrl: folderUrl,\n    noteFileName: filename\n  }),\n  binary: {\n    data: {\n      data: Buffer.from(markdown).toString('base64'),\n      mimeType: 'text/markdown',\n      fileName: filename\n    }\n  }\n};\n\nreturn result;"
-        },
-        "id": "node_prepare_obsidian_note",
-        "name": "Prepara Nota Obsidian",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          2080,
-          -96
-        ]
-      },
-      {
-        "parameters": {
-          "name": "={{ $json.noteFileName }}",
-          "driveId": {
-            "__rl": true,
-            "mode": "list",
-            "value": "My Drive"
-          },
-          "folderId": {
-            "__rl": true,
-            "mode": "list",
-            "value": "root",
-            "cachedResultName": "/ (Root folder)"
-          },
-          "options": {}
-        },
-        "id": "node_save_obsidian_note",
-        "name": "Salva Nota Obsidian su Drive",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          2240,
-          -96
-        ],
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://api.notion.com/v1/pages",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Authorization",
-                "value": "Bearer NOTION_API_KEY_PLACEHOLDER"
-              },
-              {
-                "name": "Notion-Version",
-                "value": "2022-06-28"
-              },
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={{ JSON.stringify({\n  parent: { database_id: '536f8767-0d24-4e77-838d-57eb65d2bdd0' },\n  properties: {\n    \"Titolo\": { title: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Titolo\"] || \"Aggiornamento Normativo\").substring(0, 100) } }] },\n    \"Fonte Newsletter\": $('Prepara Nota Obsidian').item.json[\"Fonte Newsletter\"] ? { select: { name: $('Prepara Nota Obsidian').item.json[\"Fonte Newsletter\"] } } : undefined,\n    \"Data Newsletter\": $('Prepara Nota Obsidian').item.json[\"Data Newsletter\"] ? { date: { start: $('Prepara Nota Obsidian').item.json[\"Data Newsletter\"] } } : undefined,\n    \"Materia\": $('Prepara Nota Obsidian').item.json[\"Materia\"] ? { select: { name: $('Prepara Nota Obsidian').item.json[\"Materia\"] } } : undefined,\n    \"Tipo Atto\": $('Prepara Nota Obsidian').item.json[\"Tipo Atto\"] ? { select: { name: $('Prepara Nota Obsidian').item.json[\"Tipo Atto\"] } } : undefined,\n    \"Numero Atto\": { rich_text: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Numero Atto\"] || \"\").substring(0, 100) } }] },\n    \"Data Atto\": $('Prepara Nota Obsidian').item.json[\"Data Atto\"] ? { date: { start: $('Prepara Nota Obsidian').item.json[\"Data Atto\"] } } : undefined,\n    \"Link Testo Ufficiale\": $('Prepara Nota Obsidian').item.json[\"Link Testo Ufficiale\"] ? { url: $('Prepara Nota Obsidian').item.json[\"Link Testo Ufficiale\"] } : undefined,\n    \"PDF su Drive\": $('Prepara Nota Obsidian').item.json.noteFolderUrl ? { url: $('Prepara Nota Obsidian').item.json.noteFolderUrl } : undefined,\n    \"Sintesi Operativa\": { rich_text: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Sintesi Operativa\"] || \"\").substring(0, 1900) } }] },\n    \"Rischi e Scadenze\": { rich_text: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Rischi e Scadenze\"] || \"\").substring(0, 1900) } }] },\n    \"Cosa Fare in Studio\": { rich_text: [{ text: { content: ($('Prepara Nota Obsidian').item.json[\"Cosa Fare in Studio\"] || \"\").substring(0, 1900) } }] },\n    \"Priorità\": $('Prepara Nota Obsidian').item.json[\"Priorità\"] ? { select: { name: $('Prepara Nota Obsidian').item.json[\"Priorità\"] } } : undefined,\n    \"Stato\": { select: { name: \"Nuovo\" } },\n    \"Elaborato da n8n\": { checkbox: true },\n    \"Tags\": { multi_select: ($('Prepara Nota Obsidian').item.json[\"Tags\"] || []).map(t => ({ name: t })) }\n  }\n}) }}",
-          "options": {}
-        },
-        "id": "node_save_notion_updates",
-        "name": "Salva su Notion Aggiornamenti",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          2400,
-          -96
-        ]
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": false,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 2
-            },
-            "conditions": [
-              {
-                "id": "cond-has-attachments",
-                "leftValue": "={{ $json.hasAttachments ? 'true' : 'false' }}",
-                "rightValue": "true",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "id": "node_has_attachments",
-        "name": "Salva Allegati su Drive?",
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.2,
-        "position": [
-          2560,
-          -96
-        ]
-      },
-      {
-        "parameters": {
-          "jsCode": "var files = [];\ntry {\n  files = $('Estrai Testo File').all();\n} catch(e) {}\n\nvar folderId = $('Crea Cartella Aggiornamento').item.json.id;\n\nreturn files.map(fileItem => {\n  var key = fileItem.json.key;\n  var name = fileItem.json.fileName || 'allegato';\n  \n  var result = {\n    json: {\n      parentFolderId: folderId,\n      fileName: name,\n      binaryKey: key\n    },\n    binary: {}\n  };\n  \n  if (fileItem.binary && fileItem.binary[key]) {\n    result.binary[key] = fileItem.binary[key];\n  }\n  \n  return result;\n});"
-        },
-        "id": "node_prepare_attachments_upload",
-        "name": "Prepara Allegati per Upload",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          2720,
-          -208
-        ]
-      },
-      {
-        "parameters": {
-          "name": "={{ $json.fileName }}",
-          "driveId": {
-            "__rl": true,
-            "mode": "list",
-            "value": "My Drive"
-          },
-          "folderId": {
-            "__rl": true,
-            "mode": "list",
-            "value": "root",
-            "cachedResultName": "/ (Root folder)"
-          },
-          "options": {}
-        },
-        "id": "node_save_attachments_drive",
-        "name": "Salva Allegati su Drive",
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          2880,
-          -208
-        ],
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "11MnaLtExdUMB3f9",
-            "name": "Google Drive account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "model": {
-            "__rl": true,
-            "mode": "id",
-            "value": "anthropic/claude-haiku-4.5"
-          },
-          "options": {
-            "maxTokens": 100
-          }
-        },
-        "id": "node6-openrouter",
-        "name": "OpenRouter Classificatore",
-        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
-        "typeVersion": 1,
-        "position": [
-          2288,
-          800
-        ],
-        "credentials": {
-          "openRouterApi": {
-            "id": "BYSYxqd8P5VUBbBQ",
-            "name": "OpenRouter account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "model": {
-            "__rl": true,
-            "mode": "id",
-            "value": "anthropic/claude-haiku-4.5"
-          },
-          "options": {
-            "maxTokens": 200
-          }
-        },
-        "id": "node10-openrouter",
-        "name": "OpenRouter Argomento",
-        "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
-        "typeVersion": 1,
-        "position": [
-          2576,
-          512
-        ],
-        "credentials": {
-          "openRouterApi": {
-            "id": "BYSYxqd8P5VUBbBQ",
-            "name": "OpenRouter account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://api.perplexity.ai/chat/completions",
-          "authentication": "predefinedCredentialType",
-          "nodeCredentialType": "perplexityApi",
-          "sendBody": true,
-          "contentType": "raw",
-          "rawContentType": "application/json",
-          "body": "={{ JSON.stringify({ model: 'sonar', messages: [ { role: 'system', content: 'Sei un assistente di ricerca normativa per un Consulente del Lavoro italiano. Rispondi in italiano, in modo sintetico, citando sempre la fonte normativa precisa (legge/decreto/circolare) e la data. Non inventare riferimenti normativi che non trovi nelle fonti.' }, { role: 'user', content: $json.webSearchQuery } ], return_citations: true, search_domain_filter: ['gazzettaufficiale.it','normattiva.it','inps.it','inail.it','lavoro.gov.it'] }) }}",
-          "options": {}
-        },
-        "id": "nodeGoogleHTTP",
-        "name": "Cerca su Perplexity",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          2256,
-          560
-        ],
-        "credentials": {
-          "perplexityApi": {
-            "id": "LtQ7Cvl4Tana0ktu",
-            "name": "Perplexity account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "var input = $input.first().json;\nvar perplexityResults = 'Nessun risultato trovato su Perplexity.';\ntry {\n  var content = (input.choices && input.choices[0] && input.choices[0].message && input.choices[0].message.content) || '';\n  var citations = input.citations || [];\n  if (content) {\n    perplexityResults = 'Risposta Perplexity:\\n\\n' + content;\n    if (citations.length > 0) {\n      perplexityResults += '\\n\\nFonti:\\n' + citations.map(function(c, i) { return (i + 1) + '. ' + c; }).join('\\n');\n    }\n  }\n} catch(e) { perplexityResults = ''; }\nvar mappaData = {};\ntry { mappaData = $('Mappa Argomento a Cartella').first().json; } catch(e) {}\nreturn [{ json: {\n  topic: mappaData.topic || 'GENERALE',\n  driveFolder: mappaData.driveFolder || '',\n  driveQuery: mappaData.driveQuery || '',\n  folderSearchQuery: mappaData.driveQuery || '',\n  webSearchQuery: mappaData.webSearchQuery || '',\n  googleResults: perplexityResults\n}}];"
-        },
-        "id": "nodeGoogleParse",
-        "name": "Elabora Risultati Perplexity",
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          2544,
-          560
-        ]
-      }
-    ],
-    "connections": {
-      "Ignora Email da Se Stesso": {
-        "main": [
-          [],
-          [
-            {
-              "node": "È Newsletter Normativa?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Recupera Etichette Gmail": {
-        "main": [
-          [
-            {
-              "node": "Controlla Etichetta CLIENTI",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Email Pubblicitaria?": {
-        "main": [
-          [],
-          [
-            {
-              "node": "Email da CLIENTI?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Email da CLIENTI?": {
-        "main": [
-          [
-            {
-              "node": "Estrai Argomento",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Classificatore Email",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Classificatore Email": {
-        "main": [
-          [
-            {
-              "node": "Email Lavorativa?",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Cerca Cliente in Notion",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Email Lavorativa?": {
-        "main": [
-          [
-            {
-              "node": "Estrai Argomento",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Estrai Argomento": {
-        "main": [
-          [
-            {
-              "node": "Mappa Argomento a Cartella",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Mappa Argomento a Cartella": {
-        "main": [
-          [
-            {
-              "node": "Valuta Ricerca Web",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Ricerca Normativa Web?",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Cerca in Knowledge Base",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Aggrega Contesto": {
-        "main": [
-          [
-            {
-              "node": "Genera Risposta",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Genera Risposta": {
-        "main": [
-          [
-            {
-              "node": "Prepara Bozza",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "OpenRouter Classificatore": {
-        "ai_languageModel": [
-          [
-            {
-              "node": "Classificatore Email",
-              "type": "ai_languageModel",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "OpenRouter Argomento": {
-        "ai_languageModel": [
-          [
-            {
-              "node": "Estrai Argomento",
-              "type": "ai_languageModel",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Anthropic Risposta": {
-        "ai_languageModel": [
-          [
-            {
-              "node": "Genera Risposta",
-              "type": "ai_languageModel",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Controlla Etichetta CLIENTI": {
-        "main": [
-          [
-            {
-              "node": "Email Pubblicitaria?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara Query File": {
-        "main": [
-          [
-            {
-              "node": "Cerca File Cliente",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara Query Azienda": {
-        "main": [
-          [
-            {
-              "node": "Cerca Cartella Azienda",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Gmail Trigger": {
-        "main": [
-          [
-            {
-              "node": "Aggiungi Contesto Allegati",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Separa Allegati",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara Query Anno": {
-        "main": [
-          [
-            {
-              "node": "Cerca Cartella Anno",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Valuta Ricerca Web": {
-        "main": [
-          [
-            {
-              "node": "Ricerca Web Necessaria?",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Ricerca Normativa Legale?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Ricerca Web Necessaria?": {
-        "main": [
-          [
-            {
-              "node": "Cerca su Tavily",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Ricerca Normativa Web?": {
-        "main": [
-          [
-            {
-              "node": "Cerca su Perplexity",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Cerca Documenti Drive",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Cerca su Perplexity": {
-        "main": [
-          [
-            {
-              "node": "Elabora Risultati Perplexity",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Elabora Risultati Perplexity": {
-        "main": [
-          [
-            {
-              "node": "Cerca Documenti Drive",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "WhatsApp Business Trigger": {
-        "main": [
-          [
-            {
-              "node": "Normalizza Messaggio WhatsApp",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Normalizza Messaggio WhatsApp": {
-        "main": [
-          [
-            {
-              "node": "Email Pubblicitaria?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara Bozza": {
-        "main": [
-          [
-            {
-              "node": "Canale Risposta?",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Prepara Corrispondenza",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Crea Scadenza in Notion?",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Salva Corrispondenza Notion",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Canale Risposta?": {
-        "main": [
-          [
-            {
-              "node": "Allegato Richiesto?",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Notifica WhatsApp su Gmail",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara Query Mese": {
-        "main": [
-          [
-            {
-              "node": "Cerca Cartella Mese",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Cerca File Cliente": {
-        "main": [
-          [
-            {
-              "node": "Garante Output",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Garante Output": {
-        "main": [
-          [
-            {
-              "node": "Aggrega Contesto",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Cerca Cartella Azienda": {
-        "main": [
-          [
-            {
-              "node": "Garante Azienda",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Garante Azienda": {
-        "main": [
-          [
-            {
-              "node": "Prepara Query Anno",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Cerca Cartella Anno": {
-        "main": [
-          [
-            {
-              "node": "Garante Anno",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Cerca Cartella Mese": {
-        "main": [
-          [
-            {
-              "node": "Garante Mese",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Garante Mese": {
-        "main": [
-          [
-            {
-              "node": "Prepara Query File",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Cerca Documenti Drive": {
-        "main": [
-          [
-            {
-              "node": "Garante Drive",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Garante Drive": {
-        "main": [
-          [
-            {
-              "node": "Prepara Query Azienda",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Garante Anno": {
-        "main": [
-          [
-            {
-              "node": "Prepara Query Paghe Mensili",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara Query Paghe Mensili": {
-        "main": [
-          [
-            {
-              "node": "Cerca Cartella Paghe Mensili",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Cerca Cartella Paghe Mensili": {
-        "main": [
-          [
-            {
-              "node": "Garante Paghe Mensili",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Garante Paghe Mensili": {
-        "main": [
-          [
-            {
-              "node": "Prepara Query Mese",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Allegato Richiesto?": {
-        "main": [
-          [
-            {
-              "node": "Scarica File Allegato",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Crea Bozza Gmail",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Scarica File Allegato": {
-        "main": [
-          [
-            {
-              "node": "Crea Bozza Con Allegato",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara Corrispondenza": {
-        "main": [
-          [
-            {
-              "node": "Cerca Cartella Corrispondenza",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Cerca Cartella Corrispondenza": {
-        "main": [
-          [
-            {
-              "node": "Corrispondenza Esiste?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Corrispondenza Esiste?": {
-        "main": [
-          [
-            {
-              "node": "Prepara File Corrispondenza",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Crea Cartella Corrispondenza",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Crea Cartella Corrispondenza": {
-        "main": [
-          [
-            {
-              "node": "Prepara File Corrispondenza",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara File Corrispondenza": {
-        "main": [
-          [
-            {
-              "node": "Salva Corrispondenza su Drive",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Ricerca Normativa Legale?": {
-        "main": [
-          [
-            {
-              "node": "Cerca Legislazione IT",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          []
-        ]
-      },
-      "Cerca Legislazione IT": {
-        "main": [
-          []
-        ]
-      },
-      "Crea Scadenza in Notion?": {
-        "main": [
-          [
-            {
-              "node": "Crea Scadenza Notion",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          []
-        ]
-      },
-      "Cerca Cliente in Notion": {
-        "main": [
-          []
-        ]
-      },
-      "Cerca in Knowledge Base": {
-        "main": [
-          []
-        ]
-      },
-      "Crea Scadenza Notion": {
-        "main": [
-          []
-        ]
-      },
-      "Salva Corrispondenza Notion": {
-        "main": [
-          []
-        ]
-      },
-      "Separa Allegati": {
-        "main": [
-          [
-            {
-              "node": "È un file ZIP?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "È un file ZIP?": {
-        "main": [
-          [
-            {
-              "node": "Decomprimi ZIP",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Normalizza Tutti i File",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Decomprimi ZIP": {
-        "main": [
-          [
-            {
-              "node": "Estrai File Decompressi",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Estrai File Decompressi": {
-        "main": [
-          [
-            {
-              "node": "Normalizza Tutti i File",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Normalizza Tutti i File": {
-        "main": [
-          [
-            {
-              "node": "Estrai Testo File",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Estrai Testo File": {
-        "main": [
-          [
-            {
-              "node": "Serve OCR?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Serve OCR?": {
-        "main": [
-          [
-            {
-              "node": "Prepara OCR",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Aggiungi Testo",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara OCR": {
-        "main": [
-          [
-            {
-              "node": "OCR Claude",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "OCR Claude": {
-        "main": [
-          [
-            {
-              "node": "Aggiungi Testo",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Aggiungi Testo": {
-        "main": [
-          []
-        ]
-      },
-      "Aggiungi Contesto Allegati": {
-        "main": [
-          [
-            {
-              "node": "Ignora Email da Se Stesso",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "È Newsletter Normativa?": {
-        "main": [
-          [
-            {
-              "node": "Analisi Newsletter Claude",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Recupera Etichette Gmail",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Analisi Newsletter Claude": {
-        "main": [
-          [
-            {
-              "node": "Parsed Analysis",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parsed Analysis": {
-        "main": [
-          [
-            {
-              "node": "Crea Cartella Aggiornamento",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Crea Cartella Aggiornamento": {
-        "main": [
-          [
-            {
-              "node": "Prepara Nota Obsidian",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Prepara Nota Obsidian": {
-        "main": [
-          [
-            {
-              "node": "Salva Nota Obsidian su Drive",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Salva Nota Obsidian su Drive": {
-        "main": [
-          [
-            {
-              "node": "Salva su Notion Aggiornamenti",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Salva su Notion Aggiornamenti": {
-        "main": [
-          [
-            {
-              "node": "Salva Allegati su Drive?",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Salva Allegati su Drive?": {
-        "main": [
-          [
-            {
-              "node": "Prepara Allegati per Upload",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          []
-        ]
-      },
-      "Prepara Allegati per Upload": {
-        "main": [
-          [
-            {
-              "node": "Salva Allegati su Drive",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Salva Allegati su Drive": {
-        "main": [
-          []
-        ]
-      },
-      "Model Claude Newsletter": {
-        "ai_languageModel": [
-          [
-            {
-              "node": "Analisi Newsletter Claude",
-              "type": "ai_languageModel",
-              "index": 0
-            }
-          ]
-        ]
-      }
-    },
-    "authors": "Attilio Assirelli",
-    "name": null,
-    "description": null,
-    "autosaved": false,
-    "workflowPublishHistory": [
-      {
-        "createdAt": "2026-06-28T03:33:14.630Z",
-        "id": 197,
-        "workflowId": "634G5sX55sgsYpvz",
-        "versionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
-        "event": "activated",
-        "userId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
-      },
-      {
-        "createdAt": "2026-06-28T03:33:14.419Z",
-        "id": 196,
-        "workflowId": "634G5sX55sgsYpvz",
-        "versionId": "a547d2b8-2d80-4f93-8ff6-6a1b305b5033",
-        "event": "deactivated",
-        "userId": "b00ce183-a8f1-4916-b05b-feccf26f75b4"
-      }
-    ]
   }
 }

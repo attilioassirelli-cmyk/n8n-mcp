@@ -1,0 +1,341 @@
+{
+  "name": "Teleconsul-Dottrina Lavoro",
+  "id": "acsL7ofsVGM8vb2F",
+  "active": true,
+  "nodes": [
+    {
+      "id": "trig_schedule",
+      "name": "Trigger Giornaliero 9:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [0, 500],
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "days", "triggerAtHour": 9, "triggerAtMinute": 0 }
+          ]
+        }
+      }
+    },
+    {
+      "id": "gmail_get_many",
+      "name": "Recupera Newsletter Normative",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [260, 500],
+      "parameters": {
+        "resource": "message",
+        "operation": "getAll",
+        "returnAll": true,
+        "simple": false,
+        "filters": {
+          "q": "from:(newsletter@info.wolterskluwer.com OR info@fap.acli.it OR newsletter@fiscoetasse.com OR comunicazioni@ateneoweb.com OR info@dottrinalavoro.it OR infonetlf@news.teleconsul.it) newer_than:30d"
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": { "id": "i2Ruggq5iDNBD8Vq", "name": "Gmail account" }
+      },
+      "webhookId": "cc3da5fb-e62e-49ef-9b84-a94661ceff4e"
+    },
+    {
+      "id": "code_estrai_testo",
+      "name": "Estrai Testo Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [520, 500],
+      "parameters": {
+        "jsCode": "var items = $input.all();\nreturn items.map(function(item) {\n  var d = item.json;\n  var from = '';\n  try { from = d.from.value[0].address; } catch(e) { from = d.from || ''; }\n  var body = d.text || d.snippet || '';\n  return { json: {\n    sourceSubject: d.subject || '',\n    sourceFrom: from,\n    sourceBody: body.substring(0, 6000)\n  } };\n});"
+      }
+    },
+    {
+      "id": "chainllm_estrai_update",
+      "name": "Estrai Aggiornamenti Normativi",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [780, 500],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ 'Oggetto: ' + $json.sourceSubject + '\\nMittente: ' + $json.sourceFrom + '\\n\\nTesto:\\n' + $json.sourceBody + '\\n\\nsourceSubject da riportare esattamente: ' + $json.sourceSubject + '\\nsourceFrom da riportare esattamente: ' + $json.sourceFrom }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Sei un assistente che analizza newsletter giuridiche e fiscali italiane per uno Studio di Consulenza del Lavoro (Studio Assirelli, Caserta).\n\nRiceverai oggetto, mittente e testo di una newsletter. Estrai SOLO gli aggiornamenti normativi distinti (nuove leggi, decreti, circolari INPS/INAIL, sentenze, scadenze) menzionati nel testo, ignorando pubblicita e contenuti promozionali.\n\nPer ciascun aggiornamento riporta:\n- title: titolo breve\n- summary: sintesi di 2-3 righe\n- sourceSubject: riportalo IDENTICO a quello fornito nel prompt\n- sourceFrom: riportalo IDENTICO a quello fornito nel prompt\n\nRispondi SOLO con un array JSON valido, es: [{\"title\":\"...\",\"summary\":\"...\",\"sourceSubject\":\"...\",\"sourceFrom\":\"...\"}]. Se non ci sono aggiornamenti normativi, rispondi con [].",
+              "type": "SystemMessagePromptTemplate"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "lm_openrouter_estrai",
+      "name": "OpenRouter Estrazione Update",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [780, 720],
+      "parameters": {
+        "model": "anthropic/claude-haiku-4.5",
+        "options": { "maxTokens": 1500 }
+      },
+      "credentials": {
+        "openRouterApi": { "id": "BYSYxqd8P5VUBbBQ", "name": "OpenRouter account" }
+      }
+    },
+    {
+      "id": "code_flatten_update",
+      "name": "Estrai Lista Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 500],
+      "parameters": {
+        "jsCode": "var items = $input.all();\nvar output = [];\nitems.forEach(function(item, idx) {\n  var raw = item.json.text || '';\n  var arr = [];\n  try {\n    var cleaned = raw.replace(/```json\\s*/g, '').replace(/```\\s*/g, '').trim();\n    var m = cleaned.match(/\\[[\\s\\S]*\\]/);\n    if (m) arr = JSON.parse(m[0]);\n  } catch (e) {}\n  arr.forEach(function(u) {\n    output.push({\n      json: {\n        title: u.title || 'Aggiornamento normativo',\n        summary: u.summary || '',\n        sourceSubject: u.sourceSubject || '',\n        sourceFrom: u.sourceFrom || ''\n      },\n      pairedItem: { item: idx }\n    });\n  });\n});\nreturn output;"
+      }
+    },
+    {
+      "id": "http_perplexity_update",
+      "name": "Cerca Documento Normativo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1300, 500],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.perplexity.ai/chat/completions",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "perplexityApi",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'sonar', messages: [ { role: 'system', content: 'Sei un assistente di ricerca giuridica per uno Studio di Consulenza del Lavoro italiano (Studio Assirelli, Caserta). Rispondi in italiano, in modo tecnico e sintetico. Trova il testo normativo ufficiale o il documento di riferimento (legge/decreto/circolare/sentenza), citando sempre fonte precisa, data e link diretto al documento quando disponibile. Non inventare riferimenti che non trovi nelle fonti.' }, { role: 'user', content: 'Titolo aggiornamento: ' + $json.title + '\\nSintesi: ' + $json.summary } ], return_citations: true, search_domain_filter: ['gazzettaufficiale.it','normattiva.it','inps.it','inail.it','lavoro.gov.it','cortedicassazione.it'] }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "perplexityApi": { "id": "LtQ7Cvl4Tana0ktu", "name": "Perplexity account" }
+      }
+    },
+    {
+      "id": "code_formatta_blocco",
+      "name": "Formatta Blocco Update",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1560, 500],
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "var input = $input.item.json;\nvar content = '';\nvar citations = [];\ntry {\n  content = (input.choices && input.choices[0] && input.choices[0].message && input.choices[0].message.content) || '';\n  citations = input.citations || [];\n} catch (e) {}\n\nvar update = {};\ntry { update = $('Estrai Lista Update').item.json; } catch (e) {}\n\nvar lines = [];\nlines.push('### ' + (update.title || 'Aggiornamento'));\nlines.push('');\nlines.push(update.summary || '');\nlines.push('');\nlines.push('**Fonte newsletter:** ' + (update.sourceSubject || '') + ' (' + (update.sourceFrom || '') + ')');\nlines.push('');\nlines.push('**Ricerca normativa:**');\nlines.push(content || 'Nessun riferimento normativo specifico trovato.');\nif (citations.length > 0) {\n  lines.push('');\n  lines.push('**Link ai documenti:**');\n  citations.forEach(function (c, i) { lines.push((i + 1) + '. ' + c); });\n}\n\nreturn { json: { block: lines.join('\\n') } };"
+      }
+    },
+    {
+      "id": "aggregate_blocchi",
+      "name": "Aggrega Tutti gli Update",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [1820, 500],
+      "parameters": {
+        "aggregate": "aggregateIndividualFields",
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            { "fieldToAggregate": "block" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "code_compila_doc",
+      "name": "Compila Documento Finale",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2080, 500],
+      "parameters": {
+        "jsCode": "var item = $input.first().json;\nvar blocks = item.block || [];\nvar dateStr = new Date().toLocaleDateString('it-IT');\nvar lines = [];\nlines.push('AGGIORNAMENTO NORMATIVO LAVORO');\nlines.push('Studio Assirelli - Consulenza del Lavoro');\nlines.push('Data: ' + dateStr);\nlines.push('Numero aggiornamenti: ' + blocks.length);\nlines.push('');\nlines.push('========================================');\nlines.push('');\nlines.push(blocks.length > 0 ? blocks.join('\\n\\n---\\n\\n') : 'Nessun aggiornamento normativo rilevato oggi.');\n\nreturn [{ json: {\n  docTitle: 'Aggiornamento Normativo Lavoro - ' + dateStr,\n  documentText: lines.join('\\n'),\n  updateCount: blocks.length\n} }];"
+      }
+    },
+    {
+      "id": "if_ci_sono_update",
+      "name": "Ci Sono Aggiornamenti?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [2340, 500],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-update-count",
+              "leftValue": "={{ $json.updateCount }}",
+              "rightValue": 0,
+              "operator": { "type": "number", "operation": "gt" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "http_claude_studio",
+      "name": "Studio Completo Claude",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2600, 400],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 4000, messages: [ { role: 'user', content: 'Effettua uno studio professionale completo del seguente documento di aggiornamento normativo del lavoro, per uno Studio di Consulenza del Lavoro italiano (Studio Assirelli, Caserta). Per ciascun aggiornamento evidenzia: impatti operativi per i clienti dello studio, eventuali scadenze, azioni consigliate. Rispondi in italiano, in modo strutturato e professionale.\\n\\n--- DOCUMENTO ---\\n\\n' + $json.documentText } ] }) }}",
+        "options": {}
+      },
+      "credentials": {
+        "anthropicApi": { "id": "Vw3rTFIF09caGjnN", "name": "Anthropic account" }
+      }
+    },
+    {
+      "id": "code_elabora_studio",
+      "name": "Elabora Studio Claude",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2860, 400],
+      "parameters": {
+        "jsCode": "var resp = $input.first().json;\nvar studioText = '';\ntry { studioText = resp.content[0].text; } catch (e) {}\nreturn [{ json: { studioClaudeText: studioText || 'Studio non disponibile.' } }];"
+      }
+    },
+    {
+      "id": "drive_crea_doc2",
+      "name": "Crea Documento Aggiornamento",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [3120, 400],
+      "parameters": {
+        "resource": "file",
+        "operation": "createFromText",
+        "content": "={{ $('Compila Documento Finale').first().json.documentText }}",
+        "name": "={{ $('Compila Documento Finale').first().json.docTitle }}",
+        "options": { "convertToGoogleDocument": true }
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": { "id": "11MnaLtExdUMB3f9", "name": "Google Drive account" }
+      }
+    },
+    {
+      "id": "drive_scarica_pdf2",
+      "name": "Scarica PDF Aggiornamento",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [3380, 400],
+      "parameters": {
+        "resource": "file",
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}",
+          "cachedResultName": "={{ $json.name }}"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": { "docsToFormat": "application/pdf" }
+          }
+        }
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": { "id": "11MnaLtExdUMB3f9", "name": "Google Drive account" }
+      }
+    },
+    {
+      "id": "gmail_invia_finale",
+      "name": "Invia Email Aggiornamento",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [3640, 400],
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "attilio.assirelli@icloud.com",
+        "subject": "={{ $('Compila Documento Finale').first().json.docTitle }}",
+        "message": "={{ 'In allegato il PDF con l\\'aggiornamento normativo del lavoro (' + $('Compila Documento Finale').first().json.updateCount + ' aggiornamenti rilevati).\\n\\n--- STUDIO COMPLETO (Claude) ---\\n\\n' + $('Elabora Studio Claude').first().json.studioClaudeText }}",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              { "property": "data" }
+            ]
+          }
+        }
+      },
+      "credentials": {
+        "gmailOAuth2": { "id": "i2Ruggq5iDNBD8Vq", "name": "Gmail account" }
+      },
+      "webhookId": "6c633313-820d-4b4b-8a0f-333c91f5cfed"
+    }
+  ],
+  "connections": {
+    "Trigger Giornaliero 9:00": {
+      "main": [[{ "node": "Recupera Newsletter Normative", "type": "main", "index": 0 }]]
+    },
+    "Recupera Newsletter Normative": {
+      "main": [[{ "node": "Estrai Testo Email", "type": "main", "index": 0 }]]
+    },
+    "Estrai Testo Email": {
+      "main": [[{ "node": "Estrai Aggiornamenti Normativi", "type": "main", "index": 0 }]]
+    },
+    "OpenRouter Estrazione Update": {
+      "ai_languageModel": [[{ "node": "Estrai Aggiornamenti Normativi", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Estrai Aggiornamenti Normativi": {
+      "main": [[{ "node": "Estrai Lista Update", "type": "main", "index": 0 }]]
+    },
+    "Estrai Lista Update": {
+      "main": [[{ "node": "Cerca Documento Normativo", "type": "main", "index": 0 }]]
+    },
+    "Cerca Documento Normativo": {
+      "main": [[{ "node": "Formatta Blocco Update", "type": "main", "index": 0 }]]
+    },
+    "Formatta Blocco Update": {
+      "main": [[{ "node": "Aggrega Tutti gli Update", "type": "main", "index": 0 }]]
+    },
+    "Aggrega Tutti gli Update": {
+      "main": [[{ "node": "Compila Documento Finale", "type": "main", "index": 0 }]]
+    },
+    "Compila Documento Finale": {
+      "main": [[{ "node": "Ci Sono Aggiornamenti?", "type": "main", "index": 0 }]]
+    },
+    "Ci Sono Aggiornamenti?": {
+      "main": [
+        [{ "node": "Studio Completo Claude", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Studio Completo Claude": {
+      "main": [[{ "node": "Elabora Studio Claude", "type": "main", "index": 0 }]]
+    },
+    "Elabora Studio Claude": {
+      "main": [[{ "node": "Crea Documento Aggiornamento", "type": "main", "index": 0 }]]
+    },
+    "Crea Documento Aggiornamento": {
+      "main": [[{ "node": "Scarica PDF Aggiornamento", "type": "main", "index": 0 }]]
+    },
+    "Scarica PDF Aggiornamento": {
+      "main": [[{ "node": "Invia Email Aggiornamento", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "binaryMode": "separate",
+    "availableInMCP": true
+  }
+}

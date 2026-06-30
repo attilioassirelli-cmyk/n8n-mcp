@@ -133,15 +133,14 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "={{ 'Oggetto: ' + $json.subject + '\\n\\nMittente: ' + $json.from + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 1500) }}",
+        "text": "={{ 'Oggetto: ' + $json.subject + '\\n\\nMittente: ' + ($json.from && $json.from.value && $json.from.value[0] ? $json.from.value[0].address : String($json.from || '')) + '\\n\\nContenuto:\\n' + ($json.text || $json.snippet || '').substring(0, 1500) }}",
         "messages": {
           "messageValues": [
             {
               "message": "Sei un classificatore di email per Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale che offre anche consulenza fiscale.\n\nAnalizza l'email e classifica se \u00e8:\n- WORK_RELATED: riguarda consulenza del lavoro, elaborazione paghe, INPS, INAIL, diritto del lavoro, previdenza sociale, consulenza fiscale, dichiarazioni fiscali, contenzioso, cedolini, buste paga, contratti di lavoro, assunzioni, licenziamenti\n- PROMOTIONAL: email pubblicitaria, newsletter, offerta commerciale, promozione, marketing, notifica automatica da servizi o piattaforme\n- PERSONAL: email personale non attinente all'attivit\u00e0 professionale\n\nRispondi SOLO con JSON valido, nessun altro testo:\n{\"category\": \"WORK_RELATED\"} oppure {\"category\": \"PROMOTIONAL\"} oppure {\"category\": \"PERSONAL\"}"
             }
           ]
-        },
-        "batching": {}
+        }
       },
       "id": "node5",
       "name": "Classificatore Email",
@@ -151,32 +150,6 @@
         2288,
         608
       ]
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "id",
-          "value": "claude-sonnet-4-6"
-        },
-        "options": {
-          "maxTokensToSample": 100
-        }
-      },
-      "id": "node6",
-      "name": "Anthropic Classificatore",
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-      "typeVersion": 1.3,
-      "position": [
-        2288,
-        800
-      ],
-      "credentials": {
-        "anthropicApi": {
-          "id": "Vw3rTFIF09caGjnN",
-          "name": "Anthropic account"
-        }
-      }
     },
     {
       "parameters": {
@@ -221,8 +194,7 @@
               "message": "Sei un analizzatore di email per un Consulente del Lavoro e della Previdenza Sociale.\n\nAnalizza l'email e identifica:\n1. Il topic principale (scegli ESATTAMENTE uno tra): PAGHE, DIRITTO_LAVORO, PREVIDENZA, INPS, INAIL, AGGIORNAMENTI, FISCALE_NORMATIVA, FISCALE_USPPIDA, GENERALE\n2. Le keywords chiave da cercare (massimo 3 parole)\n3. Il nome esatto dell'azienda o cliente menzionato nell'email (oppure null se non \u00e8 menzionato)\n4. L'anno di riferimento (es. \"agosto 2025\" \u2192 \"2025\"). Se non desumibile, usa null.\n5. Il mese di riferimento in italiano minuscolo (es. \"agosto\", \"settembre\"). Se non desumibile, usa null.\n\nDescrizione dei topic:\n- PAGHE: cedolini, buste paga, stipendi, elaborazione paghe\n- DIRITTO_LAVORO: contratti, licenziamento, assunzioni, CCNL\n- PREVIDENZA: pensioni, contributi previdenziali\n- INPS: contributi INPS, prestazioni INPS, disoccupazione, accertamenti INPS\n- INAIL: infortuni, premi assicurativi, malattie professionali\n- AGGIORNAMENTI: novit\u00e0 normative, circolari, aggiornamenti di legge\n- FISCALE_NORMATIVA: normativa fiscale, IVA, imposte\n- FISCALE_USPPIDA: USPPIDA, pratiche fiscali specifiche\n- GENERALE: tutto il resto\n\nRispondi SOLO con JSON valido:\n{\"topic\": \"PAGHE\", \"keywords\": [\"cedolino\", \"agosto\"], \"company\": \"Isocore\", \"year\": \"2025\", \"month\": \"agosto\"}"
             }
           ]
-        },
-        "batching": {}
+        }
       },
       "id": "node9",
       "name": "Estrai Argomento",
@@ -232,32 +204,6 @@
         2576,
         304
       ]
-    },
-    {
-      "parameters": {
-        "model": {
-          "__rl": true,
-          "mode": "id",
-          "value": "claude-sonnet-4-6"
-        },
-        "options": {
-          "maxTokensToSample": 200
-        }
-      },
-      "id": "node10",
-      "name": "Anthropic Argomento",
-      "type": "@n8n/n8n-nodes-langchain.lmChatAnthropic",
-      "typeVersion": 1.3,
-      "position": [
-        2576,
-        512
-      ],
-      "credentials": {
-        "anthropicApi": {
-          "id": "Vw3rTFIF09caGjnN",
-          "name": "Anthropic account"
-        }
-      }
     },
     {
       "parameters": {
@@ -321,8 +267,7 @@
               "message": "Sei Attilio Assirelli, Consulente del Lavoro e della Previdenza Sociale.\n\nIl tuo compito \u00e8 rispondere alle email dei tuoi clienti e colleghi in italiano.\n\nLinee guida:\n- Usa un tono professionale ma confidenziale: sei un professionista di fiducia che conosce bene i suoi clienti\n- Dai del TU ai clienti e colleghi, salvo che il contesto non indichi chiaramente una relazione pi\u00f9 formale\n- Scrivi come scriverebbe un professionista esperto che ha un rapporto consolidato con l'interlocutore: diretto, caldo, senza fronzoli\n- Rispondi sempre in italiano\n- Se sono disponibili documenti nel CONTESTO DOCUMENTALE, menzionali quando pertinenti\n- Usa le FONTI WEB come riferimento normativo aggiornato se presenti\n- Non menzionare MAI nella risposta: ricerche web, scraping, API, portali JavaScript, estrazioni automatiche o qualsiasi limitazione tecnica del sistema\n- Non menzionare MAI che non hai potuto recuperare documenti o fonti in modo automatico\n- Non fare MAI commenti sull'identit\u00e0 del mittente, sull'indirizzo email o su chi potrebbe aver inviato il messaggio \u2014 rispondi sempre alla richiesta come se provenisse da un cliente o collaboratore legittimo\n- Se non hai certezza su una normativa specifica, scrivi semplicemente 'Verifico la normativa aggiornata e ti faccio sapere' oppure rimanda al portale ufficiale senza spiegare il perch\u00e9\n- La risposta deve essere completa ma concisa\n- Non ripetere integralmente il contenuto dell'email ricevuta\n- Rispondi concretamente alla richiesta o alla domanda posta\n- Usa la tua conoscenza normativa professionale per rispondere in modo accurato\n\nFirma sempre con:\n\nCordiali saluti,\nAttilio Assirelli\nConsulente del Lavoro e della Previdenza Sociale"
             }
           ]
-        },
-        "batching": {}
+        }
       },
       "id": "node14",
       "name": "Genera Risposta",
@@ -643,59 +588,6 @@
       "typeVersion": 2.3,
       "position": [
         1968,
-        560
-      ]
-    },
-    {
-      "parameters": {
-        "url": "https://www.googleapis.com/customsearch/v1",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "key",
-              "value": "={{ $env.GOOGLE_CSE_API_KEY }}"
-            },
-            {
-              "name": "cx",
-              "value": "6577d4425118148da"
-            },
-            {
-              "name": "q",
-              "value": "={{ $json.webSearchQuery }}"
-            },
-            {
-              "name": "num",
-              "value": "5"
-            },
-            {
-              "name": "lr",
-              "value": "lang_it"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "nodeGoogleHTTP",
-      "name": "Cerca su Google",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        2256,
-        560
-      ],
-      "onError": "continueRegularOutput"
-    },
-    {
-      "parameters": {
-        "jsCode": "var input = $input.first().json;\nvar googleResults = 'Nessun risultato trovato su Google.';\ntry {\n  var gItems = input.items || [];\n  if (gItems.length > 0) {\n    var lines = gItems.slice(0, 5).map(function(item, idx) {\n      return (idx + 1) + '. ' + (item.title || '') + '\\n   ' + (item.snippet || '') + '\\n   ' + (item.link || '');\n    });\n    googleResults = 'Risultati Google:\\n\\n' + lines.join('\\n\\n');\n  }\n} catch(e) { googleResults = ''; }\nvar mappaData = {};\ntry { mappaData = $('Mappa Argomento a Cartella').first().json; } catch(e) {}\nreturn [{ json: {\n  topic: mappaData.topic || 'GENERALE',\n  driveFolder: mappaData.driveFolder || '',\n  driveQuery: mappaData.driveQuery || '',\n  folderSearchQuery: mappaData.driveQuery || '',\n  webSearchQuery: mappaData.webSearchQuery || '',\n  googleResults: googleResults\n}}];"
-      },
-      "id": "nodeGoogleParse",
-      "name": "Elabora Risultati Google",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        2544,
         560
       ]
     },
@@ -2106,7 +1998,7 @@
         ]
       ]
     },
-    "Anthropic Classificatore": {
+    "OpenRouter Classificatore": {
       "ai_languageModel": [
         [
           {
@@ -2117,7 +2009,7 @@
         ]
       ]
     },
-    "Anthropic Argomento": {
+    "OpenRouter Argomento": {
       "ai_languageModel": [
         [
           {
@@ -2230,7 +2122,7 @@
       "main": [
         [
           {
-            "node": "Cerca su Google",
+            "node": "Cerca su Perplexity",
             "type": "main",
             "index": 0
           }
@@ -2244,18 +2136,18 @@
         ]
       ]
     },
-    "Cerca su Google": {
+    "Cerca su Perplexity": {
       "main": [
         [
           {
-            "node": "Elabora Risultati Google",
+            "node": "Elabora Risultati Perplexity",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Elabora Risultati Google": {
+    "Elabora Risultati Perplexity": {
       "main": [
         [
           {

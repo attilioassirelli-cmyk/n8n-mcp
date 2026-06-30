@@ -1221,7 +1221,7 @@
           "parameters": [
             {
               "name": "Authorization",
-              "value": "Bearer sk-mjTzPMunGqXjxWizUxcgRgIZLVJBCNjYsJLvS29TIWU"
+              "value": "Bearer sk-YOUR_LEGALDATAHUNTER_KEY_HERE"
             },
             {
               "name": "Content-Type",

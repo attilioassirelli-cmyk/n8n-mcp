@@ -43,7 +43,7 @@
           "conditions": [
             {
               "id": "cond-self",
-              "leftValue": "={{ (typeof $json.from === 'string' ? $json.from : ($json.from && $json.from.value && $json.from.value[0] ? $json.from.value[0].address : '')) }}",
+              "leftValue": "={{ $json.from }}",
               "rightValue": "attilio.assirelli@gmail.com",
               "operator": {
                 "type": "string",
@@ -1624,7 +1624,8 @@
     },
     {
       "parameters": {
-        "jsCode": "var emailJson = {};\ntry { emailJson = $('Gmail Trigger').item.json || {}; } catch(e) {}\n\nvar items = [];\ntry {\n  items = $('Aggiungi Testo').all();\n} catch(e) {\n  // Nessun allegato o pipeline non eseguita \u2014 continuiamo comunque\n  items = [];\n}\n\nvar fileTexts = {};\n\nitems.forEach(item => {\n  var data = item.json;\n  var fileName = data.fileName || 'Allegato';\n  var op = data.extractionOperation;\n  \n  if (!fileTexts[fileName]) {\n    fileTexts[fileName] = {\n      name: fileName,\n      operation: op,\n      textParts: [],\n      rows: []\n    };\n  }\n  \n  if (data.text) {\n    fileTexts[fileName].textParts.push(data.text);\n  } else if (data.rowData) {\n    fileTexts[fileName].rows.push(data.rowData);\n  }\n});\n\nvar attachmentTexts = [];\nvar hasPDF = false;\n\nfor (var fileName in fileTexts) {\n  var fileInfo = fileTexts[fileName];\n  var content = '';\n  \n  if (fileInfo.textParts.length > 0) {\n    content = fileInfo.textParts.join('\\n');\n  } else if (fileInfo.rows.length > 0) {\n    var rows = fileInfo.rows;\n    var headers = Object.keys(rows[0] || {}).filter(k => k !== 'fileName' && k !== 'extractionOperation' && k !== 'key');\n    \n    var headerRow = '| ' + headers.join(' | ') + ' |';\n    var separatorRow = '| ' + headers.map(() => '---').join(' | ') + ' |';\n    var dataRows = rows.map(r => '| ' + headers.map(h => String(r[h] || '')).join(' | ') + ' |');\n    \n    content = [headerRow, separatorRow].concat(dataRows).join('\\n');\n  }\n  \n  if (content.trim().length > 10) {\n    attachmentTexts.push('=== ALLEGATO: ' + fileName + ' ===\\n' + content);\n    if (fileInfo.operation === 'pdf') {\n      hasPDF = true;\n    }\n  }\n}\n\nvar attachmentText = attachmentTexts.join('\\n\\n---\\n\\n').substring(0, 10000);\n\n// IMPORTANTE: questo nodo deve sempre restituire l'email, anche senza allegati\nreturn [{\n  json: Object.assign({}, emailJson, {\n    attachmentText: attachmentText,\n    hasPDF: hasPDF,\n    hasAttachments: attachmentTexts.length > 0\n  })\n}];"
+        "jsCode": "// Legge l'email direttamente dal trigger (non aspetta la pipeline allegati)\nvar emailJson = {};\ntry {\n  emailJson = $('Gmail Trigger').item.json || {};\n} catch(e) {\n  emailJson = $input.item.json || {};\n}\n\n// Prova a leggere i testi allegati (disponibili solo se la pipeline allegati \u00e8 gi\u00e0 terminata)\nvar items = [];\ntry {\n  var allItems = $('Aggiungi Testo').all();\n  if (allItems && allItems.length > 0) {\n    items = allItems;\n  }\n} catch(e) {\n  // Normale: pipeline allegati non ancora eseguita o email senza allegati\n  items = [];\n}\n\nvar fileTexts = {};\nitems.forEach(item => {\n  var data = item.json || {};\n  var fileName = data.fileName || 'Allegato';\n  var op = data.extractionOperation;\n  if (!fileTexts[fileName]) {\n    fileTexts[fileName] = { name: fileName, operation: op, textParts: [], rows: [] };\n  }\n  if (data.text) {\n    fileTexts[fileName].textParts.push(data.text);\n  } else if (data.rowData) {\n    fileTexts[fileName].rows.push(data.rowData);\n  }\n});\n\nvar attachmentTexts = [];\nvar hasPDF = false;\n\nfor (var fileName in fileTexts) {\n  var fileInfo = fileTexts[fileName];\n  var content = '';\n  if (fileInfo.textParts.length > 0) {\n    content = fileInfo.textParts.join('\\n');\n  } else if (fileInfo.rows.length > 0) {\n    var rows = fileInfo.rows;\n    var headers = Object.keys(rows[0] || {}).filter(k => k !== 'fileName' && k !== 'extractionOperation' && k !== 'key');\n    var headerRow = '| ' + headers.join(' | ') + ' |';\n    var separatorRow = '| ' + headers.map(() => '---').join(' | ') + ' |';\n    var dataRows = rows.map(r => '| ' + headers.map(h => String(r[h] || '')).join(' | ') + ' |');\n    content = [headerRow, separatorRow].concat(dataRows).join('\\n');\n  }\n  if (content.trim().length > 10) {\n    attachmentTexts.push('=== ALLEGATO: ' + fileName + ' ===\\n' + content);\n    if (fileInfo.operation === 'pdf') { hasPDF = true; }\n  }\n}\n\nvar attachmentText = attachmentTexts.join('\\n\\n---\\n\\n').substring(0, 10000);\n\n// Normalizza il campo 'from' in stringa per i nodi a valle\nvar fromRaw = emailJson.from;\nvar fromAddress = '';\nif (typeof fromRaw === 'string') {\n  fromAddress = fromRaw;\n} else if (fromRaw && fromRaw.value && fromRaw.value[0]) {\n  fromAddress = fromRaw.value[0].address || '';\n}\n\nreturn [{\n  json: Object.assign({}, emailJson, {\n    from: fromAddress,\n    attachmentText: attachmentText,\n    hasPDF: hasPDF,\n    hasAttachments: attachmentTexts.length > 0\n  })\n}];",
+        "mode": "runOnceForEachItem"
       },
       "id": "new_aggiungi_contesto_allegati",
       "name": "Aggiungi Contesto Allegati",
@@ -1647,7 +1648,7 @@
           "conditions": [
             {
               "id": "cond-teleconsul",
-              "leftValue": "={{ (typeof $json.from === 'string' ? $json.from : ($json.from && $json.from.value && $json.from.value[0] ? $json.from.value[0].address : '')) }}",
+              "leftValue": "={{ $json.from }}",
               "rightValue": "teleconsul",
               "operator": {
                 "type": "string",
@@ -1656,7 +1657,7 @@
             },
             {
               "id": "cond-dottrina",
-              "leftValue": "={{ (typeof $json.from === 'string' ? $json.from : ($json.from && $json.from.value && $json.from.value[0] ? $json.from.value[0].address : '')) }}",
+              "leftValue": "={{ $json.from }}",
               "rightValue": "dottrina",
               "operator": {
                 "type": "string",
@@ -1665,7 +1666,7 @@
             },
             {
               "id": "cond-inps",
-              "leftValue": "={{ (typeof $json.from === 'string' ? $json.from : ($json.from && $json.from.value && $json.from.value[0] ? $json.from.value[0].address : '')) }}",
+              "leftValue": "={{ $json.from }}",
               "rightValue": "attilio.assirelli@inps.it",
               "operator": {
                 "type": "string",
@@ -1959,7 +1960,7 @@
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Recupera i dati dell'email originale da Aggiungi Contesto Allegati\nvar emailCtx = {};\ntry { emailCtx = $('Aggiungi Contesto Allegati').item.json || {}; } catch(e) {}\n\n// Recupera il risultato di Perplexity\nvar perplexityText = '';\nvar citations = [];\ntry {\n  var pxData = $('Cerca Fonti Normative (Perplexity)').item.json;\n  if (pxData && pxData.choices && pxData.choices[0]) {\n    perplexityText = pxData.choices[0].message.content || '';\n  }\n  if (pxData && pxData.citations) {\n    citations = pxData.citations;\n  }\n} catch(e) {\n  perplexityText = '';\n  citations = [];\n}\n\n// Formatta le citazioni come link Markdown\nvar citationsText = '';\nif (citations.length > 0) {\n  citationsText = '\\n\\n=== FONTI UFFICIALI TROVATE (Perplexity) ===\\n' +\n    citations.map((url, i) => (i + 1) + '. ' + url).join('\\n');\n}\n\nvar perplexityContext = '';\nif (perplexityText) {\n  perplexityContext = '\\n\\n=== RICERCA NORMATIVA (Perplexity) ===\\n' + perplexityText + citationsText;\n}\n\n// Aggiungi il contesto Perplexity al campo attachmentText\nreturn Object.assign({}, emailCtx, {\n  perplexityContext: perplexityContext,\n  perplexityCitations: citations,\n  // Estende attachmentText con le fonti Perplexity\n  attachmentText: (emailCtx.attachmentText || '') + perplexityContext\n});"
+        "jsCode": "// Recupera dati email: prima da Aggiungi Contesto Allegati, poi da Gmail Trigger come fallback\nvar emailCtx = {};\ntry {\n  emailCtx = $('Aggiungi Contesto Allegati').item.json || {};\n} catch(e) {\n  try {\n    emailCtx = $('Gmail Trigger').item.json || {};\n  } catch(e2) {\n    emailCtx = $input.item.json || {};\n  }\n}\n\n// Recupera risultato Perplexity\nvar perplexityText = '';\nvar citations = [];\ntry {\n  var pxData = $('Cerca Fonti Normative (Perplexity)').item.json;\n  if (pxData && pxData.choices && pxData.choices[0]) {\n    perplexityText = pxData.choices[0].message.content || '';\n  }\n  if (pxData && pxData.citations) {\n    citations = pxData.citations;\n  }\n} catch(e) {}\n\nvar citationsText = '';\nif (citations.length > 0) {\n  citationsText = '\\n\\n=== FONTI UFFICIALI TROVATE ===\\n' +\n    citations.map((url, i) => (i + 1) + '. ' + url).join('\\n');\n}\n\nvar perplexityContext = '';\nif (perplexityText) {\n  perplexityContext = '\\n\\n=== RICERCA NORMATIVA (Perplexity) ===\\n' + perplexityText + citationsText;\n}\n\nreturn Object.assign({}, emailCtx, {\n  perplexityContext: perplexityContext,\n  perplexityCitations: citations,\n  attachmentText: (emailCtx.attachmentText || '') + perplexityContext\n});"
       },
       "id": "node_arricchisci_contesto_newsletter",
       "name": "Arricchisci Contesto Newsletter",
@@ -1969,6 +1970,144 @@
         1520,
         -100
       ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "\nvar parsed = {};\ntry { parsed = $('Parsed Analysis').item.json; } catch(e) {}\n\nvar folderId = '';\ntry { folderId = $('Crea Cartella Aggiornamento').item.json.id || ''; } catch(e) {}\n\nvar priorityColor = parsed[\"Priorit\u00e0\"] === 'Alta' ? '#c62828' :\n                    parsed[\"Priorit\u00e0\"] === 'Media' ? '#e65100' : '#2e7d32';\n\nfunction esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }\nfunction md2html(s) {\n  return String(s||'')\n    .replace(/\\*\\*([^*]+)\\*\\*/g, '<strong>$1</strong>')\n    .replace(/\\*([^*]+)\\*/g, '<em>$1</em>')\n    .replace(/^### (.+)$/gm, '<h3>$1</h3>')\n    .replace(/^## (.+)$/gm, '<h2 style=\"color:#283593;font-size:12pt;margin-top:16px\">$1</h2>')\n    .replace(/^- \\[x\\] (.+)$/gm, '<li style=\"list-style:none\">\u2611 $1</li>')\n    .replace(/^- \\[ \\] (.+)$/gm, '<li style=\"list-style:none\">\u2610 $1</li>')\n    .replace(/^- (.+)$/gm, '<li>$1</li>')\n    .replace(/^(\\d+)\\. (.+)$/gm, '<li>$2</li>')\n    .replace(/\\[([^\\]]+)\\]\\((https?:[^)]+)\\)/g, '<a href=\"$2\">$1</a>')\n    .replace(/\\n/g, '<br>');\n}\n\nvar tags = (parsed[\"Tags\"] || []).map(t => `<span style=\"background:#e3f2fd;color:#1565c0;padding:2px 8px;border-radius:10px;font-size:9pt;margin-right:4px\">#${esc(t)}</span>`).join('');\n\nvar html = `<!DOCTYPE html>\n<html lang=\"it\">\n<head>\n<meta charset=\"UTF-8\">\n<style>\n  @page { margin: 20mm 18mm; }\n  body { font-family: 'Google Sans', Arial, sans-serif; color: #333; font-size: 10.5pt; line-height: 1.65; }\n  h1 { color: #1a237e; font-size: 15pt; border-bottom: 2px solid #1a237e; padding-bottom: 8px; margin-bottom: 12px; }\n  h2 { color: #283593; font-size: 12pt; margin-top: 18px; margin-bottom: 6px; }\n  .meta-box { background: #f8f9fa; border-left: 4px solid #1a237e; padding: 10px 14px; margin: 12px 0; border-radius: 0 4px 4px 0; font-size: 9.5pt; }\n  .meta-row { margin: 3px 0; }\n  .label { font-weight: bold; color: #555; min-width: 120px; display: inline-block; }\n  .priority { color: ${priorityColor}; font-weight: bold; }\n  .section { margin: 10px 0 16px 0; }\n  ul, ol { padding-left: 18px; margin: 6px 0; }\n  li { margin: 3px 0; }\n  a { color: #1565c0; text-decoration: none; }\n  hr { border: none; border-top: 1px solid #ddd; margin: 16px 0; }\n  .tags { margin: 8px 0; }\n  .footer { color: #888; font-size: 8.5pt; margin-top: 24px; padding-top: 8px; border-top: 1px solid #eee; }\n  .header-badge { background: #1a237e; color: white; padding: 2px 10px; border-radius: 10px; font-size: 9pt; display: inline-block; margin-bottom: 6px; }\n</style>\n</head>\n<body>\n<div class=\"header-badge\">STUDIO ASSIRELLI \u2014 AGGIORNAMENTO NORMATIVO</div>\n<h1>${esc(parsed[\"Titolo\"] || \"Aggiornamento Normativo\")}</h1>\n\n<div class=\"meta-box\">\n  <div class=\"meta-row\"><span class=\"label\">Fonte:</span> ${esc(parsed[\"Fonte Newsletter\"] || \"\u2014\")}</div>\n  <div class=\"meta-row\"><span class=\"label\">Data Newsletter:</span> ${esc(parsed[\"Data Newsletter\"] || \"\u2014\")}</div>\n  <div class=\"meta-row\"><span class=\"label\">Tipo Atto:</span> ${esc(parsed[\"Tipo Atto\"] || \"\u2014\")} ${esc(parsed[\"Numero Atto\"] || \"\")}</div>\n  <div class=\"meta-row\"><span class=\"label\">Data Atto:</span> ${esc(parsed[\"Data Atto\"] || \"\u2014\")}</div>\n  <div class=\"meta-row\"><span class=\"label\">Materia:</span> ${esc(parsed[\"Materia\"] || \"\u2014\")}</div>\n  <div class=\"meta-row\"><span class=\"label\">Priorit\u00e0:</span> <span class=\"priority\">${esc(parsed[\"Priorit\u00e0\"] || \"Media\")}</span></div>\n  ${parsed[\"Link Testo Ufficiale\"] ? `<div class=\"meta-row\"><span class=\"label\">Testo Ufficiale:</span> <a href=\"${esc(parsed[\"Link Testo Ufficiale\"])}\">${esc(parsed[\"Link Testo Ufficiale\"])}</a></div>` : \"\"}\n</div>\n\n${tags ? `<div class=\"tags\">${tags}</div>` : \"\"}\n\n<h2>\ud83d\udcf0 Relazione Professionale</h2>\n<div class=\"section\">${md2html(parsed[\"Sintesi Operativa\"])}</div>\n\n<hr>\n\n<h2>\u26a0\ufe0f Rischi e Scadenze</h2>\n<div class=\"section\">${md2html(parsed[\"Rischi e Scadenze\"])}</div>\n\n<hr>\n\n<h2>\ud83d\udee0\ufe0f Cosa Fare in Studio</h2>\n<div class=\"section\">${md2html(parsed[\"Cosa Fare in Studio\"])}</div>\n\n<div class=\"footer\">\n  Elaborato da Studio Assirelli n8n \u2022 ${new Date().toLocaleDateString('it-IT')}\n</div>\n</body>\n</html>`;\n\n// Costruisci il body multipart/related per Drive API\nvar boundary = 'n8n_boundary_' + Math.random().toString(36).substr(2, 12);\nvar tempDocName = (parsed[\"Titolo\"] || \"doc\").replace(/[^\\w\\s-]/g, '').substring(0, 40) + '_TEMP_' + Date.now();\n\nvar metadata = JSON.stringify({\n  name: tempDocName,\n  mimeType: 'application/vnd.google-apps.document',\n  parents: folderId ? [folderId] : []\n});\n\nvar multipart = '--' + boundary + '\\r\\n' +\n  'Content-Type: application/json; charset=UTF-8\\r\\n\\r\\n' +\n  metadata + '\\r\\n' +\n  '--' + boundary + '\\r\\n' +\n  'Content-Type: text/html; charset=UTF-8\\r\\n\\r\\n' +\n  html + '\\r\\n' +\n  '--' + boundary + '--';\n\nvar pdfName = (parsed[\"Data Newsletter\"] || new Date().toISOString().split('T')[0]) +\n  ' - ' + (parsed[\"Tipo Atto\"] || 'Aggiornamento') +\n  (parsed[\"Numero Atto\"] ? ' ' + parsed[\"Numero Atto\"] : '') +\n  ' - ' + (parsed[\"Titolo\"] || \"Nota\").replace(/[\\/\\\\?%*:|\"<>]/g, '-').substring(0, 55) + '.pdf';\n\nreturn {\n  json: Object.assign({}, parsed, {\n    targetFolderId: folderId,\n    pdfFileName: pdfName,\n    boundary: boundary,\n    contentType: 'multipart/related; boundary=' + boundary\n  }),\n  binary: {\n    data: {\n      data: Buffer.from(multipart, 'utf-8').toString('base64'),\n      mimeType: 'multipart/related; boundary=' + boundary,\n      fileName: 'upload.bin'\n    }\n  }\n};\n"
+      },
+      "id": "node_prepare_html_pdf",
+      "name": "Prepara HTML per PDF",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2080,
+        200
+      ],
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "={{ $json.contentType }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "binaryPropertyName": "data",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "id": "node_create_gdoc_temp",
+      "name": "Crea Google Doc Temp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2260,
+        200
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "11MnaLtExdUMB3f9",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://www.googleapis.com/drive/v3/files/' + $json.id + '/export?mimeType=application%2Fpdf' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "pdfData"
+            }
+          }
+        }
+      },
+      "id": "node_export_pdf",
+      "name": "Esporta PDF da Doc",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2440,
+        200
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "11MnaLtExdUMB3f9",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "operation": "upload",
+        "binaryData": true,
+        "binaryPropertyName": "pdfData",
+        "name": "={{ $('Prepara HTML per PDF').item.json.pdfFileName }}",
+        "parents": "={{ [$('Prepara HTML per PDF').item.json.targetFolderId] }}",
+        "options": {}
+      },
+      "id": "node_save_pdf_drive",
+      "name": "Salva PDF Aggiornamento",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        2620,
+        200
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "11MnaLtExdUMB3f9",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "={{ 'https://www.googleapis.com/drive/v3/files/' + $('Crea Google Doc Temp').item.json.id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleDriveOAuth2Api",
+        "options": {}
+      },
+      "id": "node_delete_temp_doc",
+      "name": "Elimina Doc Temporaneo",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2800,
+        200
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "11MnaLtExdUMB3f9",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "connections": {
@@ -2802,6 +2941,11 @@
             "node": "Prepara Nota Obsidian",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Prepara HTML per PDF",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -2894,6 +3038,44 @@
         [
           {
             "node": "Analisi Newsletter Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepara HTML per PDF": {
+      "main": [
+        [
+          {
+            "node": "Crea Google Doc Temp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crea Google Doc Temp": {
+      "main": [
+        [
+          {
+            "node": "Esporta PDF da Doc",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Elimina Doc Temporaneo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Esporta PDF da Doc": {
+      "main": [
+        [
+          {
+            "node": "Salva PDF Aggiornamento",
             "type": "main",
             "index": 0
           }

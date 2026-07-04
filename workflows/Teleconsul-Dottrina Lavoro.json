@@ -457,6 +457,88 @@
           "name": "Gmail account"
         }
       }
+    },
+    {
+      "id": "salva_notion_tele",
+      "name": "Salva su Notion Aggiornamenti",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2864,
+        320
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.notion.com/v1/pages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer ntn_YOUR_NOTION_TOKEN_HERE"
+            },
+            {
+              "name": "Notion-Version",
+              "value": "2022-06-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({\n  parent: { database_id: '536f8767-0d24-4e77-838d-57eb65d2bdd0' },\n  properties: {\n    \"Titolo\": { title: [{ text: { content: ($('Compila Documento Finale').first().json.docTitle || 'Aggiornamento Normativo Lavoro').substring(0, 100) } }] },\n    \"Fonte Newsletter\": { select: { name: \"Altra fonte\" } },\n    \"Data Newsletter\": { date: { start: new Date().toISOString().split('T')[0] } },\n    \"Materia\": { select: { name: \"Lavoro\" } },\n    \"Tipo Atto\": { select: { name: \"Altro\" } },\n    \"Sintesi Operativa\": { rich_text: [{ text: { content: ($('Elabora Studio Claude').first().json.studioClaudeText || '').substring(0, 1900) } }] },\n    \"PDF su Drive\": $('Crea Documento Aggiornamento').first().json.webViewLink ? { url: $('Crea Documento Aggiornamento').first().json.webViewLink } : undefined,\n    \"Priorità\": { select: { name: \"Media\" } },\n    \"Stato\": { select: { name: \"Nuovo\" } },\n    \"Elaborato da n8n\": { checkbox: true }\n  }\n}) }}",
+        "options": {}
+      },
+      "credentials": {}
+    },
+    {
+      "id": "prep_nota_obsidian_tele",
+      "name": "Prepara Nota Obsidian",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2864,
+        480
+      ],
+      "parameters": {
+        "jsCode": "var compilato = $('Compila Documento Finale').first().json;\nvar studio = '';\ntry { studio = $('Elabora Studio Claude').first().json.studioClaudeText || ''; } catch(e) {}\nvar docUrl = '';\ntry { docUrl = $('Crea Documento Aggiornamento').first().json.webViewLink || ''; } catch(e) {}\n\nvar dataStr = new Date().toISOString().split('T')[0];\nvar docTitle = compilato.docTitle || ('Aggiornamento Normativo Lavoro - ' + dataStr);\nvar updateCount = compilato.updateCount || 0;\n\nvar markdown = '---\\n' +\n'data: \"' + dataStr + '\"\\n' +\n'fonte: \"Aggregato multi-fonte (Teleconsul, Dottrina Lavoro, Wolters Kluwer, FAP ACLI, Fisco e Tasse, Ateneoweb)\"\\n' +\n'materia: \"Lavoro\"\\n' +\n'tipo_atto: \"Altro\"\\n' +\n'priorita: \"Media\"\\n' +\n'numero_aggiornamenti: ' + updateCount + '\\n' +\n'tags:\\n' +\n'  - \"#aggiornamento_normativo\"\\n' +\n'  - \"#teleconsul\"\\n' +\n'---\\n' +\n'# ' + docTitle + '\\n\\n' +\n'> [!INFO] Riepilogo giornaliero\\n' +\n'> **Aggiornamenti rilevati:** ' + updateCount + ' | **Data:** ' + dataStr + '\\n\\n' +\n'## 📰 Studio Completo (Claude)\\n\\n' +\nstudio + '\\n\\n' +\n'---\\n\\n' +\n'## 📋 Testo Aggregato Newsletter\\n\\n' +\n(compilato.documentText || 'Nessun contenuto.') + '\\n\\n' +\n'---\\n\\n' +\n'## 📎 Riferimenti\\n\\n' +\n'- **Google Doc:** ' + (docUrl ? '[Apri su Drive](' + docUrl + ')' : 'Non disponibile') + '\\n';\n\nvar filename = dataStr + ' - Aggiornamento Normativo Lavoro (Teleconsul).md';\n\nreturn [{\n  json: { fileName: filename },\n  binary: {\n    data: {\n      data: Buffer.from(markdown, 'utf-8').toString('base64'),\n      mimeType: 'text/markdown',\n      fileName: filename\n    }\n  }\n}];"
+      }
+    },
+    {
+      "id": "salva_nota_obsidian_tele",
+      "name": "Salva Nota Obsidian su Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        3120,
+        480
+      ],
+      "parameters": {
+        "name": "={{ $json.fileName }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "11MnaLtExdUMB3f9",
+          "name": "Google Drive account"
+        }
+      },
+      "onError": "continueRegularOutput"
     }
   ],
   "pinData": {},
@@ -638,6 +720,16 @@
             "node": "Scarica PDF Aggiornamento",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Salva su Notion Aggiornamenti",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Prepara Nota Obsidian",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -652,6 +744,17 @@
           }
         ]
       ]
+    },
+    "Prepara Nota Obsidian": {
+      "main": [
+        [
+          {
+            "node": "Salva Nota Obsidian su Drive",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
@@ -659,7 +762,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "6d28e17e-0848-436f-84a1-5f1cc83b7b2f",
+  "versionId": "94014324-7c41-4b58-a02a-96c8d7ef6c91",
   "meta": {
     "templateCredsSetupCompleted": true
   },

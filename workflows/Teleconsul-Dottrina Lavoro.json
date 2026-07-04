@@ -29,7 +29,7 @@
         "returnAll": true,
         "simple": false,
         "filters": {
-          "q": "from:(newsletter@info.wolterskluwer.com OR info@fap.acli.it OR newsletter@fiscoetasse.com OR comunicazioni@ateneoweb.com OR info@dottrinalavoro.it OR infonetlf@news.teleconsul.it) newer_than:30d"
+          "q": "from:(newsletter@info.wolterskluwer.com OR info@fap.acli.it OR newsletter@fiscoetasse.com OR comunicazioni@ateneoweb.com OR info@dottrinalavoro.it OR infonetlf@news.teleconsul.it) newer_than:1d"
         }
       },
       "credentials": {
@@ -38,13 +38,89 @@
       "webhookId": "cc3da5fb-e62e-49ef-9b84-a94661ceff4e"
     },
     {
+      "id": "sheets_leggi_id",
+      "name": "Leggi ID Email Processati",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [520, 280],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "PLACEHOLDER_SPREADSHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Processed"
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": { "id": "PLACEHOLDER_SHEETS_CRED_ID", "name": "Google Sheets account" }
+      }
+    },
+    {
+      "id": "code_filtra_email",
+      "name": "Filtra Email Non Processate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [780, 280],
+      "parameters": {
+        "jsCode": "// $input.all() = righe Google Sheets con gli ID già processati\n// $('Recupera Newsletter Normative').all() = email Gmail recuperate\n\nvar sheetsRows = $input.all();\nvar processedIds = new Set(\n  sheetsRows\n    .map(function(row) { return (row.json.messageId || '').toString(); })\n    .filter(function(id) { return id !== ''; })\n);\n\nvar emails = $('Recupera Newsletter Normative').all();\nvar nuove = emails.filter(function(email) {\n  var id = (email.json.id || '').toString();\n  return id !== '' && !processedIds.has(id);\n});\n\n// Se non ci sono email nuove, il workflow si ferma qui senza errori\nreturn nuove.map(function(email) {\n  return { json: email.json };\n});"
+      }
+    },
+    {
+      "id": "sheets_segna_id",
+      "name": "Segna Email Processate",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1040, 280],
+      "parameters": {
+        "resource": "sheet",
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "PLACEHOLDER_SPREADSHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Processed"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "messageId": "={{ $json.id }}"
+          },
+          "schema": [
+            {
+              "id": "messageId",
+              "displayName": "messageId",
+              "required": false,
+              "defaultMatch": false,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": { "id": "PLACEHOLDER_SHEETS_CRED_ID", "name": "Google Sheets account" }
+      }
+    },
+    {
       "id": "code_estrai_testo",
       "name": "Estrai Testo Email",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [520, 500],
       "parameters": {
-        "jsCode": "var items = $input.all();\nreturn items.map(function(item) {\n  var d = item.json;\n  var from = '';\n  try { from = d.from.value[0].address; } catch(e) { from = d.from || ''; }\n  var body = d.text || d.snippet || '';\n  return { json: {\n    sourceSubject: d.subject || '',\n    sourceFrom: from,\n    sourceBody: body.substring(0, 6000)\n  } };\n});"
+        "jsCode": "var items = $input.all();\nreturn items.map(function(item) {\n  var d = item.json;\n  var from = '';\n  try { from = d.from.value[0].address; } catch(e) { from = d.from || ''; }\n\n  // FIX: fallback HTML se plain text è assente\n  var body = d.text || '';\n  if (!body && d.html) {\n    body = d.html\n      .replace(/<style[\\s\\S]*?<\\/style>/gi, '')\n      .replace(/<script[\\s\\S]*?<\\/script>/gi, '')\n      .replace(/<[^>]+>/g, ' ')\n      .replace(/&nbsp;/g, ' ')\n      .replace(/&amp;/g, '&')\n      .replace(/&lt;/g, '<')\n      .replace(/&gt;/g, '>')\n      .replace(/\\s+/g, ' ')\n      .trim();\n  }\n  if (!body) body = d.snippet || '';\n\n  return { json: {\n    messageId: d.id || '',\n    sourceSubject: d.subject || '',\n    sourceFrom: from,\n    sourceBody: body.substring(0, 6000)\n  } };\n});"
       }
     },
     {
@@ -74,7 +150,7 @@
       "position": [780, 720],
       "parameters": {
         "model": "anthropic/claude-haiku-4.5",
-        "options": { "maxTokens": 1500 }
+        "options": { "maxTokens": 2000 }
       },
       "credentials": {
         "openRouterApi": { "id": "BYSYxqd8P5VUBbBQ", "name": "OpenRouter account" }
@@ -222,6 +298,17 @@
         "operation": "createFromText",
         "content": "={{ $('Compila Documento Finale').first().json.documentText }}",
         "name": "={{ $('Compila Documento Finale').first().json.docTitle }}",
+        "driveId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "MY_DRIVE"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "PLACEHOLDER_FOLDER_ID",
+          "cachedResultName": "Aggiornamenti Normativi"
+        },
         "options": { "convertToGoogleDocument": true }
       },
       "credentials": {
@@ -284,13 +371,24 @@
       "main": [[{ "node": "Recupera Newsletter Normative", "type": "main", "index": 0 }]]
     },
     "Recupera Newsletter Normative": {
-      "main": [[{ "node": "Estrai Testo Email", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Leggi ID Email Processati", "type": "main", "index": 0 }]]
     },
-    "Estrai Testo Email": {
-      "main": [[{ "node": "Estrai Aggiornamenti Normativi", "type": "main", "index": 0 }]]
+    "Leggi ID Email Processati": {
+      "main": [[{ "node": "Filtra Email Non Processate", "type": "main", "index": 0 }]]
+    },
+    "Filtra Email Non Processate": {
+      "main": [
+        [
+          { "node": "Estrai Testo Email", "type": "main", "index": 0 },
+          { "node": "Segna Email Processate", "type": "main", "index": 0 }
+        ]
+      ]
     },
     "OpenRouter Estrazione Update": {
       "ai_languageModel": [[{ "node": "Estrai Aggiornamenti Normativi", "type": "ai_languageModel", "index": 0 }]]
+    },
+    "Estrai Testo Email": {
+      "main": [[{ "node": "Estrai Aggiornamenti Normativi", "type": "main", "index": 0 }]]
     },
     "Estrai Aggiornamenti Normativi": {
       "main": [[{ "node": "Estrai Lista Update", "type": "main", "index": 0 }]]

@@ -41,6 +41,41 @@ Seven complementary skill sets that encode correct n8n patterns. Load the releva
 | **n8n Code JavaScript** | When writing Code nodes in JavaScript |
 | **n8n Code Python** | When writing Code nodes in Python |
 
+### 3. Optional web research (Parallel Search MCP)
+
+Use [Parallel Search MCP](https://docs.parallel.ai/integrations/mcp/search-mcp) to find current service documentation and read source pages while planning a workflow. It provides `web_search` and `web_fetch` over Streamable HTTP, with no Parallel account or API key required for the free tier. Anonymous searches use Fast mode; free usage is rate limited.
+
+With [Claude Code](https://code.claude.com/docs/en/mcp) installed, run this from the repository directory:
+
+```bash
+claude mcp add --transport http --scope local parallel-search https://search.parallel.ai/mcp \
+  --header "User-Agent: n8n-mcp-workflow-builder"
+claude mcp get parallel-search
+```
+
+Local scope saves the server privately for this project. If `parallel-search` is already configured, inspect it first and keep your existing settings or choose another server name. Start a new Claude Code session in this directory and use `/mcp` to check the connection and available tools. A successful `add` only confirms that the configuration was saved.
+
+For example, ask:
+
+```text
+Plan a WhatsApp Business workflow without creating or activating it yet.
+First read tools_documentation() and load the relevant n8n skills.
+Use parallel-search's web_search to find current official Meta documentation
+for webhook verification and message templates. Use web_fetch to read the
+relevant pages, then list the requirements with source URLs and dates where
+available. Check the n8n WhatsApp Trigger and WhatsApp node configuration with
+the n8n MCP tools, and propose the nodes, connections and required credentials.
+Flag any requirements you could not verify before proceeding to validation.
+```
+
+Keep queries limited to public information; do not include private email contents or credentials. Research results inform the plan; continue to validate nodes with the n8n MCP tools before deployment. This setup adds research tools to Claude Code only and does not change the saved workflows or their search providers.
+
+To remove this optional server, run from the same directory:
+
+```bash
+claude mcp remove --scope local parallel-search
+```
+
 ---
 
 ## Workflow Building Process
